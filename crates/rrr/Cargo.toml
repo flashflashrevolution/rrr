@@ -1,0 +1,16 @@
+[package]
+name = "rrr"
+version = "0.1.0"
+authors = ["Fission"]
+edition = "2018"
+
+[package.metadata.docs.rs]
+features = ["serde1"]
+
+[features]
+default = ["serde1"]
+serde1 = ["serde", "num-rational/serde"]
+
+[dependencies]
+num-rational = { version = "0.3.2", default_features = false, features = ["serde"] }
+serde = { version = "1.0.118", optional = true, features = ["derive"] }

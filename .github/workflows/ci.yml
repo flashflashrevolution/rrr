@@ -1,0 +1,135 @@
+name: CI
+
+on: [push, pull_request]
+
+env:
+  RUST_BACKTRACE: 1
+  RUSTFLAGS: -Dwarnings
+
+jobs:
+  rustfmt:
+    name: Rustfmt check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: rustfmt
+
+      - name: Rustfmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        rust: [stable, beta, nightly-2021-01-11]
+        allow_error: [false]
+        include:
+          - os: ubuntu-latest
+            rust: nightly
+            allow_error: true
+          - os: windows-latest
+            rust: nightly
+            allow_error: true
+          - os: macOS-latest
+            rust: nightly
+            allow_error: true
+
+    name: Test ${{ matrix.rust }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.allow_error }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install rust ${{ matrix.rust }}
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          override: true
+          toolchain: ${{ matrix.rust }}
+
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --workspace
+
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --workspace
+
+  clippy:
+    name: Clippy check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          components: clippy
+
+      - name: Clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          name: Clippy
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --workspace
+
+  docs:
+    name: Deploy docs
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [rustfmt, test, clippy]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+
+      - name: API docs
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+          args: --workspace --no-deps
+
+      - name: Deploy API docs
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/doc
+          destination_dir: api
+
+      - name: Setup mdBook
+        uses: peaceiris/actions-mdbook@v1
+        with:
+          mdbook-version: latest
+
+      - name: Book
+        run: mdbook build docs
+
+      - name: Deploy book
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/book
+          destination_dir: book
