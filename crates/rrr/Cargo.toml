@@ -13,4 +13,4 @@ serde1 = ["serde", "num-rational/serde"]
 
 [dependencies]
 num-rational = { version = "0.3.2", default_features = false, features = ["serde"] }
-serde = { version = "1.0.118", optional = true, features = ["derive"] }
+serde = { version = "1.0.119", optional = true, features = ["derive"] }
