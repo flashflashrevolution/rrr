@@ -1,8 +1,7 @@
-use num_rational::Rational;
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 /// Represents a single note in a [note row](NoteRow).
 pub struct Note {
@@ -16,27 +15,18 @@ impl Note {
     }
 }
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 /// Stores the [notes](Note) that belong to a single row in a [beat](Beat).
 pub struct NoteRow {
-    offset: Rational,
+    offset: u32,
     // TODO: This should be [Note; N] but const generics aren't stable yet.
     notes: Vec<Note>,
 }
 
-impl Default for NoteRow {
-    fn default() -> Self {
-        Self {
-            offset: Rational::new(0, 1),
-            notes: Vec::default(),
-        }
-    }
-}
-
 impl NoteRow {
     #[must_use]
-    pub fn new(offset: Rational, notes: &[Note]) -> Self {
+    pub fn new(offset: u32, notes: &[Note]) -> Self {
         Self {
             offset,
             notes: notes.into(),
@@ -44,53 +34,46 @@ impl NoteRow {
     }
 }
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 /// Stores all of the [note rows](NoteRow) that represent a beat.
 pub struct Beat {
     note_rows: Vec<NoteRow>,
+    subdivisions: u32,
 }
 
 impl Beat {
     #[must_use]
-    pub fn new(note_rows: &[NoteRow]) -> Self {
+    pub fn new(note_rows: &[NoteRow], subdivisions: u32) -> Self {
         Self {
             note_rows: note_rows.into(),
+            subdivisions,
         }
     }
 }
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]
 /// Represents a BPM change in a [chart](Chart).
 pub struct BpmChange {
-    bpm: Rational,
+    bpm: f32,
     beat: usize,
-}
-
-impl Default for BpmChange {
-    fn default() -> Self {
-        Self {
-            bpm: Rational::new(0, 1),
-            beat: 0,
-        }
-    }
 }
 
 impl BpmChange {
     #[must_use]
-    pub fn new(bpm: Rational, beat: usize) -> Self {
+    pub fn new(bpm: f32, beat: usize) -> Self {
         Self { bpm, beat }
     }
 }
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 /// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
 pub struct CompiledChart {}
 
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]
 /// A space/memory efficient representation of a chart.
 ///
 /// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
@@ -120,14 +103,12 @@ mod tests {
 
     #[test]
     fn create_chart() -> Result<(), ()> {
-        let offset = Rational::new(0, 1);
         let note = Note::new(0);
-        let note_row = NoteRow::new(offset, &[note]);
+        let note_row = NoteRow::new(0, &[note]);
 
-        let beat = Beat::new(&[note_row]);
+        let beat = Beat::new(&[note_row], 4);
 
-        let bpm = Rational::approximate_float(120.).ok_or(())?;
-        let bpm_change = BpmChange::new(bpm, 0);
+        let bpm_change = BpmChange::new(120., 0);
 
         let _chart = Chart::new(&[beat], &[bpm_change]);
 

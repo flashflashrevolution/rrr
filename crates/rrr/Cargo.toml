@@ -15,12 +15,10 @@ license = "AGPL-3.0"
 edition = "2018"
 
 [package.metadata.docs.rs]
-features = ["serde1"]
+features = ["serde"]
 
 [features]
-default = ["serde1"]
-serde1 = ["serde", "num-rational/serde"]
+default = ["serde"]
 
 [dependencies]
-num-rational = { version = "0.3.2", default_features = false, features = ["std"] }
 serde = { version = "1.0.119", optional = true, features = ["derive"] }

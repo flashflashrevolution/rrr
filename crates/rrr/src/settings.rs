@@ -1,13 +1,13 @@
-#[cfg(feature = "serde1")]
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// Stores RRR settings to play charts with.
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 pub struct Settings {}
 
 /// A builder for a [Settings](Settings) instance.
-#[cfg_attr(feature = "serde1", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
 pub struct SettingsBuilder {}
 
