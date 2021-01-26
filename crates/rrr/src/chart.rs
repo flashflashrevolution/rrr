@@ -92,6 +92,8 @@ impl Chart {
         }
     }
 
+    #[must_use]
+    #[allow(clippy::unused_self)]
     pub fn compile(&self) -> CompiledChart {
         CompiledChart {}
     }
