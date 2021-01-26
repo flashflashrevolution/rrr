@@ -108,11 +108,9 @@ impl Chart {
             bpm_changes: bpm_changes.into(),
         }
     }
-}
 
-impl From<Chart> for CompiledChart {
-    fn from(_chart: Chart) -> Self {
-        Self {}
+    pub fn compile(&self) -> CompiledChart {
+        CompiledChart {}
     }
 }
 
@@ -139,6 +137,6 @@ mod tests {
     #[test]
     fn compile_chart() {
         let chart = Chart::default();
-        let _compiled_chart: CompiledChart = chart.into();
+        let _compiled_chart: CompiledChart = chart.compile();
     }
 }

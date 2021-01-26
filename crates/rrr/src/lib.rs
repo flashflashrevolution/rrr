@@ -81,7 +81,7 @@ mod tests {
     fn start_chart() {
         let rrr = RRR::new();
         let chart = Chart::default();
-        let compiled_chart = chart.into();
+        let compiled_chart = chart.compile();
         rrr.start_chart(&compiled_chart);
     }
 }
