@@ -1,0 +1,21 @@
+[package]
+name = "rrr_tui"
+version = "0.0.0"
+authors = ["Fission", "Zageron"]
+description = """
+Console based user interface for RRR.
+"""
+documentation = "https://docs.rs/rrr"
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+edition = "2018"
+publish = false
+
+[dependencies]
+#crossterm = "0.19"
+#tui = { version = "0.14", default-features = false, features = ['crossterm'] }
+#serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
