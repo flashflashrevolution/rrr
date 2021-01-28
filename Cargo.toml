@@ -6,4 +6,6 @@ opt-level = 3
 
 [profile.release]
 codegen-units = 1
+opt-level = "z"
 lto = true
+panic = 'abort'
