@@ -26,6 +26,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "rrr_data"
+version = "0.0.0"
+
+[[package]]
 name = "rrr_tui"
 version = "0.0.0"
 
