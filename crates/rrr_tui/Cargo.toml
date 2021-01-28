@@ -16,6 +16,6 @@ edition = "2018"
 publish = false
 
 [dependencies]
-#crossterm = "0.19"
-#tui = { version = "0.14", default-features = false, features = ['crossterm'] }
+crossterm = "0.19"
+tui = { version = "0.14", default-features = false, features = ['crossterm'] }
 #serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
