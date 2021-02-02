@@ -1,26 +1,23 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-/// Stores RRR settings to play charts with.
+/// Stores RRR settings to start charts with.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-pub struct Settings {}
+#[derive(Clone, PartialEq, PartialOrd, Debug)]
+pub struct Settings {
+    pub speed: f32,
+}
 
-/// A builder for a [Settings](Settings) instance.
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-pub struct SettingsBuilder {}
+impl Default for Settings {
+    fn default() -> Self {
+        Self { speed: 1. }
+    }
+}
 
-impl SettingsBuilder {
+impl Settings {
     #[must_use]
     pub fn new() -> Self {
-        Self {}
-    }
-
-    #[must_use]
-    #[allow(clippy::unused_self)]
-    pub fn build(&self) -> Settings {
-        Settings {}
+        Self::default()
     }
 }
 
@@ -29,8 +26,8 @@ mod tests {
     use super::*;
 
     #[test]
-    fn settings_builder() {
-        let settings_builder = SettingsBuilder::new();
-        let _settings = settings_builder.build();
+    fn default_settings() {
+        let settings = Settings::new();
+        assert!((settings.speed - 1.).abs() < f32::EPSILON);
     }
 }

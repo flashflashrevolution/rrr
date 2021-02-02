@@ -73,7 +73,7 @@ mod tests {
 
     #[test]
     fn custom_settings() {
-        let settings = SettingsBuilder::new().build();
+        let settings = Settings::new();
         let _rrr = RRR::with_settings(settings);
     }
 
