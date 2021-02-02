@@ -1,3 +1,0 @@
-(function() {var implementors = {};
-implementors["rrr"] = [{"text":"impl Serialize for Note","synthetic":false,"types":[]},{"text":"impl Serialize for NoteRow","synthetic":false,"types":[]},{"text":"impl Serialize for Beat","synthetic":false,"types":[]},{"text":"impl Serialize for BpmChange","synthetic":false,"types":[]},{"text":"impl Serialize for CompiledChart","synthetic":false,"types":[]},{"text":"impl Serialize for Chart","synthetic":false,"types":[]},{"text":"impl Serialize for Settings","synthetic":false,"types":[]}];
-if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
