@@ -79,8 +79,8 @@ pub struct CompiledChart {}
 /// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
 /// These are not used by [RRR](crate::RRR) directly.
 pub struct Chart {
-    bpm_changes: Vec<BpmChange>,
     beats: Vec<Beat>,
+    bpm_changes: Vec<BpmChange>,
 }
 
 impl Chart {
