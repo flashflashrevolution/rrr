@@ -17,8 +17,5 @@ edition = "2018"
 [package.metadata.docs.rs]
 features = ["serde"]
 
-[features]
-default = ["serde"]
-
 [dependencies]
 serde = { version = "1.0.123", optional = true, features = ["derive"] }
