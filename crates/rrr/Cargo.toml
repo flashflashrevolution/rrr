@@ -21,4 +21,4 @@ features = ["serde"]
 default = ["serde"]
 
 [dependencies]
-serde = { version = "1.0.119", optional = true, features = ["derive"] }
+serde = { version = "1.0.123", optional = true, features = ["derive"] }
