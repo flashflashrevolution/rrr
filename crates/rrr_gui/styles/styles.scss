@@ -39,10 +39,10 @@ footer {
 }
 
 .root {
-  min-width: 800px;
-  max-width: 1600px;
+  min-width: 1200px;
+  max-width: 1200px;
   min-height: 800px;
-  max-height: 1600px;
+  max-height: 800px;
   margin: 5%;
   display: flex;
 }
@@ -51,14 +51,14 @@ footer {
   display: flex;
   flex-flow: column nowrap;
   margin: 5px;
-  flex-grow: 1;
+  flex-grow: 0;
 }
 
 .row {
   display: flex;
   flex-flow: row nowrap;
   margin: 5px;
-  flex-grow: 1;
+  flex-grow: 0;
 }
 
 .item {
@@ -70,8 +70,35 @@ footer {
   font-weight: bold;
   line-height: 2.4;
   flex-grow: 1;
-  align-items:center;
-  justify-content:center;
+  align-items: center;
+  justify-content: center;
+}
+
+.song_item {
+  border: none;
+  text-align: left;
+  align-items: stretch;
+  justify-content: stretch;
+  display: flex;
+  height: 1.5em;
+  line-height: unset;
+}
+
+.song_list {
+  flex: 1 0 25em;
+  justify-content: flex-start;
+  align-content: flex-start;
+  align-items: stretch;
+  overflow: auto;
+}
+
+.song_difficulty {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.song_play_status {
+  color: grey;
 }
 
 .category_list_header {
@@ -116,6 +143,11 @@ footer {
 
 .game_header {
   flex: 0 0 5em;
+}
+
+.game_body {
+  flex-basis: auto;
+  overflow: hidden;
 }
 
 .game_footer {
