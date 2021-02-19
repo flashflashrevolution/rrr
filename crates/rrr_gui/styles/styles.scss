@@ -1,0 +1,127 @@
+$font-stack: "Helvetica Neue", Helvetica, sans-serif;
+$primary-color: #4d4d4d;
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+body {
+  font: 14px $font-stack;
+  line-height: 1.4em;
+  color: $primary-color;
+  min-width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-font-smoothing: antialiased;
+  font-weight: 300;
+  background-color: #000000;
+  overflow: hidden;
+  position: absolute;
+}
+
+main {
+  flex-grow: 1;
+}
+
+header,
+main,
+footer {
+  flex-shrink: 0;
+}
+
+.gradient {
+  background: rgb(2, 0, 36);
+  background: linear-gradient(45deg, rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
+}
+
+.root {
+  min-width: 800px;
+  max-width: 1600px;
+  min-height: 800px;
+  max-height: 1600px;
+  margin: 5%;
+  display: flex;
+}
+
+.column {
+  display: flex;
+  flex-flow: column nowrap;
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.item {
+  background: #00000000;
+  border: solid 2px #305077;
+  margin: 5px;
+  text-align: center;
+  color: white;
+  font-weight: bold;
+  line-height: 2.4;
+  flex-grow: 1;
+  align-items:center;
+  justify-content:center;
+}
+
+.category_list_header {
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  font-size: larger;
+}
+
+.category_list {
+  flex: 0 0 15em;
+}
+
+.container_list {
+  align-items: flex-start;
+  overflow: auto;
+}
+
+.grow1 {
+  flex-basis: auto;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.grow2 {
+  flex-basis: auto;
+  flex-grow: 2;
+  flex-shrink: 1;
+}
+
+.grow3 {
+  flex-basis: auto;
+  flex-grow: 3;
+  flex-shrink: 1;
+}
+
+.grow4 {
+  flex-basis: auto;
+  flex-grow: 4;
+  flex-shrink: 1;
+}
+
+.game_header {
+  flex: 0 0 5em;
+}
+
+.game_footer {
+  flex: 0 0 5em;
+}
+
+.game_details {
+  flex: 0 0 25em;
+}

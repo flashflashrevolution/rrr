@@ -1,0 +1,22 @@
+[package]
+name = "rrr_gui"
+version = "0.0.0"
+authors = ["Zageron <hello@adambryant.ca>"]
+edition = "2018"
+description = """
+Web GUI for Rust Rust Revolution.
+"""
+documentation = "https://docs.rs/rrr"
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+publish = false
+
+[dependencies]
+serde = "1"
+serde_json = "1"
+yew = { git = "https://github.com/yewstack/yew", package = "yew" }
+yew-services = { git = "https://github.com/yewstack/yew", package = "yew-services" }
