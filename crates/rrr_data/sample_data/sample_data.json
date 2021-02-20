@@ -1,0 +1,36 @@
+{
+    "songs": [
+        {
+            "name": "Sea Breeze",
+            "difficulty": 1,
+            "time": 93,
+            "id": 1485,
+            "releasedate": 1310713418,
+            "author": {
+                "name": "championanwar",
+                "url": "http://www.flashflashrevolution.com/profile/championanwar"
+            },
+            "stepauthor": {
+                "name": "Silvuh",
+                "url": "http://www.flashflashrevolution.com/profile/silvuh"
+            },
+            "rating": 4.2
+          },
+          {
+            "name": "Distortion Power",
+            "difficulty": 81,
+            "time": 163,
+            "id": 1852,
+            "releasedate": 1354399472,
+            "author": {
+                "name": "Drunk Optimus",
+                "url": "http://soundcloud.com/drunk-optimus"
+            },
+            "stepauthor": {
+                "name": "Wayward Vagabond",
+                "url": "http://www.flashflashrevolution.com/profile/Wayward%20Vagabond"
+            },
+            "rating": 3.15
+          }
+    ]
+}

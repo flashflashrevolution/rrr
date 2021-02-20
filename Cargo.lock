@@ -219,6 +219,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rrr_data"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "rrr_gui"
 version = "0.0.0"
 dependencies = [

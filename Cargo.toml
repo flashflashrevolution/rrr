@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/rrr", "crates/rrr_gui"]
+members = ["crates/rrr", "crates/rrr_data", "crates/rrr_gui"]
 
 [profile.dev.package."*"]
 opt-level = 3
