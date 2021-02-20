@@ -225,8 +225,6 @@ dependencies = [
  "rrr",
  "serde",
  "serde_json",
- "wasm-bindgen",
- "web-sys",
  "yew",
  "yew-services",
 ]

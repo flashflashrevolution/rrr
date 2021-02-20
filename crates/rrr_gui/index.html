@@ -17,27 +17,29 @@
       Some fancy header shit.
     </header>
     <main>
-        <div id="GameRoot" class="root gradient">
+        <div id="game_root" class="root gradient">
           <div id="LeftSidebar" class="column category_list">
             <div id="LeftHeader" class="grow2"/></div>
-            <div id="CategorySwitcher" class="category_list_header">
-              < DIFFICULTIES >
-            </div>
-            <div id="CategoryList" class="container_list">
-              <div class="item">All</div>
-              <div class="item">Easiest</div>
-              <div class="item">Beginner</div>
-              <div class="item">Very Easy</div>
-              <div class="item">Easy</div>
-              <div class="item">Standard</div>
-              <div class="item">Tricky</div>
-              <div class="item">Hard</div>
-              <div class="item">Difficult</div>
-              <div class="item">Challenging</div>
-              <div class="item">Expert</div>
-              <div class="item">Master</div>
-              <div class="item">Guru</div>
-              <div class="item">Brutal</div>
+            <div id="category_selection_root">
+              <div id="CategorySwitcher" class="category_list_header">
+                < DIFFICULTIES >
+              </div>
+              <div id="CategoryList" class="container_list">
+                <div class="item">All</div>
+                <div class="item">Easiest</div>
+                <div class="item">Beginner</div>
+                <div class="item">Very Easy</div>
+                <div class="item">Easy</div>
+                <div class="item">Standard</div>
+                <div class="item">Tricky</div>
+                <div class="item">Hard</div>
+                <div class="item">Difficult</div>
+                <div class="item">Challenging</div>
+                <div class="item">Expert</div>
+                <div class="item">Master</div>
+                <div class="item">Guru</div>
+                <div class="item">Brutal</div>
+              </div>
             </div>
           </div>
           <div class="column grow1">
@@ -45,7 +47,7 @@
               <div><p>PLAYER: Anonymous GAMES: 0 TOTAL: 0 RANK: 123456 AVG: 1234</p></div>
               <div>page select</div>
             </div>
-            <div class="game_body grow1 row">
+            <div id="song_selection_root" class="game_body grow1 row">
               <div class="item song_list column">
                 <div class="song_item row">
                   <div class="song_difficulty">11</div>
