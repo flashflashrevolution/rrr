@@ -1,3 +1,4 @@
 (function() {var implementors = {};
 implementors["rrr"] = [{"text":"impl Freeze for Note","synthetic":true,"types":[]},{"text":"impl Freeze for NoteRow","synthetic":true,"types":[]},{"text":"impl Freeze for Beat","synthetic":true,"types":[]},{"text":"impl Freeze for BpmChange","synthetic":true,"types":[]},{"text":"impl Freeze for CompiledChart","synthetic":true,"types":[]},{"text":"impl Freeze for Chart","synthetic":true,"types":[]},{"text":"impl Freeze for Settings","synthetic":true,"types":[]},{"text":"impl Freeze for RRR","synthetic":true,"types":[]}];
+implementors["rrr_gui"] = [{"text":"impl Freeze for Msg","synthetic":true,"types":[]},{"text":"impl Freeze for Model","synthetic":true,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

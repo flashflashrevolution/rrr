@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["__wasm_bindgen_generated_run",""],["run",""]]});
+initSidebarItems({"enum":[["Msg",""]],"fn":[["main",""]],"struct":[["Model",""]]});

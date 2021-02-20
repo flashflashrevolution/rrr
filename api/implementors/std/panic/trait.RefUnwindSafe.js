@@ -1,3 +1,4 @@
 (function() {var implementors = {};
 implementors["rrr"] = [{"text":"impl RefUnwindSafe for Note","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for NoteRow","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Beat","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for BpmChange","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for CompiledChart","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Chart","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for Settings","synthetic":true,"types":[]},{"text":"impl RefUnwindSafe for RRR","synthetic":true,"types":[]}];
+implementors["rrr_gui"] = [{"text":"impl RefUnwindSafe for Msg","synthetic":true,"types":[]},{"text":"impl !RefUnwindSafe for Model","synthetic":true,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

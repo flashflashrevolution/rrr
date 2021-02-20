@@ -1,3 +1,4 @@
 (function() {var implementors = {};
 implementors["rrr"] = [{"text":"impl Sync for Note","synthetic":true,"types":[]},{"text":"impl Sync for NoteRow","synthetic":true,"types":[]},{"text":"impl Sync for Beat","synthetic":true,"types":[]},{"text":"impl Sync for BpmChange","synthetic":true,"types":[]},{"text":"impl Sync for CompiledChart","synthetic":true,"types":[]},{"text":"impl Sync for Chart","synthetic":true,"types":[]},{"text":"impl Sync for Settings","synthetic":true,"types":[]},{"text":"impl Sync for RRR","synthetic":true,"types":[]}];
+implementors["rrr_gui"] = [{"text":"impl Sync for Msg","synthetic":true,"types":[]},{"text":"impl !Sync for Model","synthetic":true,"types":[]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
