@@ -1,5 +1,3 @@
-#![feature(test)]
-
 #[cfg(test)]
 mod data_tests {
     use rrr_data::songs::{Song, Songs};
