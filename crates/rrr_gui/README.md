@@ -10,7 +10,9 @@ Web GUI for Rust Rust Revolution.
 ## Build and Run
 
 ```zsh
-cargo install trunk
+rustup install nightly
+rustup target add wasm32-unknown-unknown
+cargo install trunk wasm-bindgen-cli
 # pwd : ./crates/rrr_gui
 trunk serve
 ```
