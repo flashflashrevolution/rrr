@@ -1,6 +1,9 @@
 #[cfg(test)]
 mod data_tests {
-    use rrr_data::songs::{Song, Songs};
+    use rrr_data::{
+        songs::{Song, SongList},
+        RRRData,
+    };
     use std::fs::File;
     use std::io::Read;
 
@@ -28,6 +31,12 @@ mod data_tests {
         let mut file = File::open("sample_data/sample_data.json").unwrap();
         let mut data = String::new();
         file.read_to_string(&mut data).unwrap();
-        serde_json::from_str::<Songs>(&data).unwrap();
+        serde_json::from_str::<SongList>(&data).unwrap();
+    }
+
+    #[test]
+    fn validate_default_fake() {
+        let data_api: RRRData = RRRData::from_fake();
+        assert!(!data_api.songs().get_song(0).name.is_empty());
     }
 }
