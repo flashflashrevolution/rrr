@@ -37,7 +37,7 @@ impl Component for Radial {
     fn view(&self) -> Html {
         let link = &self.link;
         html! {
-            <div id="container" class="container" style="--m: 6; --tan: 0.60">
+            <div id="radial_container" class="radial_container" style="--m: 6; --tan: 0.60">
                 <i>
                 <div style="--i: 1">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">

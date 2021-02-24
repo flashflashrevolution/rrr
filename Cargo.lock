@@ -231,8 +231,7 @@ name = "rrr_gui"
 version = "0.0.0"
 dependencies = [
  "rrr",
- "serde",
- "serde_json",
+ "web-sys",
  "yew",
  "yew-services",
 ]

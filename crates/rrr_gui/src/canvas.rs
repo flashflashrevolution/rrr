@@ -1,21 +1,23 @@
 use std::fmt::Debug;
 
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-use yew_services::ConsoleService;
+use web_sys::HtmlCanvasElement;
+use yew::{html, Component, ComponentLink, Html, NodeRef, ShouldRender};
+use yew_services::{render::RenderTask, ConsoleService, RenderService};
 
 #[derive(Debug)]
 pub enum Msg {
-    Render,
+    Render(f64),
 }
 
 #[derive(Debug)]
-pub struct Radial {
+pub struct Canvas {
     canvas: Option<HtmlCanvasElement>,
     canvas_node_ref: NodeRef,
     link: ComponentLink<Self>,
+    render_loop: Option<RenderTask>,
 }
 
-impl Component for Radial {
+impl Component for Canvas {
     type Message = Msg;
     type Properties = ();
 
@@ -24,6 +26,7 @@ impl Component for Radial {
             canvas: None,
             canvas_node_ref: NodeRef::default(),
             link,
+            render_loop: None,
         }
     }
 
@@ -41,15 +44,23 @@ impl Component for Radial {
     }
 
     fn view(&self) -> Html {
-        let link = &self.link;
         html! {
-            <canvas ref=self.canvas_node_ref.clone() />
+            <canvas
+                ref=self.canvas_node_ref.clone()
+                id="rrr_canvas"
+                class="rrr_canvas"/>
         }
     }
 }
 
-impl Model {
+impl Canvas {
     fn render(&mut self, timestamp: f64) {
-        ConsoleService::log("click");
+        ConsoleService::log(format!("click {}", timestamp).as_str());
+
+        let render_frame = self.link.callback(Msg::Render);
+        let handle = RenderService::request_animation_frame(render_frame);
+
+        // A reference to the new handle must be retained for the next render to run.
+        self.render_loop = Some(handle);
     }
 }

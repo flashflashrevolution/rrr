@@ -1,3 +1,4 @@
+mod canvas;
 mod radial;
 use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
@@ -29,6 +30,7 @@ impl Component for Model {
         html! {
             <div id="game_root" class="root gradient">
                 <radial::Radial/>
+                <canvas::Canvas/>
             </div>
         }
     }

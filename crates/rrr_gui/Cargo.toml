@@ -19,3 +19,9 @@ publish = false
 rrr = { path = "../rrr" }
 yew = { git = "https://github.com/yewstack/yew", package = "yew" }
 yew-services = { git = "https://github.com/yewstack/yew", package = "yew-services" }
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  'HtmlCanvasElement',
+]
