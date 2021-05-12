@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install rust stable
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install rust ${{ matrix.rust }}
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           override: true
@@ -79,7 +79,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install rust stable
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
@@ -102,7 +102,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install rust stable
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
