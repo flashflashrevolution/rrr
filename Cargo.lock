@@ -388,7 +388,7 @@ dependencies = [
 [[package]]
 name = "yew"
 version = "0.17.4"
-source = "git+https://github.com/yewstack/yew#f93fa3c8b2106dca4eb768ae005ef530310b7721"
+source = "git+https://github.com/yewstack/yew#04b019f6bfb5e3f1dd88b670af8eac65415ca4c0"
 dependencies = [
  "anyhow",
  "anymap",
@@ -412,7 +412,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.17.0"
-source = "git+https://github.com/yewstack/yew#f93fa3c8b2106dca4eb768ae005ef530310b7721"
+source = "git+https://github.com/yewstack/yew#04b019f6bfb5e3f1dd88b670af8eac65415ca4c0"
 dependencies = [
  "boolinator",
  "lazy_static",
@@ -424,7 +424,7 @@ dependencies = [
 [[package]]
 name = "yew-services"
 version = "0.1.0"
-source = "git+https://github.com/yewstack/yew#f93fa3c8b2106dca4eb768ae005ef530310b7721"
+source = "git+https://github.com/yewstack/yew#04b019f6bfb5e3f1dd88b670af8eac65415ca4c0"
 dependencies = [
  "anyhow",
  "gloo",
