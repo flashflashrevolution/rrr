@@ -18,4 +18,4 @@ edition = "2018"
 features = ["serde"]
 
 [dependencies]
-serde = { version = "1.0.124", optional = true, features = ["derive"] }
+serde = { version = "1.0.132", optional = true, features = ["derive"] }
