@@ -1,6 +1,6 @@
 [package]
 name = "rrr"
-version = "0.0.0"
+version = "0.0.1"
 authors = ["Fission", "Zageron"]
 description = """
 Rust Rust Revolution as a library.
@@ -12,10 +12,10 @@ readme = "README.md"
 keywords = ["game"]
 categories = ["games"]
 license = "AGPL-3.0"
-edition = "2018"
+edition = "2021"
 
 [package.metadata.docs.rs]
 features = ["serde"]
 
 [dependencies]
-serde = { version = "1.0.124", optional = true, features = ["derive"] }
+serde = { version = "1.0.133", optional = true, features = ["derive"] }
