@@ -86,11 +86,7 @@ jobs:
           components: clippy
 
       - name: Clippy
-        uses: actions-rs/clippy-check@v1.0.7
-        with:
-          name: Clippy
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --workspace
+        run: cargo clippy --workspace -- -D warnings
 
   docs:
     name: Deploy docs

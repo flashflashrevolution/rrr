@@ -35,8 +35,7 @@
     clippy::unreachable,
     clippy::unwrap_used,
     clippy::use_debug,
-    clippy::verbose_file_reads,
-    clippy::wrong_pub_self_convention
+    clippy::verbose_file_reads
 )]
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
@@ -49,7 +48,7 @@ pub use settings::*;
 
 #[derive(Debug, Default)]
 pub struct RRR {
-    settings: Settings,
+    _settings: Settings,
 }
 
 impl RRR {
@@ -60,7 +59,9 @@ impl RRR {
 
     #[must_use]
     pub fn with_settings(settings: Settings) -> Self {
-        Self { settings }
+        Self {
+            _settings: settings,
+        }
     }
 
     #[allow(clippy::unused_self)]
