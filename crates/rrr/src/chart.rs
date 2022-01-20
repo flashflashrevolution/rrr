@@ -97,6 +97,11 @@ impl Chart {
     pub fn compile(&self) -> CompiledChart {
         CompiledChart {}
     }
+
+    #[must_use]
+    pub fn get_first_bpm(&self) -> Option<f32> {
+        self.bpm_changes.first().map(|first_bpm| first_bpm.bpm)
+    }
 }
 
 #[cfg(test)]
@@ -104,17 +109,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn create_chart() -> Result<(), ()> {
-        let note = Note::new(0);
-        let note_row = NoteRow::new(0, &[note]);
+    fn create_chart() {
+        const FIRST_BPM: f32 = 120.;
+        let chart: Chart = Chart::new(
+            &[{
+                let note_rows: &[NoteRow] = &[NoteRow::new(0, &[Note::new(0)])];
+                Beat {
+                    note_rows: note_rows.into(),
+                    subdivisions: 4,
+                }
+            }],
+            &[BpmChange::new(FIRST_BPM, 0)],
+        );
 
-        let beat = Beat::new(&[note_row], 4);
-
-        let bpm_change = BpmChange::new(120., 0);
-
-        let _chart = Chart::new(&[beat], &[bpm_change]);
-
-        Ok(())
+        assert_eq!(chart.get_first_bpm(), Some(FIRST_BPM));
     }
 
     #[test]
