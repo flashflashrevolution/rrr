@@ -15,11 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install rust stable
+      - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           components: rustfmt
 
       - name: Rustfmt
@@ -32,7 +32,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        rust: [stable, nightly]
+        rust: [nightly, nightly]
         allow_error: [false]
         include:
           - os: ubuntu-latest
@@ -78,11 +78,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install rust stable
+      - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           components: clippy
 
       - name: Clippy
@@ -97,11 +97,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install rust stable
+      - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
 
       - name: API docs
         uses: actions-rs/cargo@v1
