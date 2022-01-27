@@ -32,7 +32,6 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macOS-latest]
-        rust: [nightly, nightly]
         allow_error: [false]
         include:
           - os: ubuntu-latest
@@ -57,7 +56,17 @@ jobs:
         with:
           profile: minimal
           override: true
-          toolchain: ${{ matrix.rust }}
+          toolchain: nightly
+
+      - name: Install binutils
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-binutils
+
+      - name: Install llvm component
+        run: |
+          rustup component add llvm-tools-preview
 
       - name: Build
         uses: actions-rs/cargo@v1
@@ -85,6 +94,16 @@ jobs:
           toolchain: nightly
           components: clippy
 
+      - name: Install binutils
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-binutils
+
+      - name: Install llvm component
+        run: |
+          rustup component add llvm-tools-preview
+
       - name: Clippy
         run: cargo clippy --workspace -- -D warnings
 
@@ -103,6 +122,16 @@ jobs:
           profile: minimal
           toolchain: nightly
 
+      - name: Install binutils
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-binutils
+
+      - name: Install llvm component
+        run: |
+          rustup component add llvm-tools-preview
+          
       - name: API docs
         uses: actions-rs/cargo@v1
         with:
