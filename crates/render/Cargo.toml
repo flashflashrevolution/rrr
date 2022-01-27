@@ -1,0 +1,19 @@
+[package]
+name = "rrr-render"
+version = "0.0.1"
+authors = ["Zageron <hello@adambryant.ca>"]
+description = "Macroquad interface for the RRR game."
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+rrr = { path = "../rrr", version = "0.0.1" }
+egui = "0.16.1"
+egui-macroquad = "0.8.0"
+macroquad = { version = "0.3.6", default-features = false }

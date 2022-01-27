@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/rrr"]
+members = ["crates/rrr", "crates/render"]
 
 [profile.dev.package."*"]
 opt-level = 3
@@ -7,3 +7,4 @@ opt-level = 3
 [profile.release]
 codegen-units = 1
 lto = true
+opt-level = 2
