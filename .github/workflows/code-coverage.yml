@@ -1,0 +1,53 @@
+name: code-coverage
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+      - ".vscode/**"
+      - "LICENCE"
+      - ".github/workflows/web-release.yml"
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -Zinstrument-coverage
+  LLVM_PROFILE_FILE: your_name-%p-%m.profraw
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          lfs: true
+
+      - name: ⚡ Cache
+        uses: actions/cache@v2
+        if: ${{ !env.ACT }}
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target
+          key: ${{ runner.os }}-cargo-code-coverage-${{ hashFiles('**/Cargo.lock') }}-0
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          components: llvm-tools-preview
+
+      - uses: Swatinem/fucov@v1
+
+      - uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: coverage
+          fail_ci_if_error: true
+          verbose: true
