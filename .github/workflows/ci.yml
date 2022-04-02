@@ -44,22 +44,11 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
-        allow_error: [true]
-        include:
-          - os: ubuntu-latest
-            rust: nightly
-            allow_error: true
-          - os: windows-latest
-            rust: nightly
-            allow_error: true
-          - os: macOS-latest
-            rust: nightly
-            allow_error: true
+        os: [windows-latest, macOS-latest]
 
-    name: Test ${{ matrix.rust }} on ${{ matrix.os }}
+    name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    continue-on-error: ${{ matrix.allow_error }}
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v3
         with:
