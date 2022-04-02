@@ -75,12 +75,6 @@ jobs:
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
 
-      - name: Install binutils
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-binutils
-
       - name: Build
         uses: actions-rs/cargo@v1
         with:
