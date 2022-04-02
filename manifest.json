@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "Rust Rust Revolution",
+  "short_name": "RRR",
+  "start_url": ".",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#fff",
+  "description": "Reimplementation of Flash Flash Revolution, for desktop and browser."
+}
