@@ -121,12 +121,6 @@ jobs:
           target: wasm32-unknown-unknown
           components: llvm-tools-preview, clippy
 
-      - name: Install binutils
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-binutils
-
       - name: Clippy
         run: cargo clippy --workspace -- -D warnings
 
@@ -160,12 +154,6 @@ jobs:
           profile: minimal
           toolchain: nightly
           components: llvm-tools-preview
-
-      - name: Install binutils
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cargo-binutils
 
       - name: API docs
         uses: actions-rs/cargo@v1
