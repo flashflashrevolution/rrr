@@ -1,0 +1,55 @@
+name: web
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*.md"
+      - ".vscode/**"
+      - "LICENCE"
+      - ".github/workflows/code-coverage.yml"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          lfs: true
+
+      - name: ⚡ Cache
+        uses: actions/cache@v2
+        if: ${{ !env.ACT }}
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target
+          key: ${{ runner.os }}-cargo-web-release-${{ hashFiles('**/Cargo.lock') }}-0
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+          components: llvm-tools-preview
+
+      - uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --package rrr-render --target wasm32-unknown-unknown --out-dir web -Z unstable-options
+
+      - name: Deploy Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./web
+          cname: rrr.flashflashrevolution.com
