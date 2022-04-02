@@ -69,7 +69,7 @@ jobs:
 
       - name: Install libegl1-mesa
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install -y libegl1-mesa
+        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
