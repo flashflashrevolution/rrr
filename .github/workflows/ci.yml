@@ -65,11 +65,11 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target
-          key: ${{ runner.os }}-cargo-web-release-${{ hashFiles('**/Cargo.lock') }}-0
+          key: ${{ runner.os }}-test-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install libegl1-mesa
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa
+        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -111,7 +111,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target
-          key: ${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-clippy-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
@@ -152,7 +152,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             target
-          key: ${{ runner.os }}-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-docs-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
