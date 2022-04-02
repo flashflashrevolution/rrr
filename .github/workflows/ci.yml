@@ -44,7 +44,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
 
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -66,6 +66,10 @@ jobs:
             ~/.cargo/git/db/
             target
           key: ${{ runner.os }}-cargo-web-release-${{ hashFiles('**/Cargo.lock') }}-0
+
+      - name: Install libegl1-mesa
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y libegl1-mesa
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
