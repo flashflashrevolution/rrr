@@ -1,0 +1,17 @@
+/* TEAM */
+    Developer: Zageron
+    Contact: hello [at] zageron.com
+    Twitter: @zageron
+    From: Earth
+
+    Developer: Fission
+    Contact:
+    Twitter:
+    From:
+
+/* SITE */
+    Last update: 2021/11/24
+    Languages: English
+    Doctype: HTML5
+    Server: Rust, Handlebars
+    IDE: Visual Studio Code, rust-analyzer
