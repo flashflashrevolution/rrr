@@ -53,3 +53,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web
           cname: rrr.flashflashrevolution.com
+          keep_files: true
