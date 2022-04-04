@@ -1,0 +1,30 @@
+use rrr::{AudioPlayer, SwfParser};
+use std::time::Duration;
+
+pub struct Head {
+    audio_player: Option<AudioPlayer>,
+}
+
+impl Head {
+    pub fn new() -> Self {
+        Self { audio_player: None }
+    }
+
+    pub fn play_song(&mut self) {
+        println!("play song?");
+
+        const TEST_CHART: usize = 1485;
+        if let Some(raw_chart) = rrr::download_chart(TEST_CHART) {
+            if let Ok(parser) = SwfParser::new(raw_chart) {
+                let mp3 = parser.get_mp3();
+                self.audio_player = Some(AudioPlayer::new(mp3));
+            };
+        }
+    }
+
+    pub fn tick(&mut self) {
+        if let Some(audio_player) = &mut self.audio_player {
+            audio_player.tick();
+        }
+    }
+}

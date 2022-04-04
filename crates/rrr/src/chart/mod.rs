@@ -1,71 +1,14 @@
+mod beat;
+mod bpm;
+mod note;
+mod parser;
+
+pub use bpm::*;
+pub use note::*;
+pub use parser::*;
+
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
-
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-/// Represents a single note in a [note row](NoteRow).
-pub struct Note {
-    lane: usize,
-}
-
-impl Note {
-    #[must_use]
-    pub fn new(lane: usize) -> Self {
-        Self { lane }
-    }
-}
-
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-/// Stores the [notes](Note) that belong to a single row in a [beat](Beat).
-pub struct NoteRow {
-    offset: u32,
-    // TODO: This should be [Note; N] but const generics aren't stable yet.
-    notes: Vec<Note>,
-}
-
-impl NoteRow {
-    #[must_use]
-    pub fn new(offset: u32, notes: &[Note]) -> Self {
-        Self {
-            offset,
-            notes: notes.into(),
-        }
-    }
-}
-
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-/// Stores all of the [note rows](NoteRow) that represent a beat.
-pub struct Beat {
-    note_rows: Vec<NoteRow>,
-    subdivisions: u32,
-}
-
-impl Beat {
-    #[must_use]
-    pub fn new(note_rows: &[NoteRow], subdivisions: u32) -> Self {
-        Self {
-            note_rows: note_rows.into(),
-            subdivisions,
-        }
-    }
-}
-
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]
-/// Represents a BPM change in a [chart](Chart).
-pub struct BpmChange {
-    bpm: f32,
-    beat: usize,
-}
-
-impl BpmChange {
-    #[must_use]
-    pub fn new(bpm: f32, beat: usize) -> Self {
-        Self { bpm, beat }
-    }
-}
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
@@ -100,12 +43,32 @@ impl Chart {
 
     #[must_use]
     pub fn get_first_bpm(&self) -> Option<f32> {
-        self.bpm_changes.first().map(|first_bpm| first_bpm.bpm)
+        self.bpm_changes.first().map(|first_bpm| first_bpm.bpm())
+    }
+}
+
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
+/// Stores all of the [note rows](NoteRow) that represent a beat.
+pub struct Beat {
+    note_rows: Vec<NoteRow>,
+    subdivisions: u32,
+}
+
+impl Beat {
+    #[must_use]
+    pub fn new(note_rows: &[NoteRow], subdivisions: u32) -> Self {
+        Self {
+            note_rows: note_rows.into(),
+            subdivisions,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::{Note, NoteRow};
+
     use super::*;
 
     #[test]

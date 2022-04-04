@@ -26,9 +26,12 @@
 </head>
 
 <body class="root">
-    <canvas class="game" id="glcanvas" tabindex='1' width="1280" height="720"></canvas>
-    <script src="https://not-fl3.github.io/miniquad-samples/mq_js_bundle.js"></script>
-    <script>load("rrr-render.wasm");</script>
+    <div class="game" id="canvas" tabindex='1'></div>
+    <script type="module" src="./bin/head.js"></script>
+    <script type="module">
+        import main from "./bin/head.js";
+        main();
+    </script>
 </body>
 
 <footer>
