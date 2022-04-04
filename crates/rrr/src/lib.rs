@@ -1,6 +1,6 @@
+#![deny(rust_2018_idioms)]
 #![warn(
     elided_lifetimes_in_paths,
-    missing_debug_implementations,
     trivial_casts,
     trivial_numeric_casts,
     unreachable_pub,
@@ -40,10 +40,14 @@
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
 
+mod audio;
 mod chart;
+mod download_chart;
 mod settings;
 
+pub use audio::*;
 pub use chart::*;
+pub use download_chart::*;
 pub use settings::*;
 
 #[derive(Debug, Default)]

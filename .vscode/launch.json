@@ -26,15 +26,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'rrr-render'",
+            "name": "Debug executable 'head'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=rrr-render",
-                    "--package=rrr-render"
+                    "--bin=head",
+                    "--package=head"
                 ],
                 "filter": {
-                    "name": "rrr-render",
+                    "name": "head",
                     "kind": "bin"
                 }
             },
@@ -44,16 +44,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'rrr-render'",
+            "name": "Debug unit tests in executable 'head'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=rrr-render",
-                    "--package=rrr-render"
+                    "--bin=head",
+                    "--package=head"
                 ],
                 "filter": {
-                    "name": "rrr-render",
+                    "name": "head",
                     "kind": "bin"
                 }
             },
