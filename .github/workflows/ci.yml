@@ -28,11 +28,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install rust nightly
+      - name: Install rust stable
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: rustfmt
 
       - name: Rustfmt
@@ -67,15 +67,15 @@ jobs:
             target
           key: ${{ runner.os }}-test-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install libegl1-mesa
+      - name: Install Dependencies
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev
+        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
 
@@ -117,9 +117,13 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview, clippy
+
+      - name: Install Dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
 
       - name: Clippy
         run: cargo clippy --workspace -- -D warnings
@@ -148,11 +152,11 @@ jobs:
             target
           key: ${{ runner.os }}-docs-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install rust nightly
+      - name: Install rust stable
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: llvm-tools-preview
 
       - name: API docs
