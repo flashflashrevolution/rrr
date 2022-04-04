@@ -23,7 +23,7 @@ jobs:
           lfs: true
 
       - name: ⚡ Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3.0.1
         if: ${{ !env.ACT }}
         with:
           path: |
