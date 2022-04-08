@@ -24,12 +24,12 @@
 
 1. Install Visual Studio Code.
 2. Install all of the recommended extensions.
-3. Install nightly rust:
-   > `rustup toolchain install nightly`
+3. Install stable rust:
+   > `rustup toolchain install stable`
 4. Install the wasm target:
-   > `rustup target add wasm32-unknown-unknown --toolchain nightly`
+   > `rustup target add wasm32-unknown-unknown --toolchain stable`
 5. Install llvm tools:
-   > `rustup component add llvm-tools-preview --toolchain nightly`
+   > `rustup component add llvm-tools-preview --toolchain stable`
 6. Install the following cargo applications:
    1. > `cargo install cargo-watch`
    2. > `cargo install miniserve --locked`

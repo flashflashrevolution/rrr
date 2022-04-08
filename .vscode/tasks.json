@@ -89,7 +89,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package head --target wasm32-unknown-unknown --out-dir target -Z unstable-options && wasm-bindgen --no-typescript --out-dir web/bin --target web target/head.wasm && wasm-opt -Os web/bin/head_bg.wasm -o web/bin/head_bg.wasm"
+                "cargo build --release --package head --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-dir web/bin --target web target/head.wasm && wasm-opt.exe -Os web/bin/head_bg.wasm -o web/bin/head_bg.wasm"
             ],
             "problemMatcher": [
                 {

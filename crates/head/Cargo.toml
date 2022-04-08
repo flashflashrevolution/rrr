@@ -18,7 +18,6 @@ debug = [
     "dep:egui",
     "dep:egui_wgpu_backend",
     "dep:egui-winit",
-    "dep:egui-winit",
     "log/release_max_level_warn",
 ]
 release = ["log/max_level_off"]
