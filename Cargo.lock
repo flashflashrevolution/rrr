@@ -691,8 +691,7 @@ dependencies = [
 [[package]]
 name = "game-loop"
 version = "0.8.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6e1d00b6ce27badd1079304f24c6142b1595126689e65dbf31554d4720c923a4"
+source = "git+https://github.com/parasyte/game-loop.git?branch=forward-main-events-cleared#68714a29338f8b88393303b1e4816350f75cc561"
 dependencies = [
  "wasm-bindgen",
  "web-sys",
