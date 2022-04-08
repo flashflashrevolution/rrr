@@ -15,9 +15,11 @@ impl Head {
 
         const TEST_CHART: usize = 1485;
         if let Some(raw_chart) = rrr::download_chart(TEST_CHART) {
-            if let Ok(parser) = SwfParser::new(raw_chart) {
-                let mp3 = parser.get_mp3();
-                self.audio_player = Some(AudioPlayer::new(mp3));
+            if let Ok(mut parser) = SwfParser::new(raw_chart) {
+                parser.parse();
+                if let Some(mp3) = parser.get_mp3() {
+                    self.audio_player = Some(AudioPlayer::new(mp3));
+                }
             };
         }
     }

@@ -24,9 +24,9 @@ pub struct AudioPlayer {
 }
 
 impl AudioPlayer {
-    pub fn new(mp3: Vec<u8>) -> Self {
+    pub fn new(mp3: &Vec<u8>) -> Self {
         let mss = MediaSourceStream::new(
-            Box::new(Cursor::new(mp3)),
+            Box::new(Cursor::new(mp3.to_vec())),
             MediaSourceStreamOptions::default(),
         );
         let reader = Box::new(Mp3Reader::try_new(mss, &FormatOptions::default()).unwrap());

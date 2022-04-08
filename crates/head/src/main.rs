@@ -179,20 +179,20 @@ async fn run() {
             }
         },
         |g, event| {
-            g.game.input.update(&event);
+            if g.game.input.update(&event) {
+                // Close events
+                if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {
+                    g.exit();
+                }
 
-            // Close events
-            if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {
-                g.exit();
-            }
+                if g.game.input.key_pressed(VirtualKeyCode::Space) {
+                    g.game.head.play_song();
+                }
 
-            if g.game.input.key_pressed(VirtualKeyCode::Space) {
-                g.game.head.play_song();
-            }
-
-            // Resize the window
-            if let Some(size) = g.game.input.window_resized() {
-                g.game.pixels.resize_surface(size.width, size.height);
+                // Resize the window
+                if let Some(size) = g.game.input.window_resized() {
+                    g.game.pixels.resize_surface(size.width, size.height);
+                }
             }
         },
     );

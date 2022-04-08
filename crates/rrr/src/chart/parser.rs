@@ -1,10 +1,17 @@
+use std::iter::Map;
+
+use crate::Note;
 use swf_parser::{
-    swf_types::{Movie, *},
+    swf_types::{Movie, Tag},
     SwfParseError,
 };
 
+use super::swf_types;
+
 pub struct SwfParser {
     swf: Movie,
+    mp3: Option<Vec<u8>>,
+    chart: Option<Vec<Note>>,
 }
 
 impl SwfParser {
@@ -14,77 +21,50 @@ impl SwfParser {
             Err(err) => return Err(err),
         };
 
-        Ok(Self { swf })
+        Ok(Self {
+            swf,
+            mp3: None,
+            chart: None,
+        })
     }
 
-    pub fn get_mp3(&self) -> Vec<u8> {
-        SwfParser::extract_mp3_from_movie(&self.swf)
+    pub fn is_parsed(&self) -> bool {
+        self.mp3.is_some() && self.chart.is_some()
     }
 
-    fn extract_mp3_from_movie(chart: &Movie) -> Vec<u8> {
+    pub fn get_mp3(&self) -> &Option<Vec<u8>> {
+        return &self.mp3;
+    }
+
+    pub fn parse(&mut self) {
         let mut mp3_data: Vec<u8> = Vec::new();
-        for tag in &chart.tags {
+        for tag in &self.swf.tags {
             match tag {
-                Tag::CsmTextSettings(_) => {}
-                Tag::DefineBinaryData(_) => {}
-                Tag::DefineBitmap(_) => {}
-                Tag::DefineButton(_) => {}
-                Tag::DefineButtonColorTransform(_) => {}
-                Tag::DefineButtonSound(_) => {}
-                Tag::DefineCffFont(_) => {}
-                Tag::DefineDynamicText(_) => {}
-                Tag::DefineFont(_) => {}
-                Tag::DefineFontAlignZones(_) => {}
-                Tag::DefineFontInfo(_) => {}
-                Tag::DefineFontName(_) => {}
-                Tag::DefineGlyphFont(_) => {}
-                Tag::DefineJpegTables(_) => {}
-                Tag::DefineMorphShape(_) => {}
-                Tag::DefineScalingGrid(_) => {}
-                Tag::DefineSceneAndFrameLabelData(_) => {}
-                Tag::DefineShape(_) => {}
-                Tag::DefineSound(sound) => {
-                    println!(
-                    "Format: {:?}, Sample Count: {:?}, Sample Rate: {:?}, Sample Size: {:?}, Sample Type: {:?}",
-                    sound.format, sound.sample_count, sound.sound_rate, sound.sound_size, sound.sound_type
-                )
+                Tag::DefineSound(sound_definition) => {
+                    println!("Format: {:?}, Sample Count: {:?}, Sample Rate: {:?}, Sample Size: {:?}, Sample Type: {:?}", sound_definition.format, sound_definition.sample_count, sound_definition.sound_rate, sound_definition.sound_size, sound_definition.sound_type);
                 }
-                Tag::DefineSprite(_) => {}
-                Tag::DefineText(_) => {}
-                Tag::DefineVideoStream(_) => {}
-                Tag::EnablePostscript => {}
-                Tag::DoAbc(_) => {}
-                Tag::DoAction(_) => {}
-                Tag::DoInitAction(_) => {}
-                Tag::EnableDebugger(_) => {}
-                Tag::ExportAssets(_) => {}
-                Tag::FileAttributes(_) => {}
-                Tag::FrameLabel(_) => {}
-                Tag::ImportAssets(_) => {}
-                Tag::Metadata(_) => {}
-                Tag::PlaceObject(_) => {}
-                Tag::Protect(_) => {}
-                Tag::Raw(_) => {}
-                Tag::RawBody(_) => {}
-                Tag::RemoveObject(_) => {}
-                Tag::ScriptLimits(_) => {}
-                Tag::SetBackgroundColor(_) => {}
-                Tag::SetTabIndex(_) => {}
-                Tag::ShowFrame => {}
-                Tag::SoundStreamBlock(sound) => {
-                    mp3_data.extend_from_slice(&sound.data);
+
+                Tag::DoAction(do_action) => SwfParser::parse_beatbox(&do_action.actions),
+
+                Tag::SoundStreamBlock(stream_block) => {
+                    mp3_data.extend_from_slice(&stream_block.data);
                 }
-                Tag::SoundStreamHead(sound) => {
-                    println!("{:?}", sound);
+                Tag::SoundStreamHead(stream_head) => {
+                    println!("{:?}", stream_head);
                 }
-                Tag::StartSound(_) => {}
-                Tag::StartSound2(_) => {}
-                Tag::SymbolClass(_) => {}
-                Tag::Telemetry(_) => {}
-                Tag::VideoFrame(_) => {}
+                _ => {}
             }
         }
 
-        mp3_data
+        self.mp3.replace(mp3_data);
+    }
+
+    fn parse_beatbox(actions: &Vec<u8>) {
+        if let Some((action_code, action)) = actions.split_first() {
+            if action_code == &swf_types::SWF_ACTION_CONSTANTPOOL {
+                println!("Action: {:?}", action);
+            }
+        } else {
+        }
     }
 }

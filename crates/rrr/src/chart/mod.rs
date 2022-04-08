@@ -2,6 +2,7 @@ mod beat;
 mod bpm;
 mod note;
 mod parser;
+mod swf_types;
 
 pub use bpm::*;
 pub use note::*;
