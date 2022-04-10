@@ -145,6 +145,11 @@ impl AudioPlayer {
             };
         }
     }
+
+    pub fn stop(&mut self) {
+        let player = &mut self.output;
+        player.as_mut().unwrap().flush();
+    }
 }
 
 impl Debug for AudioPlayer {

@@ -13,7 +13,7 @@ impl Head {
     pub fn play_song(&mut self) {
         println!("play song?");
 
-        const TEST_CHART: usize = 1485;
+        const TEST_CHART: usize = 3348;
         if let Some(raw_chart) = rrr::download_chart(TEST_CHART) {
             if let Ok(mut parser) = SwfParser::new(raw_chart) {
                 parser.parse();
@@ -22,6 +22,14 @@ impl Head {
                 }
             };
         }
+    }
+
+    pub fn stop(&mut self) {
+        println!("stop song?");
+        if let Some(player) = &mut self.audio_player {
+            player.stop();
+        }
+        self.audio_player = None;
     }
 
     pub fn tick(&mut self) {

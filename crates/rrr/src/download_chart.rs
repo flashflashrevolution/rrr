@@ -17,6 +17,6 @@ pub fn download_chart(chart_id: usize) -> Option<std::boxed::Box<Vec<u8>>> {
 #[cfg(target_arch = "wasm32")]
 pub fn download_chart(_chart_id: usize) -> Option<std::boxed::Box<Vec<u8>>> {
     return Some(Box::new(
-        include_bytes!("../../../data/level_1485.swf").to_vec(),
+        include_bytes!("..\\..\\..\\data\\level_3348.swf").to_vec(),
     ));
 }

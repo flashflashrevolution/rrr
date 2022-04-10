@@ -4,7 +4,7 @@ mod head;
 
 use game_loop::{game_loop, Time, TimeTrait};
 use head::Head;
-use log::error;
+use log::{error, info};
 use pixels::{Pixels, SurfaceTexture};
 use std::rc::Rc;
 use std::time::Duration;
@@ -14,9 +14,7 @@ use winit::event_loop::{ControlFlow, EventLoop};
 use winit::window::{Window, WindowBuilder};
 use winit_input_helper::WinitInputHelper;
 
-pub const FPS: u32 = 60;
-pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000 / FPS as u64);
-const ONE_FRAME: Duration = Duration::from_nanos(1_000_000_000 / 60);
+pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000 / 60 as u64);
 
 const WIDTH: u32 = 800;
 const HEIGHT: u32 = 600;
@@ -155,7 +153,7 @@ async fn run() {
         event_loop,
         window,
         game,
-        FPS,
+        120,
         0.1,
         |g| {
             g.game.update();
@@ -179,6 +177,7 @@ async fn run() {
             }
         },
         |g, event| {
+            info!("{:?}", event);
             if g.game.input.update(&event) {
                 // Close events
                 if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {
