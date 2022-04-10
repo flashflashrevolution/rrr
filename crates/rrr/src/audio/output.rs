@@ -5,7 +5,13 @@ use symphonia::core::{
 };
 
 pub(crate) trait AudioOutput {
-    fn write(&mut self, decoded: AudioBufferRef<'_>) -> Result<()>;
+    fn write(
+        &mut self,
+        decoded: AudioBufferRef<'_>,
+        total_samples: usize,
+        remaining_samples: usize,
+    ) -> Result<usize>;
+
     fn flush(&mut self);
 }
 
@@ -279,7 +285,16 @@ mod cpal {
                 move |data: &mut [T], _: &cpal::OutputCallbackInfo| {
                     // Write out as many samples as possible from the ring buffer to the audio
                     // output.
-                    let written = ring_buf_consumer.read(data).unwrap_or(0);
+                    let written = match ring_buf_consumer.read(data) {
+                        Ok(written) => written,
+                        Err(err) => {
+                            error!("failed to read from ring buffer: {}", err);
+                            0
+                        }
+                    };
+
+                    //println!("Read {} samples.", written);
+
                     // Mute any remaining samples.
                     data[written..].iter_mut().for_each(|s| *s = T::MID);
                 },
@@ -312,22 +327,30 @@ mod cpal {
     }
 
     impl<T: AudioOutputSample> AudioOutput for CpalAudioOutputImpl<T> {
-        fn write(&mut self, decoded: AudioBufferRef<'_>) -> Result<()> {
+        fn write(
+            &mut self,
+            decoded: AudioBufferRef<'_>,
+            total_samples: usize,
+            remaining_samples: usize,
+        ) -> Result<usize> {
             // Audio samples must be interleaved for cpal. Interleave the samples in the audio
             // buffer into the sample buffer.
             self.sample_buf.copy_interleaved_ref(decoded);
 
             // Write all the interleaved samples to the ring buffer.
-            let samples = self.sample_buf.samples();
+            let mut samples = self.sample_buf.samples();
 
-            let _written = if let Ok(written) = self.ring_buf_producer.write(samples) {
-                written
-            } else {
-                0
+            if remaining_samples > 0 {
+                samples = &samples[total_samples - remaining_samples..];
+            }
+
+            let written = match self.ring_buf_producer.write(samples) {
+                Ok(written) => written,
+                Err(rb::RbError::Full) => 0,
+                Err(err) => 0,
             };
 
-            //samples[written..].iter_mut().for_each(|s| *s = T::MID);
-            Ok(())
+            Ok(written)
         }
 
         fn flush(&mut self) {

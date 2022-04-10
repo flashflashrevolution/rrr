@@ -9,7 +9,7 @@ use symphonia::{
     core::{
         codecs::{Decoder, DecoderOptions},
         errors::Error as SymphoniaError,
-        formats::{FormatOptions, FormatReader},
+        formats::{FormatOptions, FormatReader, Packet},
         io::{MediaSourceStream, MediaSourceStreamOptions},
         units::TimeStamp,
     },
@@ -21,6 +21,7 @@ pub struct AudioPlayer {
     decoder: Box<Mp3Decoder>,
     reader: Box<Mp3Reader>,
     track_id: u32,
+    remaining_samples: usize,
 }
 
 impl AudioPlayer {
@@ -39,21 +40,29 @@ impl AudioPlayer {
             output: None,
             track_id: track.id,
             reader,
+            remaining_samples: 0,
         }
     }
 
     pub fn tick(&mut self) -> Option<TimeStamp> {
         loop {
             // Demux an encoded packet from the media format.
-            let packet = match self.reader.next_packet() {
-                Ok(packet) => packet,
-                Err(SymphoniaError::IoError(io)) if io.kind() == io::ErrorKind::UnexpectedEof => {
-                    return None; // End of this stream.
+            let packet = if self.remaining_samples == 0 {
+                println!("got new packet");
+                match self.reader.next_packet() {
+                    Ok(packet) => Some(packet),
+                    Err(SymphoniaError::IoError(io))
+                        if io.kind() == io::ErrorKind::UnexpectedEof =>
+                    {
+                        return None; // End of this stream.
+                    }
+                    Err(err) => {
+                        log::error!("format error: {}", err);
+                        return None; // We cannot recover from format errors, quit.
+                    }
                 }
-                Err(err) => {
-                    log::error!("format error: {}", err);
-                    return None; // We cannot recover from format errors, quit.
-                }
+            } else {
+                None
             };
 
             while !self.reader.metadata().is_latest() {
@@ -61,13 +70,14 @@ impl AudioPlayer {
                 // packet.
             }
 
-            // If the packet does not belong to the selected track, skip over it.
-            if packet.track_id() != self.track_id {
-                continue;
-            }
-
             // Decode the packet into an audio buffer.
-            match self.decoder.decode(&packet) {
+            let temp_decoded = if self.remaining_samples > 0 {
+                Ok(self.decoder.last_decoded())
+            } else {
+                self.decoder.decode(&packet.clone().unwrap())
+            };
+
+            match temp_decoded {
                 Ok(decoded) => {
                     // If the audio output is not open, try to open it.
                     if self.output.is_none() {
@@ -85,14 +95,38 @@ impl AudioPlayer {
                             .replace(output::try_open(spec, duration).unwrap());
                     }
 
+                    let frame_count = decoded.frames();
+
+                    let total_samples = frame_count * 2;
+
                     // Write the decoded audio samples to the audio output if the presentation timestamp
                     // for the packet is >= the seeked position (0 if not seeking).
-                    info!("write buffer to device");
-                    if let Some(out) = &mut self.output {
-                        out.write(decoded).unwrap()
+                    let written = if let Some(out) = &mut self.output {
+                        match out.write(decoded, total_samples, self.remaining_samples) {
+                            Ok(written) => written,
+                            Err(_) => 0,
+                        }
+                    } else {
+                        0
+                    };
+
+                    let timestamp = if let Some(pak) = &packet {
+                        pak.ts()
+                    } else {
+                        TimeStamp::default()
+                    };
+
+                    if written > 0 && self.remaining_samples > 0 {
+                        self.remaining_samples -= written;
+                        continue;
+                    } else if written == 0 && self.remaining_samples > 0 {
+                        return Some(timestamp);
                     }
 
-                    return Some(packet.ts());
+                    if written < total_samples {
+                        self.remaining_samples = total_samples - written;
+                        return Some(timestamp);
+                    }
                 }
                 Err(SymphoniaError::IoError(err)) => {
                     // The packet failed to decode due to an IO error, skip the packet.
