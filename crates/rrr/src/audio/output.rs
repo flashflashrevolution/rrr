@@ -86,7 +86,7 @@ mod pulseaudio {
             match pa_result {
                 Ok(pa) => Ok(Box::new(PulseAudioOutput { pa, sample_buf })),
                 Err(err) => {
-                    error!("audio output stream open error: {}", err);
+                    log::error!("audio output stream open error: {}", err);
 
                     Err(AudioOutputError::OpenStreamError)
                 }
@@ -107,7 +107,7 @@ mod pulseaudio {
             // Write interleaved samples to PulseAudio.
             match self.pa.write(self.sample_buf.as_bytes()) {
                 Err(err) => {
-                    error!("audio output stream write error: {}", err);
+                    log::error!("audio output stream write error: {}", err);
 
                     Err(AudioOutputError::StreamClosedError)
                 }
@@ -167,7 +167,6 @@ mod pulseaudio {
 mod cpal {
     use super::{AudioOutput, AudioOutputError, Result};
     use cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
-    use log::{error, info};
     use rb::{RbConsumer, RbProducer, SpscRb, RB};
     use symphonia::core::audio::{AudioBufferRef, RawSample, SampleBuffer, SignalSpec};
     use symphonia::core::conv::ConvertibleSample;
@@ -195,11 +194,11 @@ mod cpal {
             // Get the default audio output device.
             if let Ok(devices) = host.devices() {
                 for device in devices {
-                    println!("{:?}", device.name());
+                    log::info!("{:?}", device.name());
 
                     if let Ok(mut configs) = device.supported_output_configs() {
                         for config in configs.by_ref() {
-                            println!("{:?}", config);
+                            log::info!("{:?}", config);
                         }
                     }
                 }
@@ -208,14 +207,14 @@ mod cpal {
             let device = if let Some(device) = host.default_output_device() {
                 device
             } else {
-                error!("failed to get default audio output device");
+                log::error!("failed to get default audio output device");
                 return Err(AudioOutputError::OpenStreamError);
             };
 
             let config = match device.default_output_config() {
                 Ok(config) => config,
                 Err(err) => {
-                    error!("failed to get default audio output device config: {}", err);
+                    log::error!("failed to get default audio output device config: {}", err);
                     return Err(AudioOutputError::OpenStreamError);
                 }
             };
@@ -272,7 +271,8 @@ mod cpal {
                     sf.channels() as usize == 2 && sf.sample_rate() == cpal::SampleRate(spec.rate)
                 })
                 .ok_or(AudioOutputError::OpenStreamError)?;
-            info!("Supported config: {:?}", config);
+
+            log::info!("Supported config: {:?}", config);
 
             // Create a ring buffer with a capacity for up-to 200ms of audio.
             let ring_len = ((400 * spec.rate as usize) / 1000) * num_channels;
@@ -283,26 +283,23 @@ mod cpal {
             let stream_result = device.build_output_stream(
                 &config.config(),
                 move |data: &mut [T], _: &cpal::OutputCallbackInfo| {
-                    // Write out as many samples as possible from the ring buffer to the audio
-                    // output.
+                    // Write out as many samples as possible from the ring buffer to the audio output.
                     let written = match ring_buf_consumer.read(data) {
                         Ok(written) => written,
                         Err(err) => {
-                            error!("failed to read from ring buffer: {}", err);
+                            log::error!("failed to read from ring buffer: {}", err);
                             0
                         }
                     };
 
-                    //println!("Read {} samples.", written);
-
                     // Mute any remaining samples.
                     data[written..].iter_mut().for_each(|s| *s = T::MID);
                 },
-                move |err| error!("audio output error: {}", err),
+                move |err| log::error!("audio output error: {}", err),
             );
 
             if let Err(err) = stream_result {
-                error!("audio output stream open error: {}", err);
+                log::error!("audio output stream open error: {}", err);
 
                 return Err(AudioOutputError::OpenStreamError);
             }
@@ -311,7 +308,7 @@ mod cpal {
 
             // Start the output stream.
             if let Err(err) = stream.play() {
-                error!("audio output stream play error: {}", err);
+                log::error!("audio output stream play error: {}", err);
 
                 return Err(AudioOutputError::PlayStreamError);
             }

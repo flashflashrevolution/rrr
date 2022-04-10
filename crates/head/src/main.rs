@@ -1,6 +1,7 @@
 extern crate rrr;
 
 mod head;
+mod visibility;
 
 use game_loop::{game_loop, Time, TimeTrait};
 use head::Head;
@@ -54,24 +55,38 @@ struct World {
     dt: Duration,
 }
 
+cfg_if::cfg_if! {
+    if #[cfg(all(feature = "console_log", target_arch = "wasm32"))] {
+        fn init_log() {
+            console_log::init().unwrap();
+        }
+    } else {
+        fn init_log() { simple_logger::init().unwrap(); }
+    }
+}
+
 fn main() {
+    init_log();
+
     #[cfg(target_arch = "wasm32")]
     {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-        console_log::init_with_level(log::Level::Trace).expect("error initializing logger");
-
         wasm_bindgen_futures::spawn_local(run());
     }
 
     #[cfg(not(target_arch = "wasm32"))]
     {
-        env_logger::init();
-
         pollster::block_on(run());
     }
 }
 
 async fn run() {
+    log::trace!("This is a trace");
+    log::debug!("This is a debug");
+    log::info!("This is an info");
+    log::warn!("This is a warning");
+    log::error!("This is an error");
+
     let event_loop = EventLoop::new();
     let window = {
         let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
@@ -101,6 +116,8 @@ async fn run() {
         window.set_inner_size(LogicalSize::new(WIDTH, HEIGHT));
 
         let client_window = web_sys::window().unwrap();
+
+        visibility::register_on_visibility_change_listener(&client_window);
 
         // Attach winit canvas to body element
         web_sys::window()
@@ -177,7 +194,7 @@ async fn run() {
             }
         },
         |g, event| {
-            info!("{:?}", event);
+            log::trace!("{:?}", event);
             if g.game.input.update(&event) {
                 // Close events
                 if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {

@@ -48,7 +48,6 @@ impl AudioPlayer {
         loop {
             // Demux an encoded packet from the media format.
             let packet = if self.remaining_samples == 0 {
-                println!("got new packet");
                 match self.reader.next_packet() {
                     Ok(packet) => Some(packet),
                     Err(SymphoniaError::IoError(io))

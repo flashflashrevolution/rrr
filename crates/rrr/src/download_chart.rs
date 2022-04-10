@@ -1,14 +1,13 @@
 #[cfg(not(target_arch = "wasm32"))]
 /// Artificial download function which simply opens the file from disk.
 pub fn download_chart(chart_id: usize) -> Option<std::boxed::Box<Vec<u8>>> {
-    use std::path::Path;
     let chart_string = format!("data/level_{chart_id}.swf");
-    let path = Path::new(&chart_string);
+    let path = std::path::Path::new(&chart_string);
 
     match std::fs::read(path) {
         Ok(file) => Some(Box::new(file)),
         Err(error) => {
-            eprintln!("Unable to load file: {} at {:?}", error, path);
+            log::error!("Unable to load file: {} at {:?}", error, path);
             None
         }
     }

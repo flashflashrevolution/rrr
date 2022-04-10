@@ -41,7 +41,7 @@ impl SwfParser {
         for tag in &self.swf.tags {
             match tag {
                 Tag::DefineSound(sound_definition) => {
-                    println!("Format: {:?}, Sample Count: {:?}, Sample Rate: {:?}, Sample Size: {:?}, Sample Type: {:?}", sound_definition.format, sound_definition.sample_count, sound_definition.sound_rate, sound_definition.sound_size, sound_definition.sound_type);
+                    log::trace!("Format: {:?}, Sample Count: {:?}, Sample Rate: {:?}, Sample Size: {:?}, Sample Type: {:?}", sound_definition.format, sound_definition.sample_count, sound_definition.sound_rate, sound_definition.sound_size, sound_definition.sound_type);
                 }
 
                 Tag::DoAction(do_action) => SwfParser::parse_beatbox(&do_action.actions),
@@ -50,7 +50,7 @@ impl SwfParser {
                     mp3_data.extend_from_slice(&stream_block.data);
                 }
                 Tag::SoundStreamHead(stream_head) => {
-                    println!("{:?}", stream_head);
+                    log::trace!("{:?}", stream_head);
                 }
                 _ => {}
             }
@@ -62,7 +62,7 @@ impl SwfParser {
     fn parse_beatbox(actions: &Vec<u8>) {
         if let Some((action_code, action)) = actions.split_first() {
             if action_code == &swf_types::SWF_ACTION_CONSTANTPOOL {
-                println!("Action: {:?}", action);
+                log::trace!("Action: {:?}", action);
             }
         } else {
         }
