@@ -1,5 +1,75 @@
-#[cfg(feature = "serde")]
+use std::time::Duration;
+use strum::{EnumCount, EnumIter};
+
 use serde::{Deserialize, Serialize};
+
+#[derive(
+    Clone,
+    Copy,
+    Eq,
+    EnumCount,
+    EnumIter,
+    PartialEq,
+    Ord,
+    PartialOrd,
+    Hash,
+    Debug,
+    Serialize,
+    Deserialize,
+)]
+pub enum Color {
+    Red,
+    Yellow,
+    Blue,
+    Orange,
+    Green,
+    Pink,
+    Purple,
+    Cyan,
+    White,
+    Receptor,
+}
+
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Serialize, Deserialize)]
+#[repr(usize)]
+pub enum Direction {
+    Left,
+    Down,
+    Up,
+    Right,
+}
+
+#[derive(Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
+pub struct CompiledNote {
+    pub beat_position: i32,
+    pub color: Color,
+    pub direction: Direction,
+    pub timestamp: Duration,
+}
+
+impl Ord for CompiledNote {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.beat_position.cmp(&other.beat_position)
+    }
+}
+
+impl PartialOrd for CompiledNote {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.beat_position.partial_cmp(&other.beat_position) {
+            Some(core::cmp::Ordering::Equal) => {}
+            ord => return ord,
+        }
+        match self.color.partial_cmp(&other.color) {
+            Some(core::cmp::Ordering::Equal) => {}
+            ord => return ord,
+        }
+        match self.direction.partial_cmp(&other.direction) {
+            Some(core::cmp::Ordering::Equal) => {}
+            ord => return ord,
+        }
+        self.timestamp.partial_cmp(&other.timestamp)
+    }
+}
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
@@ -31,5 +101,26 @@ impl NoteRow {
             offset,
             notes: notes.into(),
         }
+    }
+}
+
+// rust test
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_lane_value() {
+        let lane_descriminant = Direction::Left as usize;
+        assert_eq!(lane_descriminant, 0);
+
+        let lane_descriminant = Direction::Down as usize;
+        assert_eq!(lane_descriminant, 1);
+
+        let lane_descriminant = Direction::Up as usize;
+        assert_eq!(lane_descriminant, 2);
+
+        let lane_descriminant = Direction::Right as usize;
+        assert_eq!(lane_descriminant, 3);
     }
 }

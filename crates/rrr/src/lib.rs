@@ -43,12 +43,14 @@
 mod audio;
 mod chart;
 mod download_chart;
+mod fetch;
 mod settings;
 
 pub use audio::*;
 pub use chart::*;
 pub use download_chart::*;
 pub use settings::*;
+pub use strum;
 
 #[derive(Debug, Default)]
 pub struct RRR {

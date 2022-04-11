@@ -1,5 +1,5 @@
 .root {
-    background-color: darkslategray;
+    background-color: #2f4f4f;
 }
 
 .game {
@@ -15,4 +15,24 @@ footer {
     bottom: 20px;
     transform: translate(-50%, -50%);
     margin: 0 auto;
+}
+
+/* soon class with drop shadow */
+.soon {
+    position: absolute;
+    left: 50%;
+    top: 10%;
+    transform: translate(-50%);
+}
+
+/* soon-inner black text */
+.soon-inner {
+    margin: 1em;
+    position: relative;
+    color: #2D3837;
+}
+
+.sm {
+	font-size: 13px;
+	font-style: italic;
 }

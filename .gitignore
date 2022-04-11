@@ -3,3 +3,4 @@ dist/
 *.wasm
 data/
 web/bin/
+.env
