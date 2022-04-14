@@ -1,21 +1,59 @@
-extern crate rrr;
+#![deny(rust_2018_idioms)]
+#![warn(
+    elided_lifetimes_in_paths,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    variant_size_differences,
+    clippy::all,
+    clippy::cargo,
+    clippy::pedantic,
+    clippy::as_conversions,
+    clippy::clone_on_ref_ptr,
+    clippy::dbg_macro,
+    clippy::decimal_literal_representation,
+    clippy::exit,
+    clippy::expect_used,
+    clippy::filetype_is_file,
+    clippy::float_cmp_const,
+    clippy::get_unwrap,
+    clippy::indexing_slicing,
+    clippy::integer_arithmetic,
+    clippy::integer_division,
+    clippy::let_underscore_must_use,
+    clippy::lossy_float_literal,
+    clippy::mem_forget,
+    clippy::multiple_inherent_impl,
+    clippy::panic,
+    clippy::pattern_type_mismatch,
+    clippy::print_stdout,
+    clippy::rest_pat_in_fully_bound_structs,
+    clippy::shadow_reuse,
+    clippy::todo,
+    clippy::unimplemented,
+    clippy::unneeded_field_pattern,
+    clippy::unreachable,
+    clippy::unwrap_used,
+    clippy::use_debug,
+    clippy::verbose_file_reads
+)]
+#![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
+#![forbid(unsafe_code)]
 
 mod head;
 mod visibility;
 
 use game_loop::{game_loop, Time, TimeTrait};
 use head::Head;
-use log::{error, info};
+use log::error;
 use pixels::{Pixels, SurfaceTexture};
-use std::rc::Rc;
 use std::time::Duration;
-use winit::dpi::LogicalSize;
-use winit::event::{Event, VirtualKeyCode, WindowEvent};
-use winit::event_loop::{ControlFlow, EventLoop};
-use winit::window::{Window, WindowBuilder};
+use winit::{
+    dpi::LogicalSize, event::VirtualKeyCode, event_loop::EventLoop, window::WindowBuilder,
+};
 use winit_input_helper::WinitInputHelper;
 
-pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000 / 60 as u64);
+pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000_u64.div_euclid(60));
 
 const WIDTH: u32 = 800;
 const HEIGHT: u32 = 600;
@@ -34,10 +72,10 @@ trait DeltaTime {
 }
 
 struct Game {
-    pub pixels: Pixels,
-    pub world: World,
-    pub head: Head,
-    pub input: WinitInputHelper,
+    pixels: Pixels,
+    world: World,
+    head: Head,
+    input: WinitInputHelper,
 }
 
 impl Game {
@@ -202,7 +240,7 @@ async fn run() {
                 }
 
                 if g.game.input.key_pressed(VirtualKeyCode::Space) {
-                    g.game.head.play_song();
+                    g.game.head.play_song().ok();
                 }
 
                 // Resize the window
