@@ -1,6 +1,6 @@
 use rubato::{
-    InterpolationParameters, InterpolationType, ResampleError, Resampler, SincFixedIn,
-    WindowFunction,
+    InterpolationParameters, InterpolationType, ResampleError, Resampler,
+    ResamplerConstructionError, SincFixedIn, WindowFunction,
 };
 
 #[derive(Copy, Clone)]
@@ -11,16 +11,19 @@ pub struct ResamplingSpec {
 }
 
 impl ResamplingSpec {
+    #[must_use]
     pub fn output_size(&self, input_size: usize) -> usize {
-        (self.output_rate as f64 / self.input_rate as f64 * input_size as f64) as usize
+        (f64::from(self.output_rate) / f64::from(self.input_rate) * input_size as f64) as usize
     }
 
+    #[must_use]
     pub fn input_size(&self, output_size: usize) -> usize {
-        (self.input_rate as f64 / self.output_rate as f64 * output_size as f64) as usize
+        (f64::from(self.input_rate) / f64::from(self.output_rate) * output_size as f64) as usize
     }
 
+    #[must_use]
     pub fn ratio(&self) -> f64 {
-        self.output_rate as f64 / self.input_rate as f64
+        f64::from(self.output_rate) / f64::from(self.input_rate)
     }
 }
 
@@ -30,7 +33,8 @@ pub struct AudioResampler {
 }
 
 impl AudioResampler {
-    pub fn new(&self, spec: ResamplingSpec) -> Self {
+    /// # Errors
+    pub fn new(spec: ResamplingSpec) -> Result<Self, ResamplerConstructionError> {
         let params = InterpolationParameters {
             sinc_len: 256,
             f_cutoff: 0.95,
@@ -38,31 +42,33 @@ impl AudioResampler {
             oversampling_factor: 256,
             window: WindowFunction::BlackmanHarris2,
         };
-        let resampler =
-            SincFixedIn::<f32>::new(48000 as f64 / 44100 as f64, 2.0, params, 1024, 2).unwrap();
+        let resampler = SincFixedIn::<f32>::new(48000_f64 / 44100_f64, 2.0, params, 1024, 2)?;
 
-        Self { spec, resampler }
+        Ok(Self { spec, resampler })
     }
 
+    /// # Panics
+    /// # Errors
     pub fn process(
         &mut self,
-        input: &Vec<Vec<f32>>,
-        output: &mut Vec<Vec<f32>>,
+        input: &[Vec<f32>],
+        output: &mut [Vec<f32>],
     ) -> Result<(usize, usize), ResampleError> {
-        // Bypass conversion completely in case the sample rates are equal.
-        if self.spec.input_rate == self.spec.output_rate {
-            let output = &mut output[..input.len()];
-            for i in 0..1 {
-                output[i].resize(input[i].len(), 0.0);
-                output[i].copy_from_slice(&input[i]);
-            }
-            return Ok((input.len(), output.len()));
+        if self.spec.input_rate != self.spec.output_rate {
+            return self
+                .resampler
+                .process_into_buffer(input, output, None)
+                .map(|_| Ok((input.len(), output.len())))?;
         }
 
-        if let Err(error) = self.resampler.process_into_buffer(&input, output, None) {
-            Err(error)
-        } else {
-            Ok((input.len(), output.len()))
+        // Bypass conversion completely in case the sample rates are equal.
+        let out = &mut output.get_mut(..input.len()).unwrap();
+        for i in 0..1 {
+            let out_i = out.get_mut(i).unwrap();
+            let in_i = input.get(i).unwrap();
+            out_i.resize(in_i.len(), 0.0);
+            out_i.copy_from_slice(in_i);
         }
+        Ok((input.len(), output.len()))
     }
 }
