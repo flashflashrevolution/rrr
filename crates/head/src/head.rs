@@ -1,37 +1,34 @@
 use rrr::{AudioPlayer, SwfParser};
-use std::time::Duration;
 
-pub struct Head {
+pub(crate) struct Head {
     audio_player: Option<AudioPlayer>,
 }
 
 impl Head {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self { audio_player: None }
     }
 
-    pub fn play_song(&mut self) {
+    pub(crate) fn play_song(&mut self) -> anyhow::Result<()> {
         const TEST_CHART: usize = 3348;
         if let Some(raw_chart) = rrr::download_chart(TEST_CHART) {
             if let Ok(mut parser) = SwfParser::new(raw_chart) {
                 parser.parse();
-                if let Some(mp3) = parser.get_mp3() {
-                    self.audio_player = Some(AudioPlayer::new(mp3));
+                if let Some(mp3) = parser.get_mp3().as_ref() {
+                    self.audio_player = Some(AudioPlayer::try_new(mp3)?);
                 }
             };
         }
+        Ok(())
     }
 
-    pub fn stop(&mut self) {
-        if let Some(player) = &mut self.audio_player {
-            player.stop();
-        }
+    #[allow(dead_code)]
+    pub(crate) fn stop(&mut self) {
+        self.audio_player.as_mut().map(AudioPlayer::stop);
         self.audio_player = None;
     }
 
-    pub fn tick(&mut self) {
-        if let Some(audio_player) = &mut self.audio_player {
-            audio_player.tick();
-        }
+    pub(crate) fn tick(&mut self) {
+        self.audio_player.as_mut().map(AudioPlayer::tick);
     }
 }

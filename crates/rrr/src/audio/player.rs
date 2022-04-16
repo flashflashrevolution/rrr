@@ -1,6 +1,6 @@
 use super::output::AudioOutput;
 use crate::audio::output;
-use log::info;
+use anyhow::Context;
 use std::{
     fmt::Debug,
     io::{self, Cursor},
@@ -9,7 +9,7 @@ use symphonia::{
     core::{
         codecs::{Decoder, DecoderOptions},
         errors::Error as SymphoniaError,
-        formats::{FormatOptions, FormatReader, Packet},
+        formats::{FormatOptions, FormatReader},
         io::{MediaSourceStream, MediaSourceStreamOptions},
         units::TimeStamp,
     },
@@ -20,30 +20,35 @@ pub struct AudioPlayer {
     output: Option<Box<dyn AudioOutput>>,
     decoder: Box<Mp3Decoder>,
     reader: Box<Mp3Reader>,
-    track_id: u32,
+    _track_id: u32,
     remaining_samples: usize,
 }
 
 impl AudioPlayer {
-    pub fn new(mp3: &Vec<u8>) -> Self {
+    /// # Panics
+    /// # Errors
+    pub fn try_new(mp3: &[u8]) -> anyhow::Result<Self> {
         let mss = MediaSourceStream::new(
-            Box::new(Cursor::new(mp3.to_vec())),
+            Box::new(Cursor::new(mp3.to_owned())),
             MediaSourceStreamOptions::default(),
         );
-        let reader = Box::new(Mp3Reader::try_new(mss, &FormatOptions::default()).unwrap());
-        let track = reader.default_track().unwrap();
-        let decoder =
-            Box::new(Mp3Decoder::try_new(&track.codec_params, &DecoderOptions::default()).unwrap());
+        let reader = Box::new(Mp3Reader::try_new(mss, &FormatOptions::default())?);
+        let track = reader.default_track().context("no tracks present")?;
+        let decoder = Box::new(Mp3Decoder::try_new(
+            &track.codec_params,
+            &DecoderOptions::default(),
+        )?);
 
-        Self {
+        Ok(Self {
             decoder,
             output: None,
-            track_id: track.id,
+            _track_id: track.id,
             reader,
             remaining_samples: 0,
-        }
+        })
     }
 
+    /// # Panics
     pub fn tick(&mut self) -> Option<TimeStamp> {
         loop {
             // Demux an encoded packet from the media format.
@@ -96,34 +101,29 @@ impl AudioPlayer {
 
                     let frame_count = decoded.frames();
 
-                    let total_samples = frame_count * 2;
+                    let total_samples = frame_count.saturating_mul(2);
 
                     // Write the decoded audio samples to the audio output if the presentation timestamp
                     // for the packet is >= the seeked position (0 if not seeking).
-                    let written = if let Some(out) = &mut self.output {
-                        match out.write(decoded, total_samples, self.remaining_samples) {
-                            Ok(written) => written,
-                            Err(_) => 0,
-                        }
-                    } else {
-                        0
-                    };
+                    let written = self
+                        .output
+                        .as_mut()
+                        .map_or(Ok(0), |out| {
+                            out.write(decoded, total_samples, self.remaining_samples)
+                        })
+                        .unwrap_or(0);
 
-                    let timestamp = if let Some(pak) = &packet {
-                        pak.ts()
-                    } else {
-                        TimeStamp::default()
-                    };
+                    let timestamp = packet.map_or_else(TimeStamp::default, |pak| pak.ts());
 
                     if written > 0 && self.remaining_samples > 0 {
-                        self.remaining_samples -= written;
+                        self.remaining_samples = self.remaining_samples.saturating_sub(written);
                         continue;
                     } else if written == 0 && self.remaining_samples > 0 {
                         return Some(timestamp);
                     }
 
                     if written < total_samples {
-                        self.remaining_samples = total_samples - written;
+                        self.remaining_samples = total_samples.saturating_sub(written);
                         return Some(timestamp);
                     }
                 }
@@ -145,9 +145,11 @@ impl AudioPlayer {
         }
     }
 
+    /// # Panics
     pub fn stop(&mut self) {
-        let player = &mut self.output;
-        player.as_mut().unwrap().flush();
+        if let Some(v) = self.output.as_mut() {
+            v.flush();
+        }
     }
 }
 

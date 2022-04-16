@@ -58,6 +58,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.56"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4361135be9122e0870de935d7c439aef945b9f9ddd4199a553b5270b49c82a27"
+
+[[package]]
 name = "arrayvec"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -751,6 +757,7 @@ dependencies = [
 name = "head"
 version = "0.0.1"
 dependencies = [
+ "anyhow",
  "cfg-if 1.0.0",
  "console_error_panic_hook",
  "console_log",
@@ -1535,6 +1542,7 @@ checksum = "f1382d1f0a252c4bf97dc20d979a2fdd05b024acd7c2ed0f7595d7817666a157"
 name = "rrr"
 version = "0.0.1"
 dependencies = [
+ "anyhow",
  "cpal",
  "log",
  "rb",

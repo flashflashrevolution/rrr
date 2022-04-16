@@ -84,7 +84,7 @@ impl CpalAudioOutput {
     }
 }
 
-struct CpalAudioOutputImpl<T: AudioOutputSample>
+struct CpalAudioOutputImpl<T>
 where
     T: AudioOutputSample,
 {
@@ -117,15 +117,16 @@ impl<T: AudioOutputSample> CpalAudioOutputImpl<T> {
         });
 
         let config = formats
-            .find(|sf| {
-                sf.channels() as usize == 2 && sf.sample_rate() == cpal::SampleRate(spec.rate)
-            })
+            .find(|sf| sf.channels() == 2 && sf.sample_rate() == cpal::SampleRate(spec.rate))
             .ok_or(AudioOutputError::OpenStreamError)?;
 
         log::info!("Supported config: {:?}", config);
 
+        let sample_rate =
+            usize::try_from(spec.rate).map_err(|_| AudioOutputError::OpenStreamError)?;
         // Create a ring buffer with a capacity for up-to 200ms of audio.
-        let ring_len = ((400 * spec.rate as usize) / 1000) * num_channels;
+        let ring_len =
+            ((400_usize.saturating_mul(sample_rate)).div_euclid(1000)).saturating_mul(num_channels);
 
         let ring_buf = SpscRb::new(ring_len);
         let (ring_buf_producer, ring_buf_consumer) = (ring_buf.producer(), ring_buf.consumer());
@@ -143,25 +144,24 @@ impl<T: AudioOutputSample> CpalAudioOutputImpl<T> {
                 };
 
                 // Mute any remaining samples.
-                data[written..].iter_mut().for_each(|s| *s = T::MID);
+                data.get_mut(written..)
+                    .unwrap_or_default()
+                    .iter_mut()
+                    .for_each(|s| *s = T::MID);
             },
-            move |err| log::error!("audio output error: {}", err),
+            |err| log::error!("audio output error: {}", err),
         );
 
-        if let Err(err) = stream_result {
+        let stream = stream_result.map_err(|err| {
             log::error!("audio output stream open error: {}", err);
-
-            return Err(AudioOutputError::OpenStreamError);
-        }
-
-        let stream = stream_result.unwrap();
+            AudioOutputError::OpenStreamError
+        })?;
 
         // Start the output stream.
-        if let Err(err) = stream.play() {
+        stream.play().map_err(|err| {
             log::error!("audio output stream play error: {}", err);
-
-            return Err(AudioOutputError::PlayStreamError);
-        }
+            AudioOutputError::PlayStreamError
+        })?;
 
         let sample_buf = SampleBuffer::<T>::new(duration, spec);
 
@@ -188,14 +188,12 @@ impl<T: AudioOutputSample> AudioOutput for CpalAudioOutputImpl<T> {
         let mut samples = self.sample_buf.samples();
 
         if remaining_samples > 0 {
-            samples = &samples[total_samples - remaining_samples..];
+            samples = samples
+                .get(total_samples.saturating_sub(remaining_samples)..)
+                .ok_or(AudioOutputError::PlayStreamError)?;
         }
 
-        let written = match self.ring_buf_producer.write(samples) {
-            Ok(written) => written,
-            Err(rb::RbError::Full) => 0,
-            Err(err) => 0,
-        };
+        let written = self.ring_buf_producer.write(samples).unwrap_or(0);
 
         Ok(written)
     }
