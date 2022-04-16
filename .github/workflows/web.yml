@@ -17,7 +17,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 1
           lfs: true
@@ -35,20 +36,21 @@ jobs:
           key: ${{ runner.os }}-cargo-web-release-${{ hashFiles('**/Cargo.lock') }}-0
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
 
-      - uses: actions-rs/cargo@v1
+      - name: Build
+        uses: actions-rs/cargo@v1.0.3
         with:
           command: build
           args: --release --package rrr-render --target wasm32-unknown-unknown --out-dir web -Z unstable-options
 
       - name: Deploy Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v3.8.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./web

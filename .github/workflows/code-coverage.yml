@@ -19,7 +19,8 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3.0.1
         with:
           fetch-depth: 1
           lfs: true
@@ -37,15 +38,17 @@ jobs:
           key: ${{ runner.os }}-cargo-code-coverage-${{ hashFiles('**/Cargo.lock') }}-0
 
       - name: Install Rust
-        uses: actions-rs/toolchain@v1
+        uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
           components: llvm-tools-preview
 
-      - uses: Swatinem/fucov@v1
+      - name: Generate coverage report
+        uses: Swatinem/fucov@v1.0.0
 
-      - uses: codecov/codecov-action@v3
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v3.0.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: coverage
