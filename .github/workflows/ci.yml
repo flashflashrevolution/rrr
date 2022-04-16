@@ -6,14 +6,12 @@ on:
       - "*.md"
       - ".vscode/**"
       - "LICENCE"
-      - ".github/workflows/code-coverage.yml"
   push:
     branches: [main]
     paths-ignore:
       - "*.md"
       - ".vscode/**"
       - "LICENCE"
-      - ".github/workflows/code-coverage.yml"
 
 env:
   CARGO_TERM_VERBOSE: true
@@ -84,6 +82,20 @@ jobs:
           command: test
           args: --workspace
 
+  actionlint:
+    name: Lint GitHub Actions workflows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.0
+
+      - name: Download actionlint
+        id: get_actionlint
+        run: bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+
+      - name: Check workflow files
+        run: ${{ steps.get_actionlint.outputs.executable }} -color
+
   clippy:
     name: Clippy check
     runs-on: ubuntu-latest
@@ -107,7 +119,6 @@ jobs:
         if: ${{ !env.ACT }}
 
       - name: Install Dependencies
-        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
 
       - name: Clippy
@@ -117,7 +128,7 @@ jobs:
     name: Deploy docs
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [rustfmt, test, clippy]
+    needs: [rustfmt, test, actionlint, clippy]
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.1
