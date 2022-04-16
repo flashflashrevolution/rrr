@@ -56,18 +56,6 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: ⚡ Cache
-        uses: actions/cache@v3.0.2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target
-          key: ${{ runner.os }}-test-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install Dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
@@ -79,6 +67,10 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
+
+      - name: ⚡ Cache
+        uses: Swatinem/rust-cache@v1.3.0
+        if: ${{ !env.ACT }}
 
       - name: Build
         uses: actions-rs/cargo@v1.0.3
@@ -102,18 +94,6 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: ⚡ Cache
-        uses: actions/cache@v3.0.2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target
-          key: ${{ runner.os }}-clippy-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install Rust
         uses: actions-rs/toolchain@v1.0.7
         with:
@@ -121,6 +101,10 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview, clippy
+
+      - name: ⚡ Cache
+        uses: Swatinem/rust-cache@v1.3.0
+        if: ${{ !env.ACT }}
 
       - name: Install Dependencies
         if: matrix.os == 'ubuntu-latest'
@@ -141,24 +125,16 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: ⚡ Cache
-        uses: actions/cache@v3.0.2
-        if: ${{ !env.ACT }}
-        with:
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            target
-          key: ${{ runner.os }}-docs-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Install rust stable
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
           toolchain: stable
           components: llvm-tools-preview
+
+      - name: ⚡ Cache
+        uses: Swatinem/rust-cache@v1.3.0
+        if: ${{ !env.ACT }}
 
       - name: API docs
         uses: actions-rs/cargo@v1.0.3
