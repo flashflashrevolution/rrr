@@ -1553,6 +1553,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "rrr-playlist"
+version = "0.0.1"
+dependencies = [
+ "log",
+ "serde",
+]
+
+[[package]]
 name = "rubato"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

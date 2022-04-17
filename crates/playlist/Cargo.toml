@@ -1,0 +1,25 @@
+[package]
+name = "rrr-playlist"
+version = "0.0.1"
+authors = ["Fission", "Zageron"]
+description = """
+Playlist downloader and orchestration library for RRR.
+"""
+documentation = "https://rrr.flashflashrevolution.com/api/rrr_playlist"
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[package.metadata.docs.rs]
+features = ["serde"]
+
+[dependencies]
+log = "0.4.16"
+serde = { version = "1.0.136", optional = true, features = ["derive"] }
