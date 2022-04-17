@@ -63,9 +63,9 @@ jobs:
         uses: actions-rs/cargo@v1.0.3
         with:
           command: build
-          args: cargo build --release --package head --target wasm32-unknown-unknown --target-dir target
+          args: --release --package head --target wasm32-unknown-unknown --target-dir target
           
-      - name: npm install, build and test
+      - name: Generate the .wasm for web deploy.
         run: wasm-bindgen --no-typescript --out-dir web/bin --target web target/wasm32-unknown-unknown/release/head.wasm"
 
       - name: Deploy Pages
