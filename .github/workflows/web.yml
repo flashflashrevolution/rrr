@@ -50,7 +50,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: install
-          args: --root ${{ runner.tool_cache }}/wasm-bindgen-cli --force wasm-bindgen-cli --version ${{ env.WASM_BINDGEN_CLI_VERSION }}
+          args: --root ${{ runner.tool_cache }}/wasm-bindgen-cli --force wasm-bindgen-cli
 
       - name: Configure $PATH for wasm-bindgen-cli
         run: echo "${{ runner.tool_cache }}/wasm-bindgen-cli/bin" >> $GITHUB_PATH
