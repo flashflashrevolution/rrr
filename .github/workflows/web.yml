@@ -30,6 +30,30 @@ jobs:
           toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
+      
+      - name: Cache wasm-bindgen-cli/bin
+        id: cache-wasm-bindgen-cli
+        uses: actions/cache@v1
+        with:
+          path: ${{ runner.tool_cache }}/wasm-bindgen-cli/bin
+          key: wasm-bindgen-cli-bin-${{ hashFiles('.github/caching/wasm-bindgen-cli.lock') }}
+          
+      - name: Install Rust toolchain (native)
+        if: "steps.cache-wasm-bindgen-cli.outputs.cache-hit != 'true'"
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          
+      - name: Install wasm-bindgen-cli
+        if: "steps.cache-wasm-bindgen-cli.outputs.cache-hit != 'true'"
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --root ${{ runner.tool_cache }}/wasm-bindgen-cli --force wasm-bindgen-cli --version ${{ env.WASM_BINDGEN_CLI_VERSION }}
+
+      - name: Configure $PATH for wasm-bindgen-cli
+        run: echo "${{ runner.tool_cache }}/wasm-bindgen-cli/bin" >> $GITHUB_PATH
 
       - name: ⚡ Cache
         uses: Swatinem/rust-cache@v1.3.0
@@ -39,7 +63,10 @@ jobs:
         uses: actions-rs/cargo@v1.0.3
         with:
           command: build
-          args: --release --package rrr-render --target wasm32-unknown-unknown --out-dir web -Z unstable-options
+          args: cargo build --release --package head --target wasm32-unknown-unknown --target-dir target
+          
+      - name: npm install, build and test
+        run: wasm-bindgen --no-typescript --out-dir web/bin --target web target/wasm32-unknown-unknown/release/head.wasm"
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0
