@@ -9,6 +9,7 @@
         "tamasfe.even-better-toml",
         "yzhang.markdown-all-in-one",
         "zerotaskx.rust-extension-pack",
-        "redhat.vscode-yaml"
+        "redhat.vscode-yaml",
+        "Gruntfuggly.todo-tree"
     ]
 }
