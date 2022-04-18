@@ -56,7 +56,7 @@ jobs:
         run: echo "${{ runner.tool_cache }}/wasm-bindgen-cli/bin" >> $GITHUB_PATH
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v1.3.0
+        uses: Swatinem/rust-cache@v1.4.0
         if: ${{ !env.ACT }}
 
       - name: Build
