@@ -33,7 +33,7 @@ jobs:
           components: llvm-tools-preview
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v1.3.0
+        uses: Swatinem/rust-cache@v1.4.0
         if: ${{ !env.ACT }}
 
       - name: Generate coverage report
