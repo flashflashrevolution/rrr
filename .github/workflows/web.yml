@@ -33,7 +33,7 @@ jobs:
       
       - name: Cache wasm-bindgen-cli/bin
         id: cache-wasm-bindgen-cli
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ${{ runner.tool_cache }}/wasm-bindgen-cli/bin
           key: wasm-bindgen-cli-bin-${{ hashFiles('.github/caching/wasm-bindgen-cli.lock') }}
