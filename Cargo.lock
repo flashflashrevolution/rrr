@@ -447,7 +447,7 @@ dependencies = [
 [[package]]
 name = "cpal"
 version = "0.13.5"
-source = "git+https://github.com/RustAudio/cpal.git#a420316e3055209fd9a1636b2341af36044f9a76"
+source = "git+https://github.com/RustAudio/cpal.git#b1457e5945cfeb136b7b04c8870b63c2ae3f2212"
 dependencies = [
  "alsa",
  "core-foundation-sys 0.8.3",
@@ -2199,7 +2199,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fc6a3cffdb686fbb24d9fb8f03a213803277ed2300f11026a3afe1f108dc021b"
 dependencies = [
  "jni",
- "ndk-glue 0.6.1",
+ "ndk-glue 0.5.1",
  "url",
  "web-sys",
  "widestring",
