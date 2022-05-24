@@ -1413,7 +1413,7 @@ checksum = "e280fbe77cc62c91527259e9442153f4688736748d24660126286329742b4c6c"
 [[package]]
 name = "pixels"
 version = "0.9.0"
-source = "git+https://github.com/parasyte/pixels.git#94b87496c3715b6fcc4541c6a9370a5544569c7b"
+source = "git+https://github.com/parasyte/pixels.git#8f66bce12e6e311c3ab65285a1a88e43e88700d7"
 dependencies = [
  "bytemuck",
  "pollster",
