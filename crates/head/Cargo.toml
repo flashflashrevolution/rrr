@@ -36,7 +36,7 @@ egui-winit = { version = "0.17.0", default-features = false, features = [
 game-loop = { git = "https://github.com/parasyte/game-loop.git", branch = "forward-main-events-cleared", features = [
     "window",
 ] }
-log = { version = "0.4.16" }
+log = { version = "0.4.17" }
 pixels = { git = "https://github.com/parasyte/pixels.git" }
 rrr = { path = "../rrr" }
 winit = "0.26.1"
