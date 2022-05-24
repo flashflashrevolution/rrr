@@ -559,18 +559,29 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a3cd1d47e12f7a17912595241622e373aa652a4e0fa90b3f9278f90a64aedf7"
 dependencies = [
  "ahash",
- "epaint",
+ "epaint 0.17.0",
+ "nohash-hasher",
+]
+
+[[package]]
+name = "egui"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb095a8b9feb9b7ff8f00b6776dffcef059538a3f4a91238e03c900e9c9ad9a2"
+dependencies = [
+ "ahash",
+ "epaint 0.18.1",
  "nohash-hasher",
  "tracing",
 ]
 
 [[package]]
 name = "egui-winit"
-version = "0.17.0"
+version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43eac3180ea178ef1a5f3048cc12c58bcbcb17fc3401813f7229c99ef2ffc1d9"
+checksum = "b040afd583fd95a9b9578d4399214a13d948ed26bc0ff7cc0104502501f34e68"
 dependencies = [
- "egui",
+ "egui 0.18.1",
  "instant",
  "tracing",
  "webbrowser",
@@ -584,7 +595,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aa894f8ab489b81dd50499ea745996221b5ebfbb7d2c805483be9b9cb083e366"
 dependencies = [
  "bytemuck",
- "egui",
+ "egui 0.17.0",
  "wgpu",
 ]
 
@@ -596,6 +607,12 @@ checksum = "a977a80456be58a2c2d48e69c1d0baadef46cecef5a0c98df141c468da006f12"
 dependencies = [
  "bytemuck",
 ]
+
+[[package]]
+name = "emath"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c223f58c7e38abe1770f367b969f1b3fbd4704b67666bcb65dbb1adb0980ba72"
 
 [[package]]
 name = "encoding_rs"
@@ -616,8 +633,22 @@ dependencies = [
  "ahash",
  "atomic_refcell",
  "bytemuck",
- "emath",
+ "emath 0.17.0",
  "nohash-hasher",
+]
+
+[[package]]
+name = "epaint"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c29567088888e8ac3e8f61bbb2ddc820207ebb8d69eefde5bcefa06d65e4e89"
+dependencies = [
+ "ab_glyph",
+ "ahash",
+ "atomic_refcell",
+ "emath 0.18.0",
+ "nohash-hasher",
+ "parking_lot 0.12.0",
 ]
 
 [[package]]
@@ -761,7 +792,7 @@ dependencies = [
  "cfg-if 1.0.0",
  "console_error_panic_hook",
  "console_log",
- "egui",
+ "egui 0.17.0",
  "egui-winit",
  "egui_wgpu_backend",
  "game-loop",
@@ -2163,9 +2194,9 @@ dependencies = [
 
 [[package]]
 name = "webbrowser"
-version = "0.6.0"
+version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9c28b6b6a78440b02647358625e3febc90724126480b9da6a967b5f674b3554"
+checksum = "fc6a3cffdb686fbb24d9fb8f03a213803277ed2300f11026a3afe1f108dc021b"
 dependencies = [
  "jni",
  "ndk-glue 0.6.1",
