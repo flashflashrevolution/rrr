@@ -25,7 +25,7 @@ anyhow = "1.0.56"
 log = "0.4.16"
 rb = "0.4.0"
 rubato = "0.11.0"
-serde = { version = "1.0.136", optional = true, features = ["derive"] }
+serde = { version = "1.0.138", optional = true, features = ["derive"] }
 swf-parser = { git = "https://github.com/Zageron/swf-parser.git", branch = "master" }
 symphonia = { version = "0.5.0", default-features = false, features = ["mp3"] }
 
