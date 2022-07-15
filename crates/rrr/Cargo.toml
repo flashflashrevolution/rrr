@@ -21,7 +21,7 @@ crate-type = ["cdylib", "lib"]
 features = ["serde"]
 
 [dependencies]
-anyhow = "1.0.56"
+anyhow = "1.0.58"
 log = "0.4.17"
 rb = "0.4.0"
 rubato = "0.11.0"
