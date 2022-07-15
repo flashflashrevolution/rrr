@@ -22,4 +22,4 @@ features = ["serde"]
 
 [dependencies]
 log = "0.4.17"
-serde = { version = "1.0.136", optional = true, features = ["derive"] }
+serde = { version = "1.0.139", optional = true, features = ["derive"] }
