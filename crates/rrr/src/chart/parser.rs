@@ -61,6 +61,7 @@ impl SwfParser {
     }
 
     pub fn parse(&mut self) {
+        let mut mp3_data: Vec<u8> = Vec::new();
         let mut swf_reader = Reader::new(&self.stream.data[..], self.stream.header.version());
         while let Ok(tag) = swf_reader.read_tag() {
             match tag {
@@ -76,12 +77,15 @@ impl SwfParser {
                         }
                     }
                 }
-                swf::Tag::SoundStreamBlock(_) => continue,
+                swf::Tag::SoundStreamBlock(sound) => {
+                    mp3_data.extend_from_slice(sound);
+                }
                 swf::Tag::SoundStreamHead(_) => log::info!("SoundStreamHead"),
                 swf::Tag::SoundStreamHead2(_) => log::info!("SoundStreamHead2"),
                 _ => {}
             }
         }
+        self.mp3.replace(mp3_data);
     }
 
     fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<CompiledNote>> {
@@ -107,7 +111,7 @@ impl SwfParser {
                         }
                     }
 
-                    avm1::types::Action::End => {
+                    avm1::types::Action::End | avm1::types::Action::Stop => {
                         done = true;
                     }
 
