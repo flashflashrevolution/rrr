@@ -84,6 +84,8 @@ impl<'a> Definition<'a> {
 // rust test block for get_note
 #[cfg(test)]
 mod tests {
+    use std::env;
+
     use image::{
         imageops, ColorType, DynamicImage, GenericImage, GenericImageView, ImageBuffer,
         ImageFormat, RgbImage,
@@ -133,8 +135,17 @@ mod tests {
             let image_out = note
                 .image
                 .to_image()
-                .save_with_format(format!("/{color:?}.png"), ImageFormat::Png);
+                .save_with_format(format!("{color:?}.png"), ImageFormat::Png);
             assert!(image_out.is_ok());
+        }
+
+        for color in Color::iter() {
+            match std::fs::remove_file(format!("{color:?}.png")) {
+                Ok(_) => {}
+                Err(err) => {
+                    log::error!("Could not remove temp directory: {}", err);
+                }
+            }
         }
     }
 }
