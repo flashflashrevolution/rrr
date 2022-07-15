@@ -22,7 +22,7 @@ features = ["serde"]
 
 [dependencies]
 anyhow = "1.0.56"
-log = "0.4.16"
+log = "0.4.17"
 rb = "0.4.0"
 rubato = "0.11.0"
 serde = { version = "1.0.139", optional = true, features = ["derive"] }
