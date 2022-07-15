@@ -798,7 +798,7 @@ dependencies = [
  "cfg-if 1.0.0",
  "console_error_panic_hook",
  "console_log",
- "egui 0.17.0",
+ "egui 0.18.1",
  "egui-winit",
  "egui_wgpu_backend",
  "game-loop",
