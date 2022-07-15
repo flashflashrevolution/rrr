@@ -65,8 +65,8 @@ use winit_input_helper::WinitInputHelper;
 
 pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000_u64.div_euclid(60));
 
-const WIDTH: u32 = 400;
-const HEIGHT: u32 = 800;
+const WIDTH: u32 = 512;
+const HEIGHT: u32 = 768;
 const BOX_SIZE: i16 = 64;
 
 trait DeltaTime {
@@ -135,6 +135,7 @@ async fn run() {
             .with_title("Rust Rust Revolution")
             .with_inner_size(size)
             .with_min_inner_size(size)
+            .with_max_inner_size(size)
             .build(&event_loop)
             .expect("WindowBuilder error")
     };
