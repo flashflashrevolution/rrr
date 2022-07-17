@@ -17,6 +17,11 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib", "lib"]
 
+[features]
+default = ["develop", "serde"]
+develop = ["log/max_level_info", "log/release_max_level_info"]
+release = ["log/release_max_level_off"]
+
 [package.metadata.docs.rs]
 features = ["serde"]
 
@@ -24,15 +29,34 @@ features = ["serde"]
 anyhow = "1.0.58"
 log = "0.4.17"
 rb = "0.4.0"
+reqwest = { version = "0.11.11", features = ["json"] }
 rubato = "0.11.0"
 serde = { version = "1.0.139", optional = true, features = ["derive"] }
-swf-parser = { git = "https://github.com/Zageron/swf-parser.git", branch = "master" }
+strum = { version = "0.24.1", features = ["derive"] }
+swf = { git = "https://github.com/ruffle-rs/ruffle.git", branch = "master", package = "swf" }
 symphonia = { version = "0.5.0", default-features = false, features = ["mp3"] }
+thiserror = "1.0.31"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }
+tokio = { version = "1.20.0", features = ["full"] }
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
+js-sys = "0.3.58"
+wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
+wasm-bindgen-test = "0.3.31"
+wasm-bindgen-futures = "0.4.31"
+
+[target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies.web-sys]
+version = "0.3.57"
+features = [
+    'Headers',
+    'Request',
+    'RequestInit',
+    'RequestMode',
+    'Response',
+    'Window',
+]

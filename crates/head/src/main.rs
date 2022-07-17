@@ -40,23 +40,33 @@
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
 
+mod geo;
 mod head;
+mod noteskin;
+mod sprites;
 mod visibility;
 
+use crate::geo::*;
+use crate::sprites::*;
 use game_loop::{game_loop, Time, TimeTrait};
 use head::Head;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
+use rrr::Color;
+use rrr::{Chart, CompiledChart};
 use std::time::Duration;
 use winit::{
-    dpi::LogicalSize, event::VirtualKeyCode, event_loop::EventLoop, window::WindowBuilder,
+    dpi::LogicalSize,
+    event::{Event, VirtualKeyCode, WindowEvent},
+    event_loop::EventLoop,
+    window::WindowBuilder,
 };
 use winit_input_helper::WinitInputHelper;
 
 pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000_u64.div_euclid(60));
 
-const WIDTH: u32 = 800;
-const HEIGHT: u32 = 600;
+const WIDTH: u32 = 512;
+const HEIGHT: u32 = 768;
 const BOX_SIZE: i16 = 64;
 
 trait DeltaTime {
@@ -73,7 +83,7 @@ trait DeltaTime {
 
 struct Game {
     pixels: Pixels,
-    world: World,
+    play_stage: Option<World>,
     head: Head,
     input: WinitInputHelper,
 }
@@ -81,15 +91,14 @@ struct Game {
 impl Game {
     fn update(&mut self) {
         self.head.tick();
-        self.world.update();
+        if let Some(stage) = &mut self.play_stage {
+            stage.update();
+        }
     }
 }
 
 struct World {
-    box_x: i16,
-    box_y: i16,
-    velocity_x: i16,
-    velocity_y: i16,
+    active_chart: CompiledChart,
     dt: Duration,
 }
 
@@ -119,19 +128,14 @@ fn main() {
 }
 
 async fn run() {
-    log::trace!("This is a trace");
-    log::debug!("This is a debug");
-    log::info!("This is an info");
-    log::warn!("This is a warning");
-    log::error!("This is an error");
-
     let event_loop = EventLoop::new();
     let window = {
-        let size = LogicalSize::new(WIDTH as f64, HEIGHT as f64);
+        let size = LogicalSize::new(WIDTH, HEIGHT);
         WindowBuilder::new()
-            .with_title("Hello Pixels + Web")
+            .with_title("Rust Rust Revolution")
             .with_inner_size(size)
             .with_min_inner_size(size)
+            .with_max_inner_size(size)
             .build(&event_loop)
             .expect("WindowBuilder error")
     };
@@ -140,15 +144,6 @@ async fn run() {
     {
         use wasm_bindgen::JsCast;
         use winit::platform::web::WindowExtWebSys;
-
-        // Retrieve current width and height dimensions of browser client window
-        let get_window_size = || {
-            let client_window = web_sys::window().unwrap();
-            LogicalSize::new(
-                client_window.inner_width().unwrap().as_f64().unwrap(),
-                client_window.inner_height().unwrap().as_f64().unwrap(),
-            )
-        };
 
         // Initialize winit window with current dimensions of browser client
         window.set_inner_size(LogicalSize::new(WIDTH, HEIGHT));
@@ -164,24 +159,13 @@ async fn run() {
             .and_then(|canvas_div| {
                 let canvas = window.canvas();
                 canvas.set_class_name("game");
-                canvas.set_width(800);
-                canvas.set_height(600);
+                canvas.set_width(WIDTH);
+                canvas.set_height(HEIGHT);
                 canvas_div
                     .append_child(&web_sys::Element::from(window.canvas()))
                     .ok()
             })
             .expect("couldn't append canvas to document body");
-
-        // let closure = wasm_bindgen::closure::Closure::wrap(Box::new(move |_e: web_sys::Event| {
-        //     let size = get_window_size();
-        //     window.set_inner_size(size)
-        // }) as Box<dyn FnMut(_)>);
-
-        // client_window
-        //     .add_event_listener_with_callback("resize", closure.as_ref().unchecked_ref())
-        //     .unwrap();
-
-        // closure.forget();
     }
 
     let input = WinitInputHelper::new();
@@ -194,15 +178,51 @@ async fn run() {
             .expect("Pixels error")
     };
 
-    let world = World::new();
     let head = head::Head::new();
+    let noteskin_bytes = head.get_noteskin();
+    let mut noteskin_image = match image::load_from_memory(noteskin_bytes) {
+        Ok(image) => image,
+        Err(err) => {
+            error!("Could not load noteskin: {}", err);
+            return;
+        }
+    };
+    let rgba_representation = noteskin_image.to_rgba8();
+    let image_bytes = rgba_representation.into_raw();
 
-    let game = Game {
+    // Definition for the default noteskin.
+    let noteskin = noteskin::Definition::new(
+        64,
+        64,
+        [
+            Color::Blue,
+            Color::Orange,
+            Color::Red,
+            Color::Cyan,
+            Color::Pink,
+            Color::White,
+            Color::Green,
+            Color::Purple,
+            Color::Yellow,
+            Color::Receptor,
+        ]
+        .to_vec(),
+        [0, 90, 180, 270].to_vec(),
+        &mut noteskin_image,
+        3,
+    );
+
+    let chart = Chart::default();
+    let _compiled_chart: CompiledChart = chart.compile();
+
+    let mut game = Game {
         pixels,
-        world,
+        play_stage: None,
         head,
         input,
     };
+
+    game.play_stage.replace(World::new(_compiled_chart));
 
     game_loop(
         event_loop,
@@ -214,25 +234,51 @@ async fn run() {
             g.game.update();
         },
         |g| {
-            // Drawing
-            g.game.world.draw(g.game.pixels.get_frame());
-            if let Err(e) = g.game.pixels.render() {
-                error!("pixels.render() failed: {}", e);
-                g.exit();
-            }
+            if let Some(stage) = &mut g.game.play_stage {
+                stage.draw(g.game.pixels.get_frame());
+                if let Err(e) = g.game.pixels.render() {
+                    error!("pixels.render() failed: {}", e);
+                    g.exit();
+                }
 
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                // Sleep the main thread to limit drawing to the fixed time step.
-                // See: https://github.com/parasyte/pixels/issues/174
-                let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
-                if dt > 0.0 {
-                    std::thread::sleep(Duration::from_secs_f64(dt));
+                #[cfg(not(target_arch = "wasm32"))]
+                {
+                    // Sleep the main thread to limit drawing to the fixed time step.
+                    // See: https://github.com/parasyte/pixels/issues/174
+                    let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
+                    if dt > 0.0 {
+                        std::thread::sleep(Duration::from_secs_f64(dt));
+                    }
                 }
             }
         },
         |g, event| {
             log::trace!("{:?}", event);
+
+            if let Event::WindowEvent {
+                ref event,
+                window_id,
+            } = event
+            {
+                if let WindowEvent::Focused(focused) = event {
+                    log::info!("Window {:?} focused {:?}", window_id, focused);
+                }
+            }
+
+            #[allow(clippy::collapsible_match, clippy::single_match)]
+            match event {
+                Event::WindowEvent {
+                    window_id,
+                    ref event,
+                } => match event {
+                    WindowEvent::Focused(focused) => {
+                        log::info!("Window {:?} focused {:?}", window_id, focused);
+                    }
+                    _ => {}
+                },
+                _ => {}
+            }
+
             if g.game.input.update(&event) {
                 // Close events
                 if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {
@@ -254,12 +300,9 @@ async fn run() {
 
 impl World {
     /// Create a new `World` instance that can draw a moving box.
-    fn new() -> Self {
+    fn new(chart: CompiledChart) -> Self {
         Self {
-            box_x: 24,
-            box_y: 16,
-            velocity_x: 1,
-            velocity_y: 1,
+            active_chart: chart,
             dt: Duration::default(),
         }
     }
@@ -268,37 +311,44 @@ impl World {
     fn update(&mut self) {
         self.dt += TIME_STEP;
 
-        if self.box_x <= 0 || self.box_x + BOX_SIZE > WIDTH as i16 {
-            self.velocity_x *= -1;
-        }
-        if self.box_y <= 0 || self.box_y + BOX_SIZE > HEIGHT as i16 {
-            self.velocity_y *= -1;
-        }
-
-        self.box_x += self.velocity_x;
-        self.box_y += self.velocity_y;
+        // TODO: Spawn arrows and begin to move them up the field at delta rate.
+        // - Get chart.
+        // - Spawn arrows in order based on time-to-target offset. (See how we do this in R^3).
+        // - Destroy arrows when they hit the top of the screen.
+        // - Destroy arrows when they are on a recepor when the player activates it.
     }
 
     /// Draw the `World` state to the frame buffer.
     ///
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     fn draw(&self, frame: &mut [u8]) {
+        // Draw shit
+        clear(frame);
+
+        // Filter out notes that aren't on screen.
+        // Render all notes.
+        // for note in &self.notes {
+        //     blit(screen, &note.position, &note.sprite);
+        // }
+
         for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
             let x = (i % WIDTH as usize) as i16;
             let y = (i / WIDTH as usize) as i16;
 
-            let inside_the_box = x >= self.box_x
-                && x < self.box_x + BOX_SIZE
-                && y >= self.box_y
-                && y < self.box_y + BOX_SIZE;
+            let inside_the_box = x >= 32 && x < 32 + BOX_SIZE && y >= 32 && y < 32 + BOX_SIZE;
 
             let rgba = if inside_the_box {
                 [0x5e, 0x48, 0xe8, 0xff]
             } else {
                 [0x48, 0xb2, 0xe8, 0xff]
             };
-
             pixel.copy_from_slice(&rgba);
         }
+    }
+}
+
+fn clear(screen: &mut [u8]) {
+    for (i, byte) in screen.iter_mut().enumerate() {
+        *byte = if i % 4 == 3 { 255 } else { 0 };
     }
 }

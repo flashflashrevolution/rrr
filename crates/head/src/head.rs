@@ -12,7 +12,7 @@ impl Head {
     pub(crate) fn play_song(&mut self) -> anyhow::Result<()> {
         const TEST_CHART: usize = 3348;
         if let Some(raw_chart) = rrr::download_chart(TEST_CHART) {
-            if let Ok(mut parser) = SwfParser::new(raw_chart) {
+            if let Ok(mut parser) = SwfParser::new(&raw_chart[..]) {
                 parser.parse();
                 if let Some(mp3) = parser.get_mp3().as_ref() {
                     self.audio_player = Some(AudioPlayer::try_new(mp3)?);
@@ -20,6 +20,11 @@ impl Head {
             };
         }
         Ok(())
+    }
+
+    // TODO: Eventually swtich this from a wildly inefficient include_bytes, to a download and cache.
+    pub(crate) fn get_noteskin(&self) -> &[u8] {
+        include_bytes!("../../../data/default_noteskin.png")
     }
 
     #[allow(dead_code)]
