@@ -67,7 +67,7 @@ jobs:
           components: llvm-tools-preview
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v1.4.0
+        uses: Swatinem/rust-cache@v2.0.0
         if: ${{ !env.ACT }}
 
       - name: Build
@@ -115,7 +115,7 @@ jobs:
           components: llvm-tools-preview, clippy
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v1.4.0
+        uses: Swatinem/rust-cache@v2.0.0
         if: ${{ !env.ACT }}
 
       - name: Install Dependencies
@@ -144,7 +144,7 @@ jobs:
           components: llvm-tools-preview
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v1.4.0
+        uses: Swatinem/rust-cache@v2.0.0
         if: ${{ !env.ACT }}
 
       - name: API docs
