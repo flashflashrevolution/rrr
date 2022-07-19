@@ -9,7 +9,7 @@ use crate::{BpmChange, Color, CompiledNote, Direction, NoteRow};
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 /// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
 pub struct CompiledChart {
-    notes: Vec<CompiledNote>,
+    pub notes: Vec<CompiledNote>,
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

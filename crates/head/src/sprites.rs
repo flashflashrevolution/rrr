@@ -1,79 +1,43 @@
 use crate::{Point, HEIGHT, WIDTH};
+use image::{DynamicImage, GenericImageView, Rgba, SubImage};
 use rrr::Direction;
 use std::rc::Rc;
 use std::time::Duration;
 
-// This is the type stored in the `Assets` hash map
-pub(crate) type CachedSprite = (usize, usize, Rc<[u8]>);
-
-/// SpriteRef can be drawn and animated.
-///
-/// They reference their pixel data (instead of owning it).
-#[derive(Debug)]
-pub(crate) struct Sprite {
-    width: usize,
-    height: usize,
-    sheet: Rc<[u8]>,
-    index: usize,
-}
-
 /// Drawables can be blitted to the pixel buffer and animated.
-pub(crate) trait Drawable {
+pub(crate) trait Drawable<'a> {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
-    fn pixels(&self) -> &[u8];
-}
-
-impl Sprite {
-    pub(crate) fn new(
-        sprite_sheet: &Rc<[u8]>,
-        width: usize,
-        height: usize,
-        index: usize,
-    ) -> Sprite {
-        Sprite {
-            width,
-            height,
-            sheet: Rc::clone(sprite_sheet),
-            index,
-        }
-    }
-}
-
-impl Drawable for Sprite {
-    fn width(&self) -> usize {
-        self.width
-    }
-
-    fn height(&self) -> usize {
-        self.height
-    }
-
-    fn pixels(&self) -> &[u8] {
-        &self.sheet
-    }
+    fn pixels(&self) -> SubImage<&'a DynamicImage>;
 }
 
 /// Blit a drawable to the pixel buffer.
-pub(crate) fn blit<S>(screen: &mut [u8], dest: &Point, sprite: &S)
+pub(crate) fn blit<'a, S>(screen: &mut [u8], dest: &Point, drawable: &S)
 where
-    S: Drawable,
+    S: Drawable<'a>,
 {
-    assert!(dest.x + sprite.width() <= WIDTH.try_into().unwrap());
-    assert!(dest.y + sprite.height() <= HEIGHT.try_into().unwrap());
+    assert!(dest.x + drawable.width() <= WIDTH.try_into().unwrap());
+    assert!(dest.y + drawable.height() <= HEIGHT.try_into().unwrap());
 
-    let pixels = sprite.pixels();
-    let width = sprite.width() * 4;
+    let pixels = drawable.pixels();
+    let width = drawable.width() * 4;
 
     let mut s = 0;
-    for y in 0..sprite.height() {
-        let i = dest.x * 4 + dest.y * WIDTH as usize * 4 + y * WIDTH as usize * 4;
+    for row in 0..drawable.height() {
+        let i = dest.x * 4 + dest.y * WIDTH as usize * 4 + row * WIDTH as usize * 4;
+
+        let pixel_row = pixels.view(0, row as u32, drawable.width() as u32, 1);
+        let pixel_iter = pixel_row.pixels();
 
         // Merge pixels from sprite into screen
-        let zipped = screen[i..i + width].iter_mut().zip(&pixels[s..s + width]);
-        for (left, &right) in zipped {
-            if right > 0 {
-                *left = right;
+        let zipped = screen[i..i + width].array_chunks_mut::<4>().zip(pixel_iter);
+        for (left, right) in zipped {
+            if right.2[3] > 0 && right.2[0] > 0 || right.2[1] > 0 || right.2[2] > 0 {
+                let fundata = &right.2 .0[0..4];
+                (*left)[0] = fundata[0];
+                (*left)[1] = fundata[1];
+                (*left)[2] = fundata[2];
+                (*left)[3] = fundata[3];
             }
         }
 

@@ -1,7 +1,5 @@
 //! Simple geometry primitives.
 
-use crate::sprites::Drawable;
-
 /// A tiny position vector.
 #[derive(Copy, Clone, Debug, Default)]
 pub(crate) struct Point {
@@ -44,17 +42,6 @@ impl Rect {
     pub(crate) fn new(p1: &Point, p2: &Point) -> Rect {
         let p1 = *p1;
         let p2 = *p2;
-
-        Rect { p1, p2 }
-    }
-
-    /// Create a rectangle from a `Point` and a `Drawable`.
-    pub(crate) fn from_drawable<D>(pos: &Point, drawable: &D) -> Rect
-    where
-        D: Drawable,
-    {
-        let p1 = *pos;
-        let p2 = p1 + Point::new(drawable.width(), drawable.height());
 
         Rect { p1, p2 }
     }

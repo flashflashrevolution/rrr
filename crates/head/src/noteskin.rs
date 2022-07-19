@@ -1,14 +1,16 @@
 // Ingest a spritesheet of noteskins, with metadata describing the notes.
 
-use image::{imageops, DynamicImage, SubImage};
+use image::{imageops, DynamicImage, GenericImageView, Pixels, SubImage};
 use rrr::Color;
 
-pub(crate) struct Definition<'a> {
+use crate::sprites::Drawable;
+
+pub(crate) struct Definition {
     note_width: usize,
     note_height: usize,
     color_indexs: Vec<Color>,
     rotations: Vec<usize>,
-    image: &'a mut DynamicImage,
+    image: DynamicImage,
     rows: usize,
 }
 
@@ -16,16 +18,30 @@ pub(crate) struct Note<'a> {
     pub(crate) width: usize,
     pub(crate) height: usize,
     pub(crate) color: Color,
-    pub(crate) image: SubImage<&'a mut DynamicImage>,
+    pub(crate) image: SubImage<&'a DynamicImage>,
 }
 
-impl<'a> Definition<'a> {
+impl<'a> Drawable<'a> for Note<'a> {
+    fn width(&self) -> usize {
+        self.width
+    }
+
+    fn height(&self) -> usize {
+        self.height
+    }
+
+    fn pixels(&self) -> SubImage<&'a DynamicImage> {
+        self.image
+    }
+}
+
+impl Definition {
     pub(crate) fn new(
         note_width: usize,
         note_height: usize,
         color_indexs: Vec<Color>,
         rotations: Vec<usize>,
-        image: &'a mut DynamicImage,
+        image: DynamicImage,
         rows: usize,
     ) -> Self {
         Self {
@@ -59,24 +75,23 @@ impl<'a> Definition<'a> {
     //     image
     // }
 
-    pub(crate) fn get_note(&mut self, color: Color) -> Note<'_> {
+    pub(crate) fn get_note(&self, color: Color) -> Note<'_> {
         let width = self.note_width;
         let height = self.note_height;
         let color_index = self.color_indexs.iter().position(|c| *c == color).unwrap();
         let row_offset = (height * color_index) % (self.rows * height);
         let col_offset = (width * color_index) / (self.rows * width) * width;
-
+        let view = self.image.view(
+            col_offset.try_into().unwrap(),
+            row_offset.try_into().unwrap(),
+            width.try_into().unwrap(),
+            height.try_into().unwrap(),
+        );
         return Note {
             width,
             height,
             color,
-            image: imageops::crop(
-                self.image,
-                col_offset.try_into().unwrap(),
-                row_offset.try_into().unwrap(),
-                width.try_into().unwrap(),
-                height.try_into().unwrap(),
-            ),
+            image: view,
         };
     }
 }
@@ -122,7 +137,7 @@ mod tests {
             ]
             .to_vec(),
             [0, 90, 180, 270].to_vec(),
-            &mut noteskin_image,
+            noteskin_image,
             3,
         );
 

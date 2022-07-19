@@ -39,6 +39,7 @@
 )]
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
+#![feature(array_chunks)]
 
 mod geo;
 mod head;
@@ -86,6 +87,7 @@ struct Game {
     play_stage: Option<World>,
     head: Head,
     input: WinitInputHelper,
+    noteskin: Option<noteskin::Definition>,
 }
 
 impl Game {
@@ -180,7 +182,7 @@ async fn run() {
 
     let head = head::Head::new();
     let noteskin_bytes = head.get_noteskin();
-    let mut noteskin_image = match image::load_from_memory(noteskin_bytes) {
+    let noteskin_image = match image::load_from_memory(noteskin_bytes) {
         Ok(image) => image,
         Err(err) => {
             error!("Could not load noteskin: {}", err);
@@ -208,21 +210,22 @@ async fn run() {
         ]
         .to_vec(),
         [0, 90, 180, 270].to_vec(),
-        &mut noteskin_image,
+        noteskin_image,
         3,
     );
 
     let chart = Chart::default();
-    let _compiled_chart: CompiledChart = chart.compile();
+    let compiled_chart: CompiledChart = chart.compile();
 
     let mut game = Game {
         pixels,
         play_stage: None,
         head,
         input,
+        noteskin: Some(noteskin),
     };
 
-    game.play_stage.replace(World::new(_compiled_chart));
+    game.play_stage.replace(World::new(compiled_chart));
 
     game_loop(
         event_loop,
@@ -235,7 +238,7 @@ async fn run() {
         },
         |g| {
             if let Some(stage) = &mut g.game.play_stage {
-                stage.draw(g.game.pixels.get_frame());
+                stage.draw(g.game.pixels.get_frame(), &g.game.noteskin);
                 if let Err(e) = g.game.pixels.render() {
                     error!("pixels.render() failed: {}", e);
                     g.exit();
@@ -321,10 +324,26 @@ impl World {
     /// Draw the `World` state to the frame buffer.
     ///
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
-    fn draw(&self, frame: &mut [u8]) {
+    fn draw(&self, frame: &mut [u8], noteskin: &Option<noteskin::Definition>) {
         // Draw shit
         clear(frame);
 
+        if let Some(noteskin) = noteskin {
+            let some_notes = &self.active_chart.notes[7..15];
+
+            // Filter out notes that aren't on screen.
+            // Render all notes.
+            let mut i = 0;
+            for note in some_notes {
+                blit(
+                    frame,
+                    &Point { x: 64 * i, y: 0 },
+                    &noteskin.get_note(note.color),
+                );
+                i += 1;
+            }
+        }
+        
         rect(frame, 150, 100, 32, 32);
     }
 }
