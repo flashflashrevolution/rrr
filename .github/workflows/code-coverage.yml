@@ -25,6 +25,9 @@ jobs:
           fetch-depth: 1
           lfs: true
 
+      - name: Install Dependencies
+        run: apt-get install libasound2-dev
+
       - name: Install Rust
         uses: actions-rs/toolchain@v1.0.7
         with:

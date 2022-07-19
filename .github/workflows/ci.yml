@@ -26,11 +26,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.0.2
 
-      - name: Install rust stable
+      - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           components: rustfmt
 
       - name: Rustfmt
@@ -62,7 +62,7 @@ jobs:
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
 
@@ -110,7 +110,7 @@ jobs:
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           target: wasm32-unknown-unknown
           components: llvm-tools-preview, clippy
 
@@ -136,11 +136,11 @@ jobs:
           fetch-depth: 1
           lfs: true
 
-      - name: Install rust stable
+      - name: Install rust nightly
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: stable
+          toolchain: nightly
           components: llvm-tools-preview
 
       - name: ⚡ Cache
