@@ -26,17 +26,27 @@
 2. Install all of the recommended extensions.
 3. Install rust:
    > `rustup toolchain install stable`
+   >
    > `rustup toolchain install nightly`
+
 4. Install the wasm target:
-   > `rustup target add wasm32-unknown-unknown --toolchain stable`
-   > `rustup target add wasm32-unknown-unknown --toolchain nightly`
+   > ```
+   > rustup target add wasm32-unknown-unknown --toolchain stable
+   > rustup target add wasm32-unknown-unknown --toolchain nightly
+   > ```
+
 5. Install llvm tools:
-   > `rustup component add llvm-tools-preview --toolchain stable`
-   > `rustup component add llvm-tools-preview --toolchain nightly`
+   > ```sh
+   > rustup component add llvm-tools-preview --toolchain stable
+   > rustup component add llvm-tools-preview --toolchain nightly
+   > ```
+
 6. Install the following cargo applications:
-   1. > `cargo install cargo-watch`
-   2. > `cargo install miniserve --locked`
-   3. > `cargo install -f wasm-bindgen-cli`
+   > ```sh
+   > cargo install cargo-watch
+   > cargo install miniserve --locked
+   > cargo install -f wasm-bindgen-cli
+   > ```
 
 > At this point you should be good to go.
 > See [Developing](#developing) for launching, debugging and creation.
