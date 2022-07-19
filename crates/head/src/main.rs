@@ -325,30 +325,24 @@ impl World {
         // Draw shit
         clear(frame);
 
-        // Filter out notes that aren't on screen.
-        // Render all notes.
-        // for note in &self.notes {
-        //     blit(screen, &note.position, &note.sprite);
-        // }
-
-        for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
-            let x = (i % WIDTH as usize) as i16;
-            let y = (i / WIDTH as usize) as i16;
-
-            let inside_the_box = x >= 32 && x < 32 + BOX_SIZE && y >= 32 && y < 32 + BOX_SIZE;
-
-            let rgba = if inside_the_box {
-                [0x5e, 0x48, 0xe8, 0xff]
-            } else {
-                [0x48, 0xb2, 0xe8, 0xff]
-            };
-            pixel.copy_from_slice(&rgba);
-        }
+        rect(frame, 150, 100, 32, 32);
     }
 }
 
 fn clear(screen: &mut [u8]) {
     for (i, byte) in screen.iter_mut().enumerate() {
         *byte = if i % 4 == 3 { 255 } else { 0 };
+    }
+}
+
+fn rect(screen: &mut [u8], x: u32, y: u32, width: u32, height: u32) {
+    for row in y..(y + height) {
+        for column in x..(x + width) {
+            let i: usize = ((row * WIDTH + column) * 4).try_into().unwrap();
+            screen[i] = 0x5e;
+            screen[i+1] = 0x48;
+            screen[i+2] = 0xe8;
+            screen[i+3] = 0xff;
+        }
     }
 }
