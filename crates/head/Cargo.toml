@@ -34,7 +34,7 @@ egui-winit = { version = "0.18.0", default-features = false, features = [
     "links",
 ], optional = true }
 game-loop = { version = "0.9.1", features = ["window"] }
-image = { version = "0.24.2", default-features = false, features = ["png"] }
+image = { version = "0.24.3", default-features = false, features = ["png"] }
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/parasyte/pixels.git" }
 rrr = { path = "../rrr" }
