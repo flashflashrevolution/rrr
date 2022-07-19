@@ -4,7 +4,7 @@
 [![Docs]][mdbook]
 [![Chat]][discord]
 [![License]][license file]
-[![rustc](https://img.shields.io/badge/rustc-1.61-lightgray.svg?style=round)](https://www.rust-lang.org/)
+[![rustc](https://img.shields.io/badge/rustc-1.62-lightgray.svg?style=round)](https://www.rust-lang.org/)
 [![codecov](https://codecov.io/gh/flashflashrevolution/rrr/branch/main/graph/badge.svg?token=2V0ZGQ04IK)](https://codecov.io/gh/flashflashrevolution/rrr)
 
 [actions]: https://github.com/flashflashrevolution/rrr/actions?query=branch%3Amain
