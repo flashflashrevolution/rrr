@@ -46,12 +46,9 @@ jobs:
           toolchain: nightly
           profile: minimal
           
-      - name: Install wasm-bindgen-cli
-        if: "steps.cache-wasm-bindgen-cli.outputs.cache-hit != 'true'"
-        uses: actions-rs/cargo@v1
+      - uses: jetli/wasm-bindgen-action@v0.1.0
         with:
-          command: install
-          args: --root ${{ runner.tool_cache }}/wasm-bindgen-cli --force wasm-bindgen-cli
+          version: 'latest'
 
       - name: Configure $PATH for wasm-bindgen-cli
         run: echo "${{ runner.tool_cache }}/wasm-bindgen-cli/bin" >> $GITHUB_PATH
