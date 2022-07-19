@@ -30,7 +30,7 @@ anyhow = "1.0.58"
 log = "0.4.17"
 rb = "0.4.0"
 reqwest = { version = "0.11.11", features = ["json"] }
-rubato = "0.11.0"
+rubato = "0.12.0"
 serde = { version = "1.0.139", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = { git = "https://github.com/ruffle-rs/ruffle.git", branch = "master", package = "swf" }
