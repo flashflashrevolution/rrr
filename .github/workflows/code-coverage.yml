@@ -40,7 +40,7 @@ jobs:
         if: ${{ !env.ACT }}
 
       - name: Extract Test Data
-        run: 7z.exe x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
+        run: 7z x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
 
       - name: Generate coverage report
         uses: Swatinem/fucov@v1.0.0
