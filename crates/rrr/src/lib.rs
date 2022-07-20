@@ -45,12 +45,16 @@ mod chart;
 mod download_chart;
 mod fetch;
 mod settings;
+mod tape;
+mod tape_deck;
 
 pub use audio::*;
 pub use chart::*;
 pub use download_chart::*;
 pub use settings::*;
 pub use strum;
+pub use tape::*;
+pub use tape_deck::*;
 
 #[derive(Debug, Default)]
 pub struct RRR {
