@@ -27,9 +27,9 @@ enum ChartParseError {
 }
 
 pub struct SwfParser {
-    stream: SwfBuf,
     mp3: Option<Vec<u8>>,
     chart: Option<Vec<CompiledNote>>,
+    stream: SwfBuf,
 }
 
 impl SwfParser {
@@ -51,13 +51,13 @@ impl SwfParser {
     }
 
     #[must_use]
-    pub fn get_mp3(&self) -> &Option<Vec<u8>> {
-        &self.mp3
+    pub fn get_mp3(&self) -> Option<Vec<u8>> {
+        self.mp3.clone()
     }
 
     #[must_use]
-    pub fn get_chart(&self) -> &Option<Vec<CompiledNote>> {
-        &self.chart
+    pub fn get_chart(&self) -> Option<Vec<CompiledNote>> {
+        self.chart.clone()
     }
 
     pub fn parse(&mut self) {

@@ -83,14 +83,70 @@ trait DeltaTime {
 }
 
 struct Game {
+    noteskin: Option<noteskin::Definition>,
+    head: Head,
     pixels: Pixels,
     play_stage: Option<World>,
-    head: Head,
     input: WinitInputHelper,
-    noteskin: Option<noteskin::Definition>,
 }
 
 impl Game {
+    fn new(
+        noteskin: Option<noteskin::Definition>,
+        head: Head,
+        pixels: Pixels,
+        play_stage: Option<World>,
+        input: WinitInputHelper,
+    ) -> Self {
+        Self {
+            noteskin,
+            head,
+            pixels,
+            play_stage,
+            input,
+        }
+    }
+
+    pub fn load(&mut self, chart_id: usize) {
+        self.head.load_chart(chart_id);
+        self.play_stage = Some(World::new(self.head.chart()));
+    }
+
+    pub fn init(&mut self) {
+        let noteskin_bytes = get_noteskin();
+        let noteskin_image = match image::load_from_memory(noteskin_bytes) {
+            Ok(image) => image,
+            Err(err) => {
+                error!("Could not load noteskin: {}", err);
+                return;
+            }
+        };
+        let rgba_representation = noteskin_image.to_rgba8();
+        let image_bytes = rgba_representation.into_raw();
+
+        // Definition for the default noteskin.
+        self.noteskin.replace(noteskin::Definition::new(
+            64,
+            64,
+            [
+                Color::Blue,
+                Color::Orange,
+                Color::Red,
+                Color::Cyan,
+                Color::Pink,
+                Color::White,
+                Color::Green,
+                Color::Purple,
+                Color::Yellow,
+                Color::Receptor,
+            ]
+            .to_vec(),
+            [0, 90, 180, 270].to_vec(),
+            noteskin_image,
+            3,
+        ));
+    }
+
     fn update(&mut self) {
         self.head.tick();
         if let Some(stage) = &mut self.play_stage {
@@ -100,7 +156,7 @@ impl Game {
 }
 
 struct World {
-    active_chart: CompiledChart,
+    active_chart: Option<CompiledChart>,
     dt: Duration,
 }
 
@@ -112,6 +168,10 @@ cfg_if::cfg_if! {
     } else {
         fn init_log() { simple_logger::init().unwrap(); }
     }
+}
+
+fn get_noteskin() -> &'static [u8] {
+    include_bytes!("../../../data/default_noteskin.png")
 }
 
 fn main() {
@@ -180,52 +240,9 @@ async fn run() {
             .expect("Pixels error")
     };
 
-    let head = head::Head::new();
-    let noteskin_bytes = head.get_noteskin();
-    let noteskin_image = match image::load_from_memory(noteskin_bytes) {
-        Ok(image) => image,
-        Err(err) => {
-            error!("Could not load noteskin: {}", err);
-            return;
-        }
-    };
-    let rgba_representation = noteskin_image.to_rgba8();
-    let image_bytes = rgba_representation.into_raw();
-
-    // Definition for the default noteskin.
-    let noteskin = noteskin::Definition::new(
-        64,
-        64,
-        [
-            Color::Blue,
-            Color::Orange,
-            Color::Red,
-            Color::Cyan,
-            Color::Pink,
-            Color::White,
-            Color::Green,
-            Color::Purple,
-            Color::Yellow,
-            Color::Receptor,
-        ]
-        .to_vec(),
-        [0, 90, 180, 270].to_vec(),
-        noteskin_image,
-        3,
-    );
-
-    let chart = Chart::default();
-    let compiled_chart: CompiledChart = chart.compile();
-
-    let mut game = Game {
-        pixels,
-        play_stage: None,
-        head,
-        input,
-        noteskin: Some(noteskin),
-    };
-
-    game.play_stage.replace(World::new(compiled_chart));
+    let mut game = Game::new(None, head::Head::new(), pixels, None, input);
+    game.init();
+    game.load(3348);
 
     game_loop(
         event_loop,
@@ -303,7 +320,7 @@ async fn run() {
 
 impl World {
     /// Create a new `World` instance that can draw a moving box.
-    fn new(chart: CompiledChart) -> Self {
+    fn new(chart: Option<CompiledChart>) -> Self {
         Self {
             active_chart: chart,
             dt: Duration::default(),
@@ -329,21 +346,23 @@ impl World {
         clear(frame);
 
         if let Some(noteskin) = noteskin {
-            let some_notes = &self.active_chart.notes[7..15];
+            if let Some(chart) = &self.active_chart {
+                let some_notes = &chart.notes[7..15];
 
-            // Filter out notes that aren't on screen.
-            // Render all notes.
-            let mut i = 0;
-            for note in some_notes {
-                blit(
-                    frame,
-                    &Point { x: 64 * i, y: 0 },
-                    &noteskin.get_note(note.color),
-                );
-                i += 1;
+                // Filter out notes that aren't on screen.
+                // Render all notes.
+                let mut i = 0;
+                for note in some_notes {
+                    blit(
+                        frame,
+                        &Point { x: 64 * i, y: 0 },
+                        &noteskin.get_note(note.color),
+                    );
+                    i += 1;
+                }
             }
         }
-        
+
         rect(frame, 150, 100, 32, 32);
     }
 }
@@ -359,9 +378,9 @@ fn rect(screen: &mut [u8], x: u32, y: u32, width: u32, height: u32) {
         for column in x..(x + width) {
             let i: usize = ((row * WIDTH + column) * 4).try_into().unwrap();
             screen[i] = 0x5e;
-            screen[i+1] = 0x48;
-            screen[i+2] = 0xe8;
-            screen[i+3] = 0xff;
+            screen[i + 1] = 0x48;
+            screen[i + 2] = 0xe8;
+            screen[i + 3] = 0xff;
         }
     }
 }

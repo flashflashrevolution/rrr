@@ -12,6 +12,15 @@ pub struct CompiledChart {
     pub notes: Vec<CompiledNote>,
 }
 
+impl CompiledChart {
+    #[must_use]
+    pub fn new(notes: &[CompiledNote]) -> Self {
+        Self {
+            notes: notes.to_vec(),
+        }
+    }
+}
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, PartialEq, PartialOrd, Debug, Default)]
 /// A space/memory efficient representation of a chart.
