@@ -2225,7 +2225,7 @@ dependencies = [
 [[package]]
 name = "swf"
 version = "0.1.2"
-source = "git+https://github.com/ruffle-rs/ruffle.git?branch=master#6f142c21faca439b6cb1ac5c2db183974adad0b8"
+source = "git+https://github.com/ruffle-rs/ruffle.git?branch=master#7336e7cbf73dd165c121034a44db25b740b03094"
 dependencies = [
  "bitflags",
  "bitstream-io",
