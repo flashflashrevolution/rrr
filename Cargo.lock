@@ -1915,6 +1915,7 @@ name = "rrr"
 version = "0.0.1"
 dependencies = [
  "anyhow",
+ "bytes",
  "cpal",
  "js-sys",
  "log",

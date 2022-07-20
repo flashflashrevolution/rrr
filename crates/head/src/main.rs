@@ -196,8 +196,8 @@ async fn run() {
         WindowBuilder::new()
             .with_title("Rust Rust Revolution")
             .with_inner_size(size)
-            .with_min_inner_size(size)
-            .with_max_inner_size(size)
+            .with_resizable(false)
+            .with_transparent(true)
             .build(&event_loop)
             .expect("WindowBuilder error")
     };
