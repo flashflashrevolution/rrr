@@ -72,5 +72,5 @@ async fn main() {
     let mut buffer = Vec::new();
     let debug = reader.read_to_end(&mut buffer).await.unwrap();
 
-    println!("size: {:?}", debug);
+    log::info!("size: {:?}", debug);
 }

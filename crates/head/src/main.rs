@@ -47,14 +47,15 @@ mod noteskin;
 mod sprites;
 mod visibility;
 
-use crate::geo::*;
-use crate::sprites::*;
-use game_loop::{game_loop, Time, TimeTrait};
+use crate::geo::Point;
+use crate::sprites::blit;
+use anyhow::{Error, Result};
+use game_loop::game_loop;
 use head::Head;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
 use rrr::Color;
-use rrr::{Chart, CompiledChart};
+use rrr::CompiledChart;
 use std::time::Duration;
 use winit::{
     dpi::LogicalSize,
@@ -68,7 +69,6 @@ pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000_u64.div_eucli
 
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 768;
-const BOX_SIZE: i16 = 64;
 
 trait DeltaTime {
     fn update(&mut self) -> usize;
@@ -179,40 +179,63 @@ fn main() {
 
     #[cfg(target_arch = "wasm32")]
     {
+        use wasm_bindgen::UnwrapThrowExt;
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-        wasm_bindgen_futures::spawn_local(run());
+        wasm_bindgen_futures::spawn_local(async {
+            run().await.unwrap_throw();
+        });
     }
 
     #[cfg(not(target_arch = "wasm32"))]
     {
-        pollster::block_on(run());
+        use futures::executor;
+        use std::env;
+
+        match executor::block_on(run()) {
+            Ok(_) => {}
+            Err(err) => {
+                error!(
+                    "{:?} exited with bad form: {}",
+                    env::current_exe().ok(),
+                    err
+                );
+            }
+        }
     }
 }
 
-async fn run() {
-    let event_loop = EventLoop::new();
-    let window = {
+fn build_window(
+    event_loop: &EventLoop<()>,
+) -> Result<winit::window::Window, winit::error::OsError> {
+    {
         let size = LogicalSize::new(WIDTH, HEIGHT);
         WindowBuilder::new()
             .with_title("Rust Rust Revolution")
             .with_inner_size(size)
             .with_resizable(false)
             .with_transparent(true)
-            .build(&event_loop)
-            .expect("WindowBuilder error")
-    };
+            .build(event_loop)
+    }
+}
+
+async fn run() -> Result<(), Error> {
+    let event_loop = EventLoop::new();
+    let window = build_window(&event_loop)?;
 
     #[cfg(target_arch = "wasm32")]
     {
-        use wasm_bindgen::JsCast;
         use winit::platform::web::WindowExtWebSys;
 
         // Initialize winit window with current dimensions of browser client
         window.set_inner_size(LogicalSize::new(WIDTH, HEIGHT));
 
-        let client_window = web_sys::window().unwrap();
-
-        visibility::register_on_visibility_change_listener(&client_window);
+        if let Some(client_window) = web_sys::window() {
+            visibility::register_on_visibility_change_listener(&client_window);
+        } else {
+            return Err(anyhow::anyhow!(
+                "Could not get window from web_sys".to_string()
+            ));
+        }
 
         // Attach winit canvas to body element
         web_sys::window()
@@ -226,24 +249,28 @@ async fn run() {
                 canvas_div
                     .append_child(&web_sys::Element::from(window.canvas()))
                     .ok()
-            })
-            .expect("couldn't append canvas to document body");
+            });
     }
 
-    let input = WinitInputHelper::new();
+    run_game_loop(window, event_loop).await
+}
 
-    let pixels = {
-        let window_size = window.inner_size();
-        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-        Pixels::new_async(WIDTH, HEIGHT, surface_texture)
-            .await
-            .expect("Pixels error")
+async fn run_game_loop(
+    window: winit::window::Window,
+    event_loop: EventLoop<()>,
+) -> Result<(), Error> {
+    let window_size = window.inner_size();
+    let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+    let pixels = if let Ok(pixels) = Pixels::new_async(WIDTH, HEIGHT, surface_texture).await {
+        pixels
+    } else {
+        Err(anyhow::anyhow!("Could not initialize Pixels renderer."))?
     };
 
+    let input = WinitInputHelper::new();
     let mut game = Game::new(None, head::Head::new(), pixels, None, input);
     game.init();
     game.load(3348);
-
     game_loop(
         event_loop,
         window,
@@ -254,22 +281,27 @@ async fn run() {
             g.game.update();
         },
         |g| {
-            if let Some(stage) = &mut g.game.play_stage {
-                stage.draw(g.game.pixels.get_frame(), &g.game.noteskin);
-                if let Err(e) = g.game.pixels.render() {
-                    error!("pixels.render() failed: {}", e);
-                    g.exit();
-                }
+            match &mut g.game.play_stage {
+                Some(stage) => {
+                    stage.draw(g.game.pixels.get_frame(), &g.game.noteskin);
+                    if let Err(e) = g.game.pixels.render() {
+                        error!("pixels.render() failed: {}", e);
+                        g.exit();
+                    }
 
-                #[cfg(not(target_arch = "wasm32"))]
-                {
-                    // Sleep the main thread to limit drawing to the fixed time step.
-                    // See: https://github.com/parasyte/pixels/issues/174
-                    let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
-                    if dt > 0.0 {
-                        std::thread::sleep(Duration::from_secs_f64(dt));
+                    #[cfg(not(target_arch = "wasm32"))]
+                    {
+                        use game_loop::{Time, TimeTrait};
+
+                        // Sleep the main thread to limit drawing to the fixed time step.
+                        // See: https://github.com/parasyte/pixels/issues/174
+                        let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
+                        if dt > 0.0 {
+                            std::thread::sleep(Duration::from_secs_f64(dt));
+                        }
                     }
                 }
+                None => log::warn!("No play stage"),
             }
         },
         |g, event| {

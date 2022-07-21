@@ -16,9 +16,6 @@ rust-version = "1.64.0"
 [features]
 default = ["develop"]
 develop = [
-    "dep:egui",
-    "dep:egui_wgpu_backend",
-    "dep:egui-winit",
     "console_log",
     "simple_logger",
     "log/max_level_info",
@@ -29,11 +26,6 @@ release = ["log/release_max_level_off"]
 [dependencies]
 anyhow = "1.0.58"
 cfg-if = "1.0.0"
-egui = { version = "0.18.1", optional = true }
-egui_wgpu_backend = { version = "0.17.0", optional = true }
-egui-winit = { version = "0.18.0", default-features = false, features = [
-    "links",
-], optional = true }
 game-loop = { version = "0.9.1", features = ["window"] }
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 log = { version = "0.4.17" }
@@ -44,7 +36,7 @@ winit_input_helper = "0.12.0"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 simple_logger = { version = "2.2.0", optional = true }
-pollster = "0.2.5"
+futures = "0.3.21"
 wgpu = "0.12.0"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
