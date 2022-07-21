@@ -45,9 +45,6 @@ where
             Direction::Up | Direction::Down => pixels.view(0, row as u32, drawable_width as u32, 1),
         };
 
-        // let raw_image = DynamicImage::from(pixel_row.to_image());
-        // let rot_180 = raw_image.rotate180();
-        // let itr2 = rot_180.pixels();
         let pixel_iter = pixel_row.pixels();
         match *dir {
             Direction::Left => {
