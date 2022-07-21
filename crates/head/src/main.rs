@@ -356,6 +356,7 @@ impl World {
                     blit(
                         frame,
                         &Point { x: 64 * i, y: 0 },
+                        &note.direction,
                         &noteskin.get_note(note.color),
                     );
                     i += 1;
