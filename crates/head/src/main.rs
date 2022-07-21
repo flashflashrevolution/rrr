@@ -42,20 +42,19 @@
 #![feature(array_chunks)]
 
 mod geo;
-mod head;
 mod noteskin;
 mod sprites;
 mod visibility;
 
 use crate::geo::Point;
-use crate::sprites::blit;
 use anyhow::{Error, Result};
 use game_loop::game_loop;
-use head::Head;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
-use rrr::Color;
-use rrr::CompiledChart;
+use rrr::{
+    download_chart, play::Play, turntable, Color, Record, SwfParser, Turntable, TurntableState,
+};
+use sprites::blit;
 use std::time::Duration;
 use winit::{
     dpi::LogicalSize,
@@ -84,33 +83,27 @@ trait DeltaTime {
 
 struct Game {
     noteskin: Option<noteskin::Definition>,
-    head: Head,
     pixels: Pixels,
-    play_stage: Option<World>,
+    play_stage: Option<Play<rrr::play::Active>>,
     input: WinitInputHelper,
 }
 
 impl Game {
     fn new(
         noteskin: Option<noteskin::Definition>,
-        head: Head,
         pixels: Pixels,
-        play_stage: Option<World>,
+        play_stage: Option<Play<rrr::play::Active>>,
         input: WinitInputHelper,
     ) -> Self {
         Self {
             noteskin,
-            head,
             pixels,
             play_stage,
             input,
         }
     }
 
-    pub fn load(&mut self, chart_id: usize) {
-        self.head.load_chart(chart_id);
-        self.play_stage = Some(World::new(self.head.chart()));
-    }
+    pub fn load(&mut self, chart_id: usize) {}
 
     pub fn init(&mut self) {
         let noteskin_bytes = get_noteskin();
@@ -148,16 +141,39 @@ impl Game {
     }
 
     fn update(&mut self) {
-        self.head.tick();
         if let Some(stage) = &mut self.play_stage {
-            stage.update();
+            stage.tick(Duration::ZERO);
         }
     }
-}
 
-struct World {
-    active_chart: Option<CompiledChart>,
-    dt: Duration,
+    /// Draw the `World` state to the frame buffer.
+    ///
+    /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
+    fn draw(&mut self) {
+        let frame = self.pixels.get_frame();
+        clear(frame);
+
+        if let Some(play) = &self.play_stage {
+            if let Some(noteskin) = &self.noteskin {
+                let view = play.view();
+                // Filter out notes that aren't on screen.
+                // Render all notes.
+                let x_limit = WIDTH as usize / 64 as usize;
+                for (i, note) in view.iter().enumerate() {
+                    let x = (i % x_limit) * 64;
+                    let y = (i / x_limit) * 64;
+                    blit(
+                        frame,
+                        &Point { x, y },
+                        &note.direction,
+                        &noteskin.get_note(note.color),
+                    );
+                }
+            }
+        }
+
+        rect(frame, 150, 100, 32, 32);
+    }
 }
 
 cfg_if::cfg_if! {
@@ -268,7 +284,7 @@ async fn run_game_loop(
     };
 
     let input = WinitInputHelper::new();
-    let mut game = Game::new(None, head::Head::new(), pixels, None, input);
+    let mut game = Game::new(None, pixels, None, input);
     game.init();
     game.load(3348);
     game_loop(
@@ -281,27 +297,22 @@ async fn run_game_loop(
             g.game.update();
         },
         |g| {
-            match &mut g.game.play_stage {
-                Some(stage) => {
-                    stage.draw(g.game.pixels.get_frame(), &g.game.noteskin);
-                    if let Err(e) = g.game.pixels.render() {
-                        error!("pixels.render() failed: {}", e);
-                        g.exit();
-                    }
+            g.game.draw();
+            if let Err(e) = g.game.pixels.render() {
+                error!("pixels.render() failed: {}", e);
+                g.exit();
+            }
 
-                    #[cfg(not(target_arch = "wasm32"))]
-                    {
-                        use game_loop::{Time, TimeTrait};
+            #[cfg(not(target_arch = "wasm32"))]
+            {
+                use game_loop::{Time, TimeTrait};
 
-                        // Sleep the main thread to limit drawing to the fixed time step.
-                        // See: https://github.com/parasyte/pixels/issues/174
-                        let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
-                        if dt > 0.0 {
-                            std::thread::sleep(Duration::from_secs_f64(dt));
-                        }
-                    }
+                // Sleep the main thread to limit drawing to the fixed time step.
+                // See: https://github.com/parasyte/pixels/issues/174
+                let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
+                if dt > 0.0 {
+                    std::thread::sleep(Duration::from_secs_f64(dt));
                 }
-                None => log::warn!("No play stage"),
             }
         },
         |g, event| {
@@ -338,7 +349,19 @@ async fn run_game_loop(
                 }
 
                 if g.game.input.key_pressed(VirtualKeyCode::Space) {
-                    g.game.head.play_song().ok();
+                    if let Some(raw_chart) = download_chart(3348) {
+                        let parser_compressed = SwfParser::new(*raw_chart);
+                        let tape = if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                            let parsing = ready_to_parse.parse();
+                            // TODO: Make this async, remove intermediate state and just await it.
+                            let parsed = parsing.tick();
+                            Some(parsed.produce_tape())
+                        } else {
+                            None
+                        };
+
+                        g.game.play_stage = Some(Play::new(Turntable::load(tape.unwrap())).start());
+                    }
                 }
 
                 // Resize the window
@@ -348,56 +371,6 @@ async fn run_game_loop(
             }
         },
     );
-}
-
-impl World {
-    /// Create a new `World` instance that can draw a moving box.
-    fn new(chart: Option<CompiledChart>) -> Self {
-        Self {
-            active_chart: chart,
-            dt: Duration::default(),
-        }
-    }
-
-    /// Update the `World` internal state; bounce the box around the screen.
-    fn update(&mut self) {
-        self.dt += TIME_STEP;
-
-        // TODO: Spawn arrows and begin to move them up the field at delta rate.
-        // - Get chart.
-        // - Spawn arrows in order based on time-to-target offset. (See how we do this in R^3).
-        // - Destroy arrows when they hit the top of the screen.
-        // - Destroy arrows when they are on a recepor when the player activates it.
-    }
-
-    /// Draw the `World` state to the frame buffer.
-    ///
-    /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
-    fn draw(&self, frame: &mut [u8], noteskin: &Option<noteskin::Definition>) {
-        // Draw shit
-        clear(frame);
-
-        if let Some(noteskin) = noteskin {
-            if let Some(chart) = &self.active_chart {
-                let some_notes = &chart.notes[7..15];
-
-                // Filter out notes that aren't on screen.
-                // Render all notes.
-                let mut i = 0;
-                for note in some_notes {
-                    blit(
-                        frame,
-                        &Point { x: 64 * i, y: 0 },
-                        &note.direction,
-                        &noteskin.get_note(note.color),
-                    );
-                    i += 1;
-                }
-            }
-        }
-
-        rect(frame, 150, 100, 32, 32);
-    }
 }
 
 fn clear(screen: &mut [u8]) {

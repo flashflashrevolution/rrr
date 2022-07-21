@@ -1,6 +1,6 @@
-use crate::{chart::beat, Color, CompiledNote, Direction, Note};
+use crate::{Color, CompiledChart, CompiledNote, Direction, Record};
 use anyhow::bail;
-use std::{collections::HashMap, ops::ControlFlow, time::Duration};
+use std::{ops::ControlFlow, time::Duration};
 use swf::{
     avm1::{
         self,
@@ -26,51 +26,82 @@ enum ChartParseError {
     Timestamp,
 }
 
-pub struct SwfParser {
-    mp3: Option<Vec<u8>>,
-    chart: Option<Vec<CompiledNote>>,
+pub struct SwfParser<S: SwfParserState> {
+    state: S,
+}
+
+pub struct Compressed {
+    raw_swf: Vec<u8>,
+}
+pub struct ReadyToParse {
     stream: SwfBuf,
 }
 
-impl SwfParser {
+pub struct Parsing {
+    stream: SwfBuf,
+    mp3: Option<Vec<u8>>,
+    chart: Option<Vec<CompiledNote>>,
+}
+pub struct Parsed {
+    tape: Record,
+}
+
+pub trait SwfParserState {}
+impl SwfParserState for Compressed {}
+impl SwfParserState for ReadyToParse {}
+impl SwfParserState for Parsing {}
+impl SwfParserState for Parsed {}
+
+impl SwfParser<Compressed> {
+    #[must_use]
+    pub fn new(swf_file: Vec<u8>) -> Self {
+        Self {
+            state: Compressed { raw_swf: swf_file },
+        }
+    }
+
     /// # Errors
     ///
     /// Will return `swf::error::Error` if `swf_file` is not a valid swf binary slice.
-    pub fn new(swf_file: &[u8]) -> Result<Self, swf::error::Error> {
-        let stream = swf::decompress_swf(swf_file)?;
-        Ok(Self {
-            stream,
-            mp3: None,
-            chart: None,
+    pub fn decompress(self) -> anyhow::Result<SwfParser<ReadyToParse>, swf::error::Error> {
+        let stream = swf::decompress_swf(self.state.raw_swf.as_slice())?;
+        Ok(SwfParser {
+            state: ReadyToParse { stream },
         })
     }
+}
 
+impl SwfParser<ReadyToParse> {
     #[must_use]
-    pub fn is_parsed(&self) -> bool {
-        self.mp3.is_some() && self.chart.is_some()
+    pub fn parse(self) -> SwfParser<Parsing> {
+        SwfParser {
+            state: Parsing {
+                stream: self.state.stream,
+                mp3: None,
+                chart: None,
+            },
+        }
     }
+}
 
+// TODO: Make this parse function async.
+impl SwfParser<Parsing> {
     #[must_use]
-    pub fn get_mp3(&self) -> Option<Vec<u8>> {
-        self.mp3.clone()
-    }
-
-    #[must_use]
-    pub fn get_chart(&self) -> Option<Vec<CompiledNote>> {
-        self.chart.clone()
-    }
-
-    pub fn parse(&mut self) {
+    pub fn tick(self) -> SwfParser<Parsed> {
         let mut mp3_data: Vec<u8> = Vec::new();
-        let mut swf_reader = Reader::new(&self.stream.data[..], self.stream.header.version());
+        let mut chart_data: Vec<CompiledNote> = Vec::new();
+        let mut swf_reader = Reader::new(
+            &self.state.stream.data[..],
+            self.state.stream.header.version(),
+        );
         while let Ok(tag) = swf_reader.read_tag() {
             match tag {
                 swf::Tag::DefineSound(_) => log::info!("DefineSound"),
                 swf::Tag::DoAction(action) => {
-                    let res = SwfParser::parse_action(&action, swf_reader.version());
+                    let res = SwfParser::parse_action(action, swf_reader.version());
                     match res {
                         Ok(chart) => {
-                            self.chart.replace(chart);
+                            chart_data = chart;
                         }
                         Err(error) => {
                             log::error!("Error parsing action: {}", error);
@@ -85,14 +116,23 @@ impl SwfParser {
                 _ => {}
             }
         }
-        self.mp3.replace(mp3_data);
+
+        // TODO: State data for when parsing is tickable.
+        //self.extra.chart.replace(chart_data);
+        //self.extra.mp3.replace(mp3_data);
+
+        SwfParser {
+            state: Parsed {
+                tape: Record::new(mp3_data, CompiledChart { notes: chart_data }),
+            },
+        }
     }
 
     fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<CompiledNote>> {
         let mut action_reader = avm1::read::Reader::new(action_raw, version);
         let mut is_chart_data = false;
-        let mut constant_pool: Option<ConstantPool> = None;
-        let mut value_stack: Vec<Value> = Vec::with_capacity(4);
+        let mut constant_pool: Option<ConstantPool<'_>> = None;
+        let mut value_stack: Vec<Value<'_>> = Vec::with_capacity(4);
         let mut beat_box: Vec<CompiledNote> = Vec::new();
 
         let mut done = false;
@@ -163,7 +203,14 @@ impl SwfParser {
     }
 }
 
-fn parse_timestamp(value_stack: &mut Vec<Value>) -> anyhow::Result<Duration> {
+impl SwfParser<Parsed> {
+    #[must_use]
+    pub fn produce_tape(self) -> Record {
+        self.state.tape
+    }
+}
+
+fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<Duration> {
     if let Some(Value::Int(ms)) = value_stack.pop() {
         Ok(Duration::from_millis(ms.try_into().unwrap()))
     } else {
@@ -172,8 +219,8 @@ fn parse_timestamp(value_stack: &mut Vec<Value>) -> anyhow::Result<Duration> {
 }
 
 fn parse_color(
-    value_stack: &mut Vec<Value>,
-    constant_pool: &Option<ConstantPool>,
+    value_stack: &mut Vec<Value<'_>>,
+    constant_pool: &Option<ConstantPool<'_>>,
 ) -> anyhow::Result<Color> {
     if let Some(Value::ConstantPool(color)) = value_stack.pop() {
         match constant_pool.clone().unwrap().strings[color as usize]
@@ -197,8 +244,8 @@ fn parse_color(
 }
 
 fn parse_direction(
-    value_stack: &mut Vec<Value>,
-    constant_pool: &Option<ConstantPool>,
+    value_stack: &mut Vec<Value<'_>>,
+    constant_pool: &Option<ConstantPool<'_>>,
 ) -> anyhow::Result<Direction> {
     if let Some(Value::ConstantPool(dir)) = value_stack.pop() {
         match constant_pool.clone().unwrap().strings[dir as usize]
@@ -217,7 +264,7 @@ fn parse_direction(
     }
 }
 
-fn parse_beat_position(value_stack: &mut Vec<Value>) -> anyhow::Result<i32> {
+fn parse_beat_position(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i32> {
     if let Some(Value::Int(ms)) = value_stack.pop() {
         Ok(ms)
     } else {

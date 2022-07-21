@@ -24,25 +24,6 @@ impl Head {
         Ok(())
     }
 
-    pub(crate) fn load_chart(&mut self, chart_id: usize) {
-        if let Some(raw_chart) = rrr::download_chart(chart_id) {
-            self.parser = if let Ok(parser) = SwfParser::new(&raw_chart[..]) {
-                Some(parser)
-            } else {
-                None
-            };
-
-            if let Some(parser) = &mut self.parser {
-                parser.parse();
-                self.mp3 = parser.get_mp3();
-                self.chart = parser
-                    .get_chart()
-                    .as_ref()
-                    .map(|notes| CompiledChart::new(notes));
-            };
-        }
-    }
-
     #[allow(dead_code)]
     pub(crate) fn stop(&mut self) {
         self.audio_player.as_mut().map(AudioPlayer::stop);
@@ -51,9 +32,5 @@ impl Head {
 
     pub(crate) fn tick(&mut self) {
         self.audio_player.as_mut().map(AudioPlayer::tick);
-    }
-
-    pub(crate) fn chart(&self) -> Option<CompiledChart> {
-        self.chart.clone()
     }
 }

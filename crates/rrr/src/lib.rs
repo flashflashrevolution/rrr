@@ -40,13 +40,15 @@
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
 
-mod audio;
-mod chart;
-mod download_chart;
-mod fetch;
-mod settings;
-mod tape;
-mod tape_deck;
+pub mod audio;
+pub mod chart;
+pub mod download_chart;
+pub mod fetch;
+pub mod loaders;
+pub mod play;
+pub mod settings;
+pub mod tape;
+pub mod turntable;
 
 pub use audio::*;
 pub use chart::*;
@@ -54,7 +56,7 @@ pub use download_chart::*;
 pub use settings::*;
 pub use strum;
 pub use tape::*;
-pub use tape_deck::*;
+pub use turntable::*;
 
 #[derive(Debug, Default)]
 pub struct RRR {
