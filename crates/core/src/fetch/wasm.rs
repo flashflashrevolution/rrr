@@ -45,7 +45,6 @@ mod tests {
 
     #[wasm_bindgen_test(async)]
     async fn test_fetch() {
-
         let result = fetch().await;
         match result {
             Ok(Some(meta)) => {
