@@ -122,7 +122,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
 
       - name: Clippy
-        run: cargo clippy --workspace -- -D warnings
+        run: cargo clippy --workspace
 
   docs:
     name: Deploy docs
