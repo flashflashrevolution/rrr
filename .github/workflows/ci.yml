@@ -80,7 +80,7 @@ jobs:
           profile: minimal
           toolchain: nightly
           target: wasm32-unknown-unknown
-          components: llvm-tools-preview
+          components: llvm-tools-preview, clippy
 
       - name: ⚡ Cache
         uses: Swatinem/rust-cache@v2.0.0
