@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Active",""],["Concluded",""],["NoteAction",""],["Play",""],["PlayStats",""],["Ready",""]],"trait":[["Difference",""],["PlayState",""]]};

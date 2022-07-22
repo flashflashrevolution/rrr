@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Point","A tiny position vector."],["Rect","A tiny rectangle based on two absolute `Point`s."]]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["blit","Blit a drawable to the pixel buffer."],["copy_pixels",""]],"trait":[["Drawable","Drawables can be blitted to the pixel buffer and animated."]]};
