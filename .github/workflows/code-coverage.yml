@@ -42,13 +42,15 @@ jobs:
       - name: Extract Test Data
         run: 7z x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
 
-      - name: Generate coverage report
-        uses: Swatinem/fucov@v1.0.0
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@cargo-llvm-cov
+        
+      - name: Generate code coverage
+        run: cargo llvm-cov --all-features --workspace --lcov --output-path lcov.info
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v3.1.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: coverage
+          files: lcov.info
           fail_ci_if_error: true
-          verbose: true
