@@ -14,7 +14,7 @@
 [docs]: https://img.shields.io/badge/docs-book-blue?logo=gitbook
 [license]: https://img.shields.io/github/license/flashflashrevolution/rrr?color=blue
 [license file]: LICENSE
-[mdbook]: https://flashflashrevolution.github.io/rrr/book
+[mdbook]: https://rrr.flashflashrevolution.com/book/
 
 ---
 
