@@ -62,7 +62,7 @@ jobs:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     continue-on-error: true
-    needs: [actionlint]
+    needs: [rustfmt]
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2
@@ -100,36 +100,7 @@ jobs:
         with:
           command: test
           args: --workspace
-
-  clippy:
-    name: Clippy check
-    runs-on: ubuntu-latest
-    needs: [actionlint]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3.0.2
-        with:
-          fetch-depth: 1
-          lfs: true
-
-      - name: Install Dependencies
-        run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1.0.7
-        with:
-          profile: minimal
-          toolchain: nightly
-          target: wasm32-unknown-unknown
-          components: llvm-tools-preview, clippy
-
-      - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v2.0.0
-        if: ${{ !env.ACT }}
-
-      - name: Extract Test Data
-        run: 7z x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
-
+          
       - name: Clippy
         run: cargo clippy --workspace
 
@@ -137,7 +108,7 @@ jobs:
     name: Deploy docs
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [rustfmt, test, clippy]
+    needs: [test]
     steps:
       - name: Checkout
         uses: actions/checkout@v3.0.2
