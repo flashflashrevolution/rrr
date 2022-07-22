@@ -16,7 +16,7 @@ on:
 env:
   CARGO_TERM_VERBOSE: true
   RUST_BACKTRACE: 1
-  RUSTFLAGS: #-Dwarnings
+  RUSTFLAGS: "" #-Dwarnings
 
 jobs:
   rustfmt:
@@ -42,7 +42,7 @@ jobs:
   test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest]
 
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -69,6 +69,9 @@ jobs:
       - name: ⚡ Cache
         uses: Swatinem/rust-cache@v2.0.0
         if: ${{ !env.ACT }}
+
+      - name: Extract Test Data
+        run: 7z x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
 
       - name: Build
         uses: actions-rs/cargo@v1.0.3

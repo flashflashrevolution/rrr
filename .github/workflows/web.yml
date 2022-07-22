@@ -30,17 +30,10 @@ jobs:
           toolchain: nightly
           target: wasm32-unknown-unknown
           components: llvm-tools-preview
-      
-      - name: Install Rust toolchain (native)
-        if: "steps.cache-wasm-bindgen-cli.outputs.cache-hit != 'true'"
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          profile: minimal
-          
+
       - uses: jetli/wasm-bindgen-action@v0.1.0
         with:
-          version: 'latest'
+          version: "latest"
 
       - name: ⚡ Cache
         uses: Swatinem/rust-cache@v2.0.0
@@ -54,7 +47,7 @@ jobs:
         with:
           command: build
           args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target
-          
+
       - name: Generate the .wasm for web deploy.
         run: wasm-bindgen --no-typescript --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
 
