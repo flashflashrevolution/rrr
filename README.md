@@ -3,7 +3,6 @@
 [![Build Status]][actions]
 [![Docs]][mdbook]
 [![Chat]][discord]
-[![License]][license file]
 [![rustc](https://img.shields.io/badge/rustc-1.64-lightgray.svg?style=round)](https://www.rust-lang.org/)
 [![codecov](https://codecov.io/gh/flashflashrevolution/rrr/branch/main/graph/badge.svg?token=2V0ZGQ04IK)](https://codecov.io/gh/flashflashrevolution/rrr)
 
