@@ -51,8 +51,9 @@ use anyhow::{Error, Result};
 use game_loop::game_loop;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
-use rrr::{
-    download_chart, play::Play, turntable, Color, Record, SwfParser, Turntable, TurntableState,
+use rrr_core::{
+    download_chart, note::Color, play, play::Play, turntable, Record, SwfParser, Turntable,
+    TurntableState,
 };
 use sprites::blit;
 use std::time::Duration;
@@ -84,7 +85,7 @@ trait DeltaTime {
 struct Game {
     noteskin: Option<noteskin::Definition>,
     pixels: Pixels,
-    play_stage: Option<Play<rrr::play::Active>>,
+    play_stage: Option<Play<play::Active>>,
     input: WinitInputHelper,
 }
 
@@ -92,7 +93,7 @@ impl Game {
     fn new(
         noteskin: Option<noteskin::Definition>,
         pixels: Pixels,
-        play_stage: Option<Play<rrr::play::Active>>,
+        play_stage: Option<Play<play::Active>>,
         input: WinitInputHelper,
     ) -> Self {
         Self {
@@ -351,7 +352,7 @@ async fn run_game_loop(
                 if g.game.input.key_pressed(VirtualKeyCode::Space) {
                     if let Some(raw_chart) = download_chart(3348) {
                         let parser_compressed = SwfParser::new(*raw_chart);
-                        let tape = if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                        let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
                             let parsing = ready_to_parse.parse();
                             // TODO: Make this async, remove intermediate state and just await it.
                             let parsed = parsing.tick();
@@ -360,7 +361,8 @@ async fn run_game_loop(
                             None
                         };
 
-                        g.game.play_stage = Some(Play::new(Turntable::load(tape.unwrap())).start());
+                        g.game.play_stage =
+                            Some(Play::new(Turntable::load(record.unwrap())).start());
                     }
                 }
 

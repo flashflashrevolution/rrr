@@ -1,7 +1,7 @@
 // Ingest a spritesheet of noteskins, with metadata describing the notes.
 
 use image::{imageops, DynamicImage, GenericImageView, Pixels, SubImage};
-use rrr::Color;
+use rrr_core::note::Color;
 
 use crate::sprites::Drawable;
 
@@ -105,7 +105,7 @@ mod tests {
         imageops, ColorType, DynamicImage, GenericImage, GenericImageView, ImageBuffer,
         ImageFormat, RgbImage,
     };
-    use rrr::strum::{EnumIter, IntoEnumIterator};
+    use rrr_core::strum::{EnumIter, IntoEnumIterator};
 
     use super::*;
 

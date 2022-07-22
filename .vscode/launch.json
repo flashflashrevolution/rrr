@@ -7,16 +7,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in library 'rrr'",
+            "name": "Debug unit tests in library 'rrr-core'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
                     "--lib",
-                    "--package=rrr"
+                    "--package=rrr-core"
                 ],
                 "filter": {
-                    "name": "rrr",
+                    "name": "rrr-core",
                     "kind": "lib"
                 }
             },
@@ -26,15 +26,15 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'head'",
+            "name": "Debug executable 'rrr-head'",
             "cargo": {
                 "args": [
                     "build",
-                    "--bin=head",
-                    "--package=head"
+                    "--bin=rrr-head",
+                    "--package=rrr-head"
                 ],
                 "filter": {
-                    "name": "head",
+                    "name": "rrr-head",
                     "kind": "bin"
                 }
             },
@@ -44,36 +44,17 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'head'",
+            "name": "Debug unit tests in executable 'rrr-head'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=head",
-                    "--package=head"
+                    "--bin=rrr-head",
+                    "--package=rrr-head"
                 ],
                 "filter": {
-                    "name": "head",
+                    "name": "rrr-head",
                     "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in library 'rrr-playlist'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--lib",
-                    "--package=rrr-playlist"
-                ],
-                "filter": {
-                    "name": "rrr-playlist",
-                    "kind": "lib"
                 }
             },
             "args": [],

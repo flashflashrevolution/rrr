@@ -3,7 +3,10 @@ use std::time::Duration;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use crate::{BpmChange, Color, CompiledNote, Direction, NoteRow};
+use crate::{
+    note::{Color, CompiledNote, Direction, NoteRow},
+    BpmChange,
+};
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
@@ -83,7 +86,7 @@ impl Beat {
 
 #[cfg(test)]
 mod tests {
-    use crate::{Note, NoteRow};
+    use crate::note::{Note, NoteRow};
 
     use super::*;
 

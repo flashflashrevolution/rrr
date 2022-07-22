@@ -89,7 +89,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package head --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-dir web/bin --target web target/wasm32-unknown-unknown/release/head.wasm"
+                "cargo build --package rrr-head --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/debug/rrr-head.wasm"
             ],
             "problemMatcher": [
                 {

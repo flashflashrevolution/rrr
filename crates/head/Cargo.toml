@@ -1,6 +1,6 @@
 [package]
-name = "head"
-version = "0.0.1"
+name = "rrr-head"
+version = "0.1.0"
 authors = ["Zageron <hello@adambryant.ca>"]
 description = "Macroquad interface for the RRR game."
 homepage = "https://github.com/flashflashrevolution/rrr"
@@ -30,7 +30,7 @@ game-loop = { version = "0.9.1", features = ["window"] }
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/JMS55/pixels.git", branch = "main" }
-rrr = { path = "../rrr" }
+rrr-core = { path = "../core" }
 winit = "0.26.1"
 winit_input_helper = "0.12.0"
 

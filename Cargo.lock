@@ -837,29 +837,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
-name = "head"
-version = "0.0.1"
-dependencies = [
- "anyhow",
- "cfg-if 1.0.0",
- "console_error_panic_hook",
- "console_log",
- "futures",
- "game-loop",
- "image",
- "log",
- "pixels",
- "rrr",
- "simple_logger",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "wgpu",
- "winit",
- "winit_input_helper",
-]
-
-[[package]]
 name = "heck"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1814,8 +1791,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "rrr"
-version = "0.0.1"
+name = "rrr-core"
+version = "0.1.0"
 dependencies = [
  "anyhow",
  "bytes",
@@ -1838,11 +1815,26 @@ dependencies = [
 ]
 
 [[package]]
-name = "rrr-playlist"
-version = "0.0.1"
+name = "rrr-head"
+version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "cfg-if 1.0.0",
+ "console_error_panic_hook",
+ "console_log",
+ "futures",
+ "game-loop",
+ "image",
  "log",
- "serde",
+ "pixels",
+ "rrr-core",
+ "simple_logger",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+ "wgpu",
+ "winit",
+ "winit_input_helper",
 ]
 
 [[package]]

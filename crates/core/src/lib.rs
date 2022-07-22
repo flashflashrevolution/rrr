@@ -46,16 +46,16 @@ pub mod download_chart;
 pub mod fetch;
 pub mod loaders;
 pub mod play;
+pub mod record;
 pub mod settings;
-pub mod tape;
 pub mod turntable;
 
 pub use audio::*;
 pub use chart::*;
 pub use download_chart::*;
+pub use record::*;
 pub use settings::*;
 pub use strum;
-pub use tape::*;
 pub use turntable::*;
 
 #[derive(Debug, Default)]

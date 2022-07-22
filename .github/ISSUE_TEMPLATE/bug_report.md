@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: An issue with RRR or any of its crates (rrr, rrr_core, etc.)
+about: An issue with RRR or any of its crates (rrr_core, rrr_head, etc...)
 title: ""
 labels: ""
 assignees: ""

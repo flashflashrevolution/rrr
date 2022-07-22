@@ -1,6 +1,6 @@
 [package]
-name = "rrr"
-version = "0.0.1"
+name = "rrr-core"
+version = "0.1.0"
 authors = ["Fission", "Zageron"]
 description = """
 Rust Rust Revolution as a library.

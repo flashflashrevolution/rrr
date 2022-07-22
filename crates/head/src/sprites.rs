@@ -1,8 +1,6 @@
 use crate::{Point, HEIGHT, WIDTH};
 use image::{DynamicImage, GenericImageView, Rgba, SubImage};
-use rrr::Direction;
-use std::rc::Rc;
-use std::time::Duration;
+use rrr_core::note::Direction;
 
 /// Drawables can be blitted to the pixel buffer and animated.
 pub(crate) trait Drawable<'a> {
@@ -24,7 +22,6 @@ where
 
     let dest_pixel_width = drawable_width * 4;
     let pixels = drawable.pixels();
-    let width = drawable.width() * 4;
 
     for row in 0..drawable.height() {
         let i = match *dir {

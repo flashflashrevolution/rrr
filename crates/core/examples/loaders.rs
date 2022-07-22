@@ -5,7 +5,7 @@
 use std::{io::Cursor, pin::Pin};
 
 use bytes::Bytes;
-use rrr::Color;
+use rrr_core::note::Color;
 use tokio::io::{AsyncRead, AsyncReadExt, BufReader};
 
 // Empty Noteskin List

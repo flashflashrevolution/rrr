@@ -1,4 +1,4 @@
-use rrr::{AudioPlayer, CompiledChart, SwfParser};
+use rrr_core::{AudioPlayer, CompiledChart, SwfParser};
 
 pub(crate) struct Head {
     audio_player: Option<AudioPlayer>,

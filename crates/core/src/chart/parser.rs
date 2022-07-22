@@ -1,4 +1,7 @@
-use crate::{Color, CompiledChart, CompiledNote, Direction, Record};
+use crate::{
+    note::{Color, CompiledNote, Direction},
+    CompiledChart, Record,
+};
 use anyhow::bail;
 use std::{ops::ControlFlow, time::Duration};
 use swf::{
@@ -43,7 +46,7 @@ pub struct Parsing {
     chart: Option<Vec<CompiledNote>>,
 }
 pub struct Parsed {
-    tape: Record,
+    record: Record,
 }
 
 pub trait SwfParserState {}
@@ -99,19 +102,20 @@ impl SwfParser<Parsing> {
                 swf::Tag::DefineSound(_) => log::info!("DefineSound"),
                 swf::Tag::DoAction(action) => {
                     let res = SwfParser::parse_action(action, swf_reader.version());
-                    match res {
-                        Ok(chart) => {
-                            chart_data = chart;
-                        }
-                        Err(error) => {
-                            log::error!("Error parsing action: {}", error);
-                        }
+                    if let Ok(chart) = res {
+                        chart_data = chart;
                     }
                 }
                 swf::Tag::SoundStreamBlock(sound) => {
                     mp3_data.extend_from_slice(sound);
                 }
-                swf::Tag::SoundStreamHead(_) => log::info!("SoundStreamHead"),
+                swf::Tag::SoundStreamHead(ssh) => {
+                    log::info!("SoundStreamHead");
+                    log::info!("latency seek: {}", ssh.latency_seek);
+                    log::info!("playback format: {:?}", ssh.playback_format);
+                    log::info!("num samples per block: {}", ssh.num_samples_per_block);
+                    log::info!("stream format: {:?}", ssh.stream_format);
+                }
                 swf::Tag::SoundStreamHead2(_) => log::info!("SoundStreamHead2"),
                 _ => {}
             }
@@ -123,7 +127,7 @@ impl SwfParser<Parsing> {
 
         SwfParser {
             state: Parsed {
-                tape: Record::new(mp3_data, CompiledChart { notes: chart_data }),
+                record: Record::new(mp3_data, CompiledChart { notes: chart_data }),
             },
         }
     }
@@ -195,10 +199,14 @@ impl SwfParser<Parsing> {
             }
         }
 
-        log::info!("{:?}", beat_box);
         if beat_box.is_empty() {
-            bail!(ChartParseError::BeatPosition);
+            if is_chart_data {
+                bail!(ChartParseError::BeatPosition);
+            }
+
+            bail!("Not chart data.");
         }
+
         Ok(beat_box)
     }
 }
@@ -206,7 +214,7 @@ impl SwfParser<Parsing> {
 impl SwfParser<Parsed> {
     #[must_use]
     pub fn produce_tape(self) -> Record {
-        self.state.tape
+        self.state.record
     }
 }
 
@@ -268,6 +276,7 @@ fn parse_beat_position(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i32> 
     if let Some(Value::Int(ms)) = value_stack.pop() {
         Ok(ms)
     } else {
+        log::error!("No beat position found");
         bail!(ChartParseError::BeatPosition);
     }
 }

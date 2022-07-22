@@ -1,6 +1,6 @@
-use std::{iter, marker::PhantomData};
+use std::marker::PhantomData;
 
-use crate::{tape::Record, CompiledNote};
+use crate::{note::CompiledNote, record::Record};
 
 pub struct Turntable<S: TurntableState> {
     record: Record,

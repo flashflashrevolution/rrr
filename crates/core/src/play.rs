@@ -1,6 +1,9 @@
 use std::time::Duration;
 
-use crate::{turntable, CompiledNote, Direction, Turntable};
+use crate::{
+    note::{Color, CompiledNote, Direction},
+    turntable, Turntable,
+};
 
 pub struct PlayStats {
     amazings: u32,
@@ -135,7 +138,7 @@ impl Play<Active> {
             self.state.actions.push(NoteAction {
                 note: CompiledNote {
                     beat_position: -1,
-                    color: crate::Color::Receptor,
+                    color: Color::Receptor,
                     direction,
                     timestamp: ts,
                 },
