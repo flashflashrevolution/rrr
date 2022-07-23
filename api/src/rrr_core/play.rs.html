@@ -236,6 +236,7 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
@@ -340,9 +341,10 @@
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">_timestamp</span>: <span class="ident">Duration</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">f64</span>) {
         <span class="comment">// gameplay logic</span>
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>();
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">delta_time</span>);
+        <span class="macro">log::info!</span>(<span class="string">&quot;DT: {:?}&quot;</span>, <span class="ident">delta_time</span>);
         <span class="kw">let</span> <span class="ident">chart_view</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>();
 
         <span class="comment">// Small state machine that controls whether the music should be started.</span>
@@ -469,5 +471,5 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (62b272d25 2022-07-21)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (848090dcd 2022-07-22)" ></div>
 </body></html>

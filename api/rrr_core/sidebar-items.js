@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["audio",""],["chart",""],["download_chart",""],["fetch",""],["loaders",""],["play",""],["record",""],["settings",""],["turntable",""]],"struct":[["RRR",""]]};
+window.SIDEBAR_ITEMS = {"mod":[["audio",""],["chart",""],["download_chart",""],["fetch",""],["loaders",""],["play",""],["record",""],["settings",""],["time",""],["turntable",""]],"struct":[["RRR",""]]};
