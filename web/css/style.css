@@ -1,5 +1,6 @@
 .root {
     background-color: #2f4f4f;
+    pointer-events: none;
 }
 
 .game {
@@ -7,22 +8,12 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-}
-
-footer {
-    position: fixed;
-    left: 50%;
-    bottom: 20px;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
+    pointer-events: all;
 }
 
 /* soon class with drop shadow */
 .soon {
     position: absolute;
-    left: 50%;
-    top: 10%;
-    transform: translate(-50%);
 }
 
 /* soon-inner black text */
@@ -35,4 +26,9 @@ footer {
 .sm {
     font-size: 13px;
     font-style: italic;
+}
+
+.game,
+canvas:focus {
+    outline: none;
 }

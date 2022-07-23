@@ -59,7 +59,7 @@ use rrr_core::{
     turntable, Record, SwfParser, Turntable, TurntableState,
 };
 use sprites::blit;
-use std::time::{Duration, Instant};
+
 use winit::{
     dpi::LogicalSize,
     event::{
@@ -241,6 +241,11 @@ async fn run() -> Result<(), Error> {
 
     #[cfg(target_arch = "wasm32")]
     {
+        use std::rc::Rc;
+        use wasm_bindgen::closure::Closure;
+        use wasm_bindgen::prelude::*;
+        use wasm_bindgen::JsCast;
+        use web_sys::{Element, HtmlCanvasElement, HtmlElement};
         use winit::platform::web::WindowExtWebSys;
 
         // Initialize winit window with current dimensions of browser client
@@ -254,19 +259,52 @@ async fn run() -> Result<(), Error> {
             ));
         }
 
-        // Attach winit canvas to body element
-        web_sys::window()
-            .and_then(|win| win.document())
-            .and_then(|doc| doc.get_element_by_id("canvas"))
-            .and_then(|canvas_div| {
-                let canvas = window.canvas();
-                canvas.set_class_name("game");
-                canvas.set_width(WIDTH);
-                canvas.set_height(HEIGHT);
-                canvas_div
-                    .append_child(&web_sys::Element::from(window.canvas()))
-                    .ok()
-            });
+        {
+            let onblur = Closure::wrap(Box::new(move |e: web_sys::FocusEvent| {
+                if let Some(target) = e.current_target() {
+                    if let canvas =
+                        Rc::new(target.dyn_ref::<HtmlCanvasElement>().unwrap().to_owned())
+                    {
+                        let focus = Closure::wrap(Box::new(move || {
+                            canvas.to_owned().focus().ok();
+                        }) as Box<dyn Fn()>);
+                        web_sys::window().and_then(|win| {
+                            win.set_timeout_with_callback_and_timeout_and_arguments_0(
+                                focus.as_ref().unchecked_ref(),
+                                0,
+                            );
+                            Some(win)
+                        });
+                        focus.forget();
+                    } else {
+                        log::error!("Could not get canvas from target");
+                    }
+                } else {
+                    log::error!("Could not get current target");
+                }
+            }) as Box<dyn FnMut(web_sys::FocusEvent)>);
+
+            // Attach winit canvas to body element
+            web_sys::window()
+                .and_then(|win| win.document())
+                .and_then(|doc| doc.get_element_by_id("canvas"))
+                .and_then(|canvas_div: Element| {
+                    let canvas: HtmlCanvasElement = window.canvas();
+                    canvas.set_class_name("game");
+                    canvas.set_id("rrr");
+                    canvas.set_width(WIDTH);
+                    canvas.set_height(HEIGHT);
+                    let res = canvas_div
+                        .append_child(&web_sys::Element::from(window.canvas()))
+                        .ok();
+                    canvas.set_onblur(Some(onblur.as_ref().unchecked_ref()));
+                    canvas.set_tab_index(1);
+                    canvas.focus().ok();
+                    res
+                });
+
+            onblur.forget();
+        }
     }
 
     run_game_loop(window, event_loop).await
@@ -288,6 +326,8 @@ async fn run_game_loop(
 
     game.init();
     game.load(3348);
+
+    window.focus_window();
 
     let mut modifiers = ModifiersState::default();
 
@@ -318,10 +358,12 @@ async fn run_game_loop(
                         G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
                         H => window.set_cursor_visible(modifiers.shift()),
                         Space => {
-                            if let Some(raw_chart) = download_chart(3348) {
-                                let parser_compressed = SwfParser::new(*raw_chart);
-                                let record =
-                                    if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                            if game.play_stage.is_none() {
+                                if let Some(raw_chart) = download_chart(3348) {
+                                    let parser_compressed = SwfParser::new(*raw_chart);
+                                    let record = if let Ok(ready_to_parse) =
+                                        parser_compressed.decompress()
+                                    {
                                         let parsing = ready_to_parse.parse();
                                         // TODO: Make this async, remove intermediate state and just await it.
                                         let parsed = parsing.tick();
@@ -330,8 +372,11 @@ async fn run_game_loop(
                                         None
                                     };
 
-                                game.play_stage =
-                                    Some(Play::new(Turntable::load(record.unwrap())).start());
+                                    game.play_stage =
+                                        Some(Play::new(Turntable::load(record.unwrap())).start());
+                                }
+                            } else {
+                                game.play_stage = None;
                             }
                         }
                         _ => log::info!("Key: {:?}", key),
@@ -341,10 +386,10 @@ async fn run_game_loop(
                 _ => (),
             },
             Event::DeviceEvent { event, .. } => match event {
-                DeviceEvent::MouseMotion { delta } => log::info!("mouse moved: {:?}", delta),
-                DeviceEvent::Button { button, state } => match state {
-                    ElementState::Pressed => log::info!("mouse button {} pressed", button),
-                    ElementState::Released => log::info!("mouse button {} released", button),
+                DeviceEvent::MouseMotion { delta: _ } => (),
+                DeviceEvent::Button { button: _, state } => match state {
+                    ElementState::Pressed => (),
+                    ElementState::Released => (),
                 },
                 _ => (),
             },
