@@ -102,9 +102,10 @@ impl Play<Active> {
         self.state.turntable.view()
     }
 
-    pub fn tick(&mut self, _timestamp: Duration) {
+    pub fn tick(&mut self, delta_time: f64) {
         // gameplay logic
-        self.state.turntable.tick();
+        self.state.turntable.tick(delta_time);
+        log::info!("DT: {:?}", delta_time);
         let chart_view = self.state.turntable.view();
 
         // Small state machine that controls whether the music should be started.

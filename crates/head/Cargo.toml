@@ -26,7 +26,6 @@ release = ["log/release_max_level_off"]
 [dependencies]
 anyhow = "1.0.58"
 cfg-if = "1.0.0"
-game-loop = { version = "0.9.1", features = ["window"] }
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/JMS55/pixels.git", branch = "main" }

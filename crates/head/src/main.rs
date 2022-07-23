@@ -48,59 +48,51 @@ mod visibility;
 
 use crate::geo::Point;
 use anyhow::{Error, Result};
-use game_loop::game_loop;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
 use rrr_core::{
-    download_chart, note::Color, play, play::Play, turntable, Record, SwfParser, Turntable,
-    TurntableState,
+    download_chart,
+    note::Color,
+    play,
+    play::Play,
+    time::{performance::Time, TimeTrait},
+    turntable, Record, SwfParser, Turntable, TurntableState,
 };
 use sprites::blit;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use winit::{
     dpi::LogicalSize,
-    event::{Event, VirtualKeyCode, WindowEvent},
-    event_loop::EventLoop,
+    event::{
+        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, VirtualKeyCode,
+        WindowEvent,
+    },
+    event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
-use winit_input_helper::WinitInputHelper;
-
-pub const TIME_STEP: Duration = Duration::from_nanos(1_000_000_000_u64.div_euclid(60));
 
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 768;
 
-trait DeltaTime {
-    fn update(&mut self) -> usize;
-
-    fn update_dt(dest_dt: &mut Duration, step: Duration) -> usize {
-        *dest_dt += TIME_STEP;
-        let frames = dest_dt.as_nanos() / step.as_nanos();
-        *dest_dt -= Duration::from_nanos((frames * step.as_nanos()) as u64);
-
-        frames as usize
-    }
-}
-
-struct Game {
+struct Game<T: TimeTrait> {
     noteskin: Option<noteskin::Definition>,
     pixels: Pixels,
     play_stage: Option<Play<play::Active>>,
-    input: WinitInputHelper,
+    previous_instant: T,
+    current_instant: T,
 }
 
-impl Game {
+impl<T: TimeTrait> Game<T> {
     fn new(
         noteskin: Option<noteskin::Definition>,
         pixels: Pixels,
         play_stage: Option<Play<play::Active>>,
-        input: WinitInputHelper,
     ) -> Self {
         Self {
             noteskin,
             pixels,
             play_stage,
-            input,
+            previous_instant: T::now(),
+            current_instant: T::now(),
         }
     }
 
@@ -142,8 +134,12 @@ impl Game {
     }
 
     fn update(&mut self) {
+        self.current_instant = T::now();
+
+        let delta_time = self.current_instant.sub(&self.previous_instant);
+
         if let Some(stage) = &mut self.play_stage {
-            stage.tick(Duration::ZERO);
+            stage.tick(delta_time);
         }
     }
 
@@ -174,6 +170,10 @@ impl Game {
         }
 
         rect(frame, 150, 100, 32, 32);
+    }
+
+    fn finish(&mut self) {
+        self.previous_instant = self.current_instant;
     }
 }
 
@@ -275,7 +275,7 @@ async fn run() -> Result<(), Error> {
 async fn run_game_loop(
     window: winit::window::Window,
     event_loop: EventLoop<()>,
-) -> Result<(), Error> {
+) -> Result<(), anyhow::Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
     let pixels = if let Ok(pixels) = Pixels::new_async(WIDTH, HEIGHT, surface_texture).await {
@@ -284,95 +284,85 @@ async fn run_game_loop(
         Err(anyhow::anyhow!("Could not initialize Pixels renderer."))?
     };
 
-    let input = WinitInputHelper::new();
-    let mut game = Game::new(None, pixels, None, input);
+    let mut game = Game::<Time>::new(None, pixels, None);
+
     game.init();
     game.load(3348);
-    game_loop(
-        event_loop,
-        window,
-        game,
-        120,
-        0.1,
-        |g| {
-            g.game.update();
-        },
-        |g| {
-            g.game.draw();
-            if let Err(e) = g.game.pixels.render() {
-                error!("pixels.render() failed: {}", e);
-                g.exit();
-            }
 
-            #[cfg(not(target_arch = "wasm32"))]
-            {
-                use game_loop::{Time, TimeTrait};
+    let mut modifiers = ModifiersState::default();
 
-                // Sleep the main thread to limit drawing to the fixed time step.
-                // See: https://github.com/parasyte/pixels/issues/174
-                let dt = TIME_STEP.as_secs_f64() - Time::now().sub(&g.current_instant());
-                if dt > 0.0 {
-                    std::thread::sleep(Duration::from_secs_f64(dt));
+    event_loop.run(move |in_event, _, control_flow| {
+        *control_flow = ControlFlow::Poll;
+
+        match in_event {
+            Event::WindowEvent { event, .. } => match event {
+                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                WindowEvent::Resized(size) => {
+                    game.pixels.resize_surface(size.width, size.height);
                 }
-            }
-        },
-        |g, event| {
-            log::trace!("{:?}", event);
-
-            if let Event::WindowEvent {
-                ref event,
-                window_id,
-            } = event
-            {
-                if let WindowEvent::Focused(focused) = event {
-                    log::info!("Window {:?} focused {:?}", window_id, focused);
+                WindowEvent::Focused(focused) => {
+                    log::info!("Window {:?} focused: {:?}", &window.id(), focused);
                 }
-            }
+                WindowEvent::KeyboardInput {
+                    input:
+                        KeyboardInput {
+                            state: ElementState::Released,
+                            virtual_keycode: Some(key),
+                            ..
+                        },
+                    ..
+                } => {
+                    use winit::event::VirtualKeyCode::{Escape, Space, G, H};
+                    match key {
+                        Escape => *control_flow = ControlFlow::Exit,
+                        G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
+                        H => window.set_cursor_visible(modifiers.shift()),
+                        Space => {
+                            if let Some(raw_chart) = download_chart(3348) {
+                                let parser_compressed = SwfParser::new(*raw_chart);
+                                let record =
+                                    if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                                        let parsing = ready_to_parse.parse();
+                                        // TODO: Make this async, remove intermediate state and just await it.
+                                        let parsed = parsing.tick();
+                                        Some(parsed.produce_tape())
+                                    } else {
+                                        None
+                                    };
 
-            #[allow(clippy::collapsible_match, clippy::single_match)]
-            match event {
-                Event::WindowEvent {
-                    window_id,
-                    ref event,
-                } => match event {
-                    WindowEvent::Focused(focused) => {
-                        log::info!("Window {:?} focused {:?}", window_id, focused);
+                                game.play_stage =
+                                    Some(Play::new(Turntable::load(record.unwrap())).start());
+                            }
+                        }
+                        _ => log::info!("Key: {:?}", key),
                     }
-                    _ => {}
+                }
+                WindowEvent::ModifiersChanged(m) => modifiers = m,
+                _ => (),
+            },
+            Event::DeviceEvent { event, .. } => match event {
+                DeviceEvent::MouseMotion { delta } => log::info!("mouse moved: {:?}", delta),
+                DeviceEvent::Button { button, state } => match state {
+                    ElementState::Pressed => log::info!("mouse button {} pressed", button),
+                    ElementState::Released => log::info!("mouse button {} released", button),
                 },
-                _ => {}
+                _ => (),
+            },
+            Event::MainEventsCleared => {
+                game.draw();
+                if let Err(e) = game.pixels.render() {
+                    log::error!("pixels.render() failed: {}", e);
+                    *control_flow = ControlFlow::Exit;
+                }
+                game.update();
+                window.request_redraw();
             }
-
-            if g.game.input.update(&event) {
-                // Close events
-                if g.game.input.key_pressed(VirtualKeyCode::Escape) || g.game.input.quit() {
-                    g.exit();
-                }
-
-                if g.game.input.key_pressed(VirtualKeyCode::Space) {
-                    if let Some(raw_chart) = download_chart(3348) {
-                        let parser_compressed = SwfParser::new(*raw_chart);
-                        let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
-                            let parsing = ready_to_parse.parse();
-                            // TODO: Make this async, remove intermediate state and just await it.
-                            let parsed = parsing.tick();
-                            Some(parsed.produce_tape())
-                        } else {
-                            None
-                        };
-
-                        g.game.play_stage =
-                            Some(Play::new(Turntable::load(record.unwrap())).start());
-                    }
-                }
-
-                // Resize the window
-                if let Some(size) = g.game.input.window_resized() {
-                    g.game.pixels.resize_surface(size.width, size.height);
-                }
+            Event::RedrawEventsCleared => {
+                game.finish();
             }
-        },
-    );
+            _ => (),
+        }
+    });
 }
 
 fn clear(screen: &mut [u8]) {

@@ -1,4 +1,4 @@
-use std::marker::PhantomData;
+use std::{marker::PhantomData, time::Duration};
 
 use crate::{note::CompiledNote, record::Record};
 
@@ -47,7 +47,7 @@ impl Turntable<Playing> {
         }
     }
 
-    pub fn tick(&mut self) {
+    pub fn tick(&mut self, delta_time: f64) {
         // Here would be positional information about the current position in the record.
     }
 

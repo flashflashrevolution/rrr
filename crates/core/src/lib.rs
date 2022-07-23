@@ -48,6 +48,7 @@ pub mod loaders;
 pub mod play;
 pub mod record;
 pub mod settings;
+pub mod time;
 pub mod turntable;
 
 pub use audio::*;
