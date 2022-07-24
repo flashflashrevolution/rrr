@@ -70,6 +70,8 @@ use winit::{
     window::WindowBuilder,
 };
 
+use std::f64;
+
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 768;
 
@@ -79,6 +81,8 @@ struct Game<T: TimeTrait> {
     play_stage: Option<Play<play::Active>>,
     previous_instant: T,
     current_instant: T,
+    rect_x: f64,
+    rect_y: f64,
 }
 
 impl<T: TimeTrait> Game<T> {
@@ -93,6 +97,8 @@ impl<T: TimeTrait> Game<T> {
             play_stage,
             previous_instant: T::now(),
             current_instant: T::now(),
+            rect_x: 100.,
+            rect_y: 150.,
         }
     }
 
@@ -136,6 +142,9 @@ impl<T: TimeTrait> Game<T> {
     fn update(&mut self) {
         self.current_instant = T::now();
 
+        self.rect_x += 0.1;
+        self.rect_y += 0.1;
+
         let delta_time = self.current_instant.sub(&self.previous_instant);
 
         if let Some(stage) = &mut self.play_stage {
@@ -169,7 +178,7 @@ impl<T: TimeTrait> Game<T> {
             }
         }
 
-        rect(frame, 150, 100, 32, 32);
+        rect(frame, self.rect_x, self.rect_y, 32., 32.);
     }
 
     fn finish(&mut self) {
@@ -416,10 +425,32 @@ fn clear(screen: &mut [u8]) {
     }
 }
 
-fn rect(screen: &mut [u8], x: u32, y: u32, width: u32, height: u32) {
-    for row in y..(y + height) {
-        for column in x..(x + width) {
-            let i: usize = ((row * WIDTH + column) * 4).try_into().unwrap();
+// fn rect(screen: &mut [u8], x: u32, y: u32, width: u32, height: u32) {
+//     for row in y..(y + height) {
+//         for column in x..(x + width) {
+//             let i: usize = ((row * WIDTH + column) * 4).try_into().unwrap();
+//             screen[i] = 0x5e;
+//             screen[i + 1] = 0x48;
+//             screen[i + 2] = 0xe8;
+//             screen[i + 3] = 0xff;
+//         }
+//     }
+// }
+
+fn rect(screen: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
+    let x_min:f64 = f64::max(0., x);
+    let x_max:f64 = f64::min(WIDTH as f64, x + width);
+    let y_min:f64 = f64::max(0., y);
+    let y_max:f64 = f64::min(HEIGHT as f64, y + height);
+    
+    let x_min_u: usize = x_min.round() as usize;
+    let x_max_u: usize = x_max.round() as usize;
+    let y_min_u: usize = y_min.round() as usize;
+    let y_max_u: usize = y_max.round() as usize;
+    
+    for row in y_min_u..y_max_u {
+        for column in x_min_u..x_max_u {
+            let i: usize = (row * (WIDTH as usize) + column) * 4;
             screen[i] = 0x5e;
             screen[i + 1] = 0x48;
             screen[i + 2] = 0xe8;
