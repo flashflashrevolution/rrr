@@ -47,7 +47,7 @@ cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
 js-sys = "0.3.58"
-wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
+wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-test = "0.3.31"
 wasm-bindgen-futures = "0.4.31"
 
