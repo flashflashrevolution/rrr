@@ -40,7 +40,7 @@ thiserror = "1.0.31"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }
-tokio = { version = "1.20.0", features = ["full"] }
+tokio = { version = "1.20.1", features = ["full"] }
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
