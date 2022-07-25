@@ -438,29 +438,17 @@ fn clear(screen: &mut [u8]) {
     }
 }
 
-// fn rect(screen: &mut [u8], x: u32, y: u32, width: u32, height: u32) {
-//     for row in y..(y + height) {
-//         for column in x..(x + width) {
-//             let i: usize = ((row * WIDTH + column) * 4).try_into().unwrap();
-//             screen[i] = 0x5e;
-//             screen[i + 1] = 0x48;
-//             screen[i + 2] = 0xe8;
-//             screen[i + 3] = 0xff;
-//         }
-//     }
-// }
-
 fn rect(screen: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
-    let x_min:f64 = f64::max(0., x);
-    let x_max:f64 = f64::min(WIDTH as f64, x + width);
-    let y_min:f64 = f64::max(0., y);
-    let y_max:f64 = f64::min(HEIGHT as f64, y + height);
-    
+    let x_min: f64 = f64::max(0., x);
+    let x_max: f64 = f64::min(WIDTH as f64, x + width);
+    let y_min: f64 = f64::max(0., y);
+    let y_max: f64 = f64::min(HEIGHT as f64, y + height);
+
     let x_min_u: usize = x_min.round() as usize;
     let x_max_u: usize = x_max.round() as usize;
     let y_min_u: usize = y_min.round() as usize;
     let y_max_u: usize = y_max.round() as usize;
-    
+
     for row in y_min_u..y_max_u {
         for column in x_min_u..x_max_u {
             let i: usize = (row * (WIDTH as usize) + column) * 4;
