@@ -149,8 +149,8 @@ impl<T: TimeTrait> Game<T> {
 
         self.rect_x += 1.;
         self.rect_y += 1.;
-        self.drift_x += 1.;
-        self.drift_y -= 1.;
+        self.drift_x += 0.;
+        self.drift_y -= 0.;
 
         let delta_time = self.current_instant.sub(&self.previous_instant);
 
@@ -179,7 +179,7 @@ impl<T: TimeTrait> Game<T> {
                         frame,
                         x,
                         y,
-                        // &note.direction,
+                        &note.direction,
                         &noteskin.get_note(note.color),
                     );
                 }

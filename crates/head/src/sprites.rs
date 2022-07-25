@@ -10,7 +10,7 @@ pub(crate) trait Drawable<'a> {
     fn pixels(&self) -> SubImage<&'a DynamicImage>;
 }
 
-pub(crate) fn trumpet_blit<'a, S>(screen: &mut [u8], dest_x: f64, dest_y: f64, drawable: &S)
+pub(crate) fn trumpet_blit<'a, S>(screen: &mut [u8], dest_x: f64, dest_y: f64, dir: &Direction, drawable: &S)
 where
     S: Drawable<'a>,
 {
@@ -31,9 +31,29 @@ where
     for screen_y in y_min_u..y_max_u {
         for screen_x in x_min_u..x_max_u {
             let i: usize = (screen_y * (WIDTH as usize) + screen_x) * 4;
-
-            let mut source_x = ((screen_x as f64) - dest_x).round() as u32;
-            let mut source_y = ((screen_y as f64) - dest_y).round() as u32;
+            
+            // I make no guarantees that this will work with a non-square drawable
+            let mut source_x: u32;
+            let mut source_y: u32;
+            match *dir {
+                Direction::Down => {
+                    source_x = ((screen_x as f64) - dest_x).round() as u32;
+                    source_y = ((screen_y as f64) - dest_y).round() as u32;
+                }
+                Direction::Right => {
+                    source_x = (width - 1. - ((screen_y as f64) - dest_y)).round() as u32;
+                    source_y = ((screen_x as f64) - dest_x).round() as u32;
+                }
+                Direction::Up => {
+                    source_x = (width - 1. - ((screen_x as f64) - dest_x)).round() as u32;
+                    source_y = (height - 1. - ((screen_y as f64) - dest_y)).round() as u32;
+                }
+                Direction::Left => {
+                    source_x = ((screen_y as f64) - dest_y).round() as u32;
+                    source_y = (height - 1. - ((screen_x as f64) - dest_x)).round() as u32;
+                }
+            }
+            
             source_x = source_x.clamp(0, drawable.width() as u32 - 1);
             source_y = source_y.clamp(0, drawable.height() as u32 - 1);
 
