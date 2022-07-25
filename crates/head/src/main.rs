@@ -59,6 +59,7 @@ use rrr_core::{
     turntable, Record, SwfParser, Turntable, TurntableState,
 };
 use sprites::blit;
+use sprites::trumpet_blit;
 
 use winit::{
     dpi::LogicalSize,
@@ -83,6 +84,8 @@ struct Game<T: TimeTrait> {
     current_instant: T,
     rect_x: f64,
     rect_y: f64,
+    drift_x: f64,
+    drift_y: f64,
 }
 
 impl<T: TimeTrait> Game<T> {
@@ -99,6 +102,8 @@ impl<T: TimeTrait> Game<T> {
             current_instant: T::now(),
             rect_x: 100.,
             rect_y: 150.,
+            drift_x: 0.,
+            drift_y: 0.,
         }
     }
 
@@ -144,6 +149,8 @@ impl<T: TimeTrait> Game<T> {
 
         self.rect_x += 0.1;
         self.rect_y += 0.1;
+        self.drift_x += 0.1;
+        self.drift_y -= 0.1;
 
         let delta_time = self.current_instant.sub(&self.previous_instant);
 
@@ -166,12 +173,13 @@ impl<T: TimeTrait> Game<T> {
                 // Render all notes.
                 let x_limit = WIDTH as usize / 64 as usize;
                 for (i, note) in view.iter().enumerate() {
-                    let x = (i % x_limit) * 64;
-                    let y = (i / x_limit) * 64;
-                    blit(
+                    let x = (((i % x_limit) * 64) as f64) + self.drift_x;
+                    let y = (((i / x_limit) * 64) as f64) + self.drift_y;
+                    trumpet_blit(
                         frame,
-                        &Point { x, y },
-                        &note.direction,
+                        x,
+                        y,
+                        // &note.direction,
                         &noteskin.get_note(note.color),
                     );
                 }
@@ -179,6 +187,11 @@ impl<T: TimeTrait> Game<T> {
         }
 
         rect(frame, self.rect_x, self.rect_y, 32., 32.);
+        // if let Some(play) = &self.play_stage {
+        //     if let Some(noteskin) = &self.noteskin {
+        //         trumpet_blit(frame, 200., 74., &noteskin.get_note(Color::Red))
+        //     }
+        // }
     }
 
     fn finish(&mut self) {
