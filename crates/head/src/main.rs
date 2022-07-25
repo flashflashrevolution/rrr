@@ -147,10 +147,10 @@ impl<T: TimeTrait> Game<T> {
     fn update(&mut self) {
         self.current_instant = T::now();
 
-        self.rect_x += 0.1;
-        self.rect_y += 0.1;
-        self.drift_x += 0.1;
-        self.drift_y -= 0.1;
+        self.rect_x += 1.;
+        self.rect_y += 1.;
+        self.drift_x += 1.;
+        self.drift_y -= 1.;
 
         let delta_time = self.current_instant.sub(&self.previous_instant);
 
