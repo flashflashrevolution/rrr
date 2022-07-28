@@ -314,6 +314,9 @@
 <span id="308">308</span>
 <span id="309">309</span>
 <span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">note</span>::{<span class="ident">Color</span>, <span class="ident">CompiledNote</span>, <span class="ident">Direction</span>},
     <span class="ident">CompiledChart</span>, <span class="ident">Record</span>,
@@ -441,10 +444,13 @@
         <span class="comment">//self.extra.chart.replace(chart_data);</span>
         <span class="comment">//self.extra.mp3.replace(mp3_data);</span>
 
-        <span class="ident">SwfParser</span> {
-            <span class="ident">state</span>: <span class="ident">Parsed</span> {
-                <span class="ident">record</span>: <span class="ident">Record::new</span>(<span class="ident">mp3_data</span>, <span class="ident">CompiledChart</span> { <span class="ident">notes</span>: <span class="ident">chart_data</span> }),
-            },
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">record</span>) <span class="op">=</span> <span class="ident">Record::new</span>(<span class="ident">mp3_data</span>, <span class="ident">CompiledChart</span> { <span class="ident">notes</span>: <span class="ident">chart_data</span> }) {
+            <span class="ident">SwfParser</span> {
+                <span class="ident">state</span>: <span class="ident">Parsed</span> { <span class="ident">record</span> },
+            }
+        } <span class="kw">else</span> {
+            <span class="comment">// this tick function should return a result instead of a panic.</span>
+            <span class="macro">panic!</span>(<span class="string">&quot;Invalid chart of unknown length.&quot;</span>);
         }
     }
 
