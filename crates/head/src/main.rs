@@ -175,13 +175,7 @@ impl<T: TimeTrait> Game<T> {
                 for (i, note) in view.iter().enumerate() {
                     let x = (((i % x_limit) * 64) as f64) + self.drift_x;
                     let y = (((i / x_limit) * 64) as f64) + self.drift_y;
-                    trumpet_blit(
-                        frame,
-                        x,
-                        y,
-                        &note.direction,
-                        &noteskin.get_note(note.color),
-                    );
+                    trumpet_blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
                 }
             }
         }
