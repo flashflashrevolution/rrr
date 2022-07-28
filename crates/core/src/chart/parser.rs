@@ -125,10 +125,13 @@ impl SwfParser<Parsing> {
         //self.extra.chart.replace(chart_data);
         //self.extra.mp3.replace(mp3_data);
 
-        SwfParser {
-            state: Parsed {
-                record: Record::new(mp3_data, CompiledChart { notes: chart_data }),
-            },
+        if let Ok(record) = Record::new(mp3_data, CompiledChart { notes: chart_data }) {
+            SwfParser {
+                state: Parsed { record },
+            }
+        } else {
+            // this tick function should return a result instead of a panic.
+            panic!("Invalid chart of unknown length.");
         }
     }
 

@@ -58,8 +58,8 @@ use rrr_core::{
     time::{performance::Time, TimeTrait},
     turntable, Record, SwfParser, Turntable, TurntableState,
 };
+
 use sprites::blit;
-use sprites::trumpet_blit;
 
 use winit::{
     dpi::LogicalSize,
@@ -168,24 +168,20 @@ impl<T: TimeTrait> Game<T> {
 
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
-                let view = play.view();
-                // Filter out notes that aren't on screen.
-                // Render all notes.
-                let x_limit = WIDTH as usize / 64 as usize;
-                for (i, note) in view.iter().enumerate() {
-                    let x = (((i % x_limit) * 64) as f64) + self.drift_x;
-                    let y = (((i / x_limit) * 64) as f64) + self.drift_y;
-                    trumpet_blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
+                if let view = play.view() {
+                    // Filter out notes that aren't on screen.
+                    // Render all notes.
+                    let x_limit = WIDTH as usize / 64 as usize;
+                    for (i, (_, note)) in view.enumerate() {
+                        let x = (((i % x_limit) * 64) as f64) + self.drift_x;
+                        let y = (((i / x_limit) * 64) as f64) + self.drift_y;
+                        blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
+                    }
                 }
             }
         }
 
         rect(frame, self.rect_x, self.rect_y, 32., 32.);
-        // if let Some(play) = &self.play_stage {
-        //     if let Some(noteskin) = &self.noteskin {
-        //         trumpet_blit(frame, 200., 74., &noteskin.get_note(Color::Red))
-        //     }
-        // }
     }
 
     fn finish(&mut self) {

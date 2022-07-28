@@ -1,35 +1,36 @@
-use std::time::Duration;
+use std::{collections::BTreeMap, time::Duration};
 
-use crate::CompiledChart;
+use crate::{chart, note::CompiledNote, CompiledChart};
 
 #[derive(Debug)]
 pub struct Record {
-    mp3: Vec<u8>,
-    chart: CompiledChart,
+    pub optimized_chart: BTreeMap<Duration, CompiledNote>,
+    pub mp3: Vec<u8>,
+    pub chart: CompiledChart,
+    pub duration: Duration,
 }
 
 impl Record {
-    #[must_use]
-    pub fn new(mp3: Vec<u8>, chart: CompiledChart) -> Self {
-        Self { mp3, chart }
-    }
-
-    #[must_use]
-    pub fn mp3(&self) -> &[u8] {
-        self.mp3.as_ref()
-    }
-
-    #[must_use]
-    pub fn chart(&self) -> &CompiledChart {
-        &self.chart
-    }
-
-    #[must_use]
-    pub fn duration(&self) -> Duration {
-        if let Some(last_note) = self.chart.notes.last() {
-            last_note.timestamp
+    /// # Errors
+    /// If duration of the chart is invalid, returns an error.
+    pub fn new(mp3: Vec<u8>, chart: CompiledChart) -> Result<Self, anyhow::Error> {
+        if let Ok(duration) = chart.get_duration() {
+            Ok(Self {
+                optimized_chart: create_optimized_chart(&chart),
+                mp3,
+                chart,
+                duration,
+            })
         } else {
-            Duration::new(0, 0)
+            Err(anyhow::anyhow!("Invalid chart of unknown length."))
         }
     }
+}
+
+fn create_optimized_chart(chart: &CompiledChart) -> BTreeMap<Duration, CompiledNote> {
+    let mut optimized_chart = BTreeMap::new();
+    for note in &chart.notes {
+        optimized_chart.insert(note.timestamp, note.clone());
+    }
+    optimized_chart
 }

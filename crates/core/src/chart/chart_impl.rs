@@ -22,6 +22,15 @@ impl CompiledChart {
             notes: notes.to_vec(),
         }
     }
+
+    #[must_use]
+    pub fn get_duration(&self) -> Result<Duration, anyhow::Error> {
+        if let Some(last_note) = self.notes.first() {
+            Ok(last_note.timestamp)
+        } else {
+            Err(anyhow::anyhow!("No notes in chart"))
+        }
+    }
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

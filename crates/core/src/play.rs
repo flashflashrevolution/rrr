@@ -1,4 +1,4 @@
-use std::time::Duration;
+use std::{collections::btree_map::Range, time::Duration};
 
 use crate::{
     note::{Color, CompiledNote, Direction},
@@ -97,15 +97,16 @@ impl Play<Active> {
     /// Temporary function giving a view directly into the playing turntable.
     ///
     /// Remove this after we create the `ChartDriver`.
-    #[must_use]
-    pub fn view(&self) -> &[CompiledNote] {
+    /// # Errors
+    /// Turntable could slice into an invalid set of notes.
+    pub fn view(&self) -> Range<'_, Duration, CompiledNote> {
         self.state.turntable.view()
     }
 
     pub fn tick(&mut self, delta_time: f64) {
         // gameplay logic
         self.state.turntable.tick(delta_time);
-        let chart_view = self.state.turntable.view();
+        let _chart_view = self.state.turntable.view();
 
         // Small state machine that controls whether the music should be started.
         // I can use the tape deck for this _maybe_, but for now could just have a bool.
@@ -123,12 +124,12 @@ impl Play<Active> {
     }
 
     pub fn do_action(&mut self, direction: Direction, ts: Duration) {
-        let view = self.state.turntable.view();
-
-        if let Some(closest_note) = view
-            .iter()
-            .filter(|note| direction == note.direction)
-            .min_by(|x, y| x.timestamp.diff(&ts).cmp(&y.timestamp.diff(&ts)))
+        let view_result = self.state.turntable.view();
+        if let Some((_, closest_note)) = view_result
+            .filter(|(_, note)| direction == note.direction)
+            .min_by(|(_, x_note), (_, y_note)| {
+                x_note.timestamp.diff(&ts).cmp(&y_note.timestamp.diff(&ts))
+            })
         {
             self.state.actions.push(NoteAction {
                 note: closest_note.clone(),
@@ -145,6 +146,9 @@ impl Play<Active> {
                 timestamp: ts,
             });
         }
+
+        // TODO: Result and Optional need to be managed better here.
+        // Possibility of invalid chart during gameplay is not good.
 
         // self.state.actions.push(NoteAction {
         //     note,

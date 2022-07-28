@@ -1,17 +1,19 @@
-use std::{marker::PhantomData, time::Duration};
-
 use crate::{note::CompiledNote, record::Record};
+use std::ops::Bound::Included;
+use std::{collections::btree_map::Range, time::Duration};
 
 pub struct Turntable<S: TurntableState> {
     record: Record,
-    marker: std::marker::PhantomData<S>,
+    state: S,
 }
 
 pub struct Empty {}
 
 pub struct Loaded {}
 
-pub struct Playing {}
+pub struct Playing {
+    pub progress: f64,
+}
 
 pub trait TurntableState {}
 impl TurntableState for Empty {}
@@ -23,7 +25,7 @@ impl Turntable<Empty> {
     pub fn load(record: Record) -> Turntable<Loaded> {
         Turntable {
             record,
-            marker: PhantomData::<Loaded>,
+            state: Loaded {},
         }
     }
 }
@@ -33,7 +35,7 @@ impl Turntable<Loaded> {
     pub fn play(self) -> Turntable<Playing> {
         Turntable {
             record: self.record,
-            marker: PhantomData::<Playing>,
+            state: Playing { progress: 0.0 },
         }
     }
 }
@@ -43,20 +45,35 @@ impl Turntable<Playing> {
     pub fn stop(self) -> Turntable<Loaded> {
         Turntable {
             record: self.record,
-            marker: PhantomData::<Loaded>,
+            state: Loaded {},
         }
     }
 
     pub fn tick(&mut self, delta_time: f64) {
-        // Here would be positional information about the current position in the record.
+        self.state.progress += delta_time;
+        if self.state.progress >= self.record.duration.as_secs_f64() {
+            self.state.progress = 0.0;
+        }
+    }
+
+    #[must_use]
+    pub fn is_finished(&self) -> bool {
+        self.state.progress >= self.record.duration.as_secs_f64()
+    }
+
+    #[must_use]
+    pub fn progress(&self) -> f64 {
+        self.state.progress
     }
 
     // TODO: Implement a method of tracking how far the slice should be.
-    #[must_use]
-    pub fn view(&self) -> &[CompiledNote] {
-        let chart = self.record.chart();
-        let first: usize = 0;
-        let last = usize::min(50, chart.notes.len());
-        &chart.notes[first..last]
+    pub fn view(&self) -> Range<'_, Duration, CompiledNote> {
+        let chart = &self.record.optimized_chart;
+
+        let extent = Duration::new(2, 0);
+        chart.range((
+            Included(Duration::from_secs_f64(self.state.progress)),
+            Included(Duration::from_secs_f64(self.state.progress) + extent),
+        ))
     }
 }
