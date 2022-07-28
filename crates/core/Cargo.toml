@@ -40,19 +40,19 @@ thiserror = "1.0.31"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }
-tokio = { version = "1.20.0", features = ["full"] }
+tokio = { version = "1.20.1", features = ["full"] }
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
-js-sys = "0.3.58"
-wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
-wasm-bindgen-test = "0.3.31"
-wasm-bindgen-futures = "0.4.31"
+js-sys = "0.3.59"
+wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
+wasm-bindgen-test = "0.3.32"
+wasm-bindgen-futures = "0.4.32"
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies.web-sys]
-version = "0.3.58"
+version = "0.3.59"
 features = [
     'Headers',
     'Request',
