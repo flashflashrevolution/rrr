@@ -40,13 +40,13 @@
 <span id="34">34</span>
 <span id="35">35</span>
 <span id="36">36</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::BTreeMap</span>, <span class="ident">time::Duration</span>};
-
-<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">chart</span>, <span class="ident">note::CompiledNote</span>, <span class="ident">CompiledChart</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">CompiledChart</span>};
+<span class="kw">use</span> <span class="ident">btreemultimap::BTreeMultiMap</span>;
+<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Record</span> {
-    <span class="kw">pub</span> <span class="ident">optimized_chart</span>: <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">optimized_chart</span>: <span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">mp3</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
     <span class="kw">pub</span> <span class="ident">chart</span>: <span class="ident">CompiledChart</span>,
     <span class="kw">pub</span> <span class="ident">duration</span>: <span class="ident">Duration</span>,
@@ -69,8 +69,8 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">create_optimized_chart</span>(<span class="ident">chart</span>: <span class="kw-2">&amp;</span><span class="ident">CompiledChart</span>) -&gt; <span class="ident">BTreeMap</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optimized_chart</span> <span class="op">=</span> <span class="ident">BTreeMap::new</span>();
+<span class="kw">fn</span> <span class="ident">create_optimized_chart</span>(<span class="ident">chart</span>: <span class="kw-2">&amp;</span><span class="ident">CompiledChart</span>) -&gt; <span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optimized_chart</span> <span class="op">=</span> <span class="ident">BTreeMultiMap::new</span>();
     <span class="kw">for</span> <span class="ident">note</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">chart</span>.<span class="ident">notes</span> {
         <span class="ident">optimized_chart</span>.<span class="ident">insert</span>(<span class="ident">note</span>.<span class="ident">timestamp</span>, <span class="ident">note</span>.<span class="ident">clone</span>());
     }

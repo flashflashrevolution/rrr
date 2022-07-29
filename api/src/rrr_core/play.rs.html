@@ -245,7 +245,12 @@
 <span id="239">239</span>
 <span id="240">240</span>
 <span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::btree_map::Range</span>, <span class="ident">time::Duration</span>};
+
+<span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">note</span>::{<span class="ident">Color</span>, <span class="ident">CompiledNote</span>, <span class="ident">Direction</span>},
@@ -346,7 +351,8 @@
     <span class="doccomment">/// Remove this after we create the `ChartDriver`.</span>
     <span class="doccomment">/// # Errors</span>
     <span class="doccomment">/// Turntable could slice into an invalid set of notes.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Range</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>)
     }
 
