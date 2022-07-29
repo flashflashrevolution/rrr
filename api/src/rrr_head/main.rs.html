@@ -455,6 +455,12 @@
 <span id="449">449</span>
 <span id="450">450</span>
 <span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">elided_lifetimes_in_paths</span>,
@@ -521,8 +527,8 @@
 <span class="kw">use</span> <span class="ident">winit</span>::{
     <span class="ident">dpi::LogicalSize</span>,
     <span class="ident">event</span>::{
-        <span class="ident">DeviceEvent</span>, <span class="ident">ElementState</span>, <span class="ident">Event</span>, <span class="ident">KeyboardInput</span>, <span class="ident">ModifiersState</span>, <span class="ident">VirtualKeyCode</span>,
-        <span class="ident">WindowEvent</span>,
+        <span class="ident">DeviceEvent</span>, <span class="ident">ElementState</span>, <span class="ident">Event</span>, <span class="ident">KeyboardInput</span>, <span class="ident">ModifiersState</span>, <span class="ident">Touch</span>, <span class="ident">TouchPhase</span>,
+        <span class="ident">VirtualKeyCode</span>, <span class="ident">WindowEvent</span>,
     },
     <span class="ident">event_loop</span>::{<span class="ident">ControlFlow</span>, <span class="ident">EventLoop</span>},
     <span class="ident">window::WindowBuilder</span>,
@@ -779,6 +785,26 @@
     <span class="ident">run_game_loop</span>(<span class="ident">window</span>, <span class="ident">event_loop</span>).<span class="kw">await</span>
 }
 
+<span class="kw">fn</span> <span class="ident">do_toggle_game_state_debug</span>(<span class="ident">game</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Game</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>) {
+    <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">play_stage</span>.<span class="ident">is_none</span>() {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">raw_chart</span>) <span class="op">=</span> <span class="ident">download_chart</span>(<span class="number">3348</span>) {
+            <span class="kw">let</span> <span class="ident">parser_compressed</span> <span class="op">=</span> <span class="ident">SwfParser::new</span>(<span class="kw-2">*</span><span class="ident">raw_chart</span>);
+            <span class="kw">let</span> <span class="ident">record</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ready_to_parse</span>) <span class="op">=</span> <span class="ident">parser_compressed</span>.<span class="ident">decompress</span>() {
+                <span class="kw">let</span> <span class="ident">parsing</span> <span class="op">=</span> <span class="ident">ready_to_parse</span>.<span class="ident">parse</span>();
+                <span class="comment">// TODO: Make this async, remove intermediate state and just await it.</span>
+                <span class="kw">let</span> <span class="ident">parsed</span> <span class="op">=</span> <span class="ident">parsing</span>.<span class="ident">tick</span>();
+                <span class="prelude-val">Some</span>(<span class="ident">parsed</span>.<span class="ident">produce_tape</span>())
+            } <span class="kw">else</span> {
+                <span class="prelude-val">None</span>
+            };
+
+            <span class="ident">game</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Play::new</span>(<span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>())).<span class="ident">start</span>());
+        }
+    } <span class="kw">else</span> {
+        <span class="ident">game</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+    }
+}
+
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run_game_loop</span>(
     <span class="ident">window</span>: <span class="ident">winit::window::Window</span>,
     <span class="ident">event_loop</span>: <span class="ident">EventLoop</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,
@@ -812,6 +838,11 @@
                 <span class="ident">WindowEvent::Focused</span>(<span class="ident">focused</span>) =&gt; {
                     <span class="macro">log::info!</span>(<span class="string">&quot;Window {:?} focused: {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">window</span>.<span class="ident">id</span>(), <span class="ident">focused</span>);
                 }
+                <span class="ident">WindowEvent::Touch</span>(<span class="ident">touch</span>) =&gt; {
+                    <span class="kw">if</span> <span class="ident">touch</span>.<span class="ident">phase</span> <span class="op">==</span> <span class="ident">TouchPhase::Ended</span> {
+                        <span class="ident">do_toggle_game_state_debug</span>(<span class="kw-2">&amp;mut</span> <span class="ident">game</span>);
+                    }
+                }
                 <span class="ident">WindowEvent::KeyboardInput</span> {
                     <span class="ident">input</span>:
                         <span class="ident">KeyboardInput</span> {
@@ -827,26 +858,7 @@
                         <span class="ident">G</span> =&gt; <span class="ident">window</span>.<span class="ident">set_cursor_grab</span>(<span class="op">!</span><span class="ident">modifiers</span>.<span class="ident">shift</span>()).<span class="ident">unwrap</span>(),
                         <span class="ident">H</span> =&gt; <span class="ident">window</span>.<span class="ident">set_cursor_visible</span>(<span class="ident">modifiers</span>.<span class="ident">shift</span>()),
                         <span class="ident">Space</span> =&gt; {
-                            <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">play_stage</span>.<span class="ident">is_none</span>() {
-                                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">raw_chart</span>) <span class="op">=</span> <span class="ident">download_chart</span>(<span class="number">3348</span>) {
-                                    <span class="kw">let</span> <span class="ident">parser_compressed</span> <span class="op">=</span> <span class="ident">SwfParser::new</span>(<span class="kw-2">*</span><span class="ident">raw_chart</span>);
-                                    <span class="kw">let</span> <span class="ident">record</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ready_to_parse</span>) <span class="op">=</span>
-                                        <span class="ident">parser_compressed</span>.<span class="ident">decompress</span>()
-                                    {
-                                        <span class="kw">let</span> <span class="ident">parsing</span> <span class="op">=</span> <span class="ident">ready_to_parse</span>.<span class="ident">parse</span>();
-                                        <span class="comment">// TODO: Make this async, remove intermediate state and just await it.</span>
-                                        <span class="kw">let</span> <span class="ident">parsed</span> <span class="op">=</span> <span class="ident">parsing</span>.<span class="ident">tick</span>();
-                                        <span class="prelude-val">Some</span>(<span class="ident">parsed</span>.<span class="ident">produce_tape</span>())
-                                    } <span class="kw">else</span> {
-                                        <span class="prelude-val">None</span>
-                                    };
-
-                                    <span class="ident">game</span>.<span class="ident">play_stage</span> <span class="op">=</span>
-                                        <span class="prelude-val">Some</span>(<span class="ident">Play::new</span>(<span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>())).<span class="ident">start</span>());
-                                }
-                            } <span class="kw">else</span> {
-                                <span class="ident">game</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-                            }
+                            <span class="ident">do_toggle_game_state_debug</span>(<span class="kw-2">&amp;mut</span> <span class="ident">game</span>);
                         }
                         <span class="kw">_</span> =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Key: {:?}&quot;</span>, <span class="ident">key</span>),
                     }
