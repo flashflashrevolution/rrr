@@ -1,5 +1,7 @@
 use std::{collections::btree_map::Range, time::Duration};
 
+use btreemultimap::MultiRange;
+
 use crate::{
     note::{Color, CompiledNote, Direction},
     turntable, Turntable,
@@ -99,7 +101,8 @@ impl Play<Active> {
     /// Remove this after we create the `ChartDriver`.
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
-    pub fn view(&self, range_in_milliseconds: u64) -> Range<'_, Duration, CompiledNote> {
+    #[must_use]
+    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, Duration, CompiledNote> {
         self.state.turntable.view(range_in_milliseconds)
     }
 

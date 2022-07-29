@@ -153,6 +153,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0d8c1fef690941d3e7788d328517591fecc684c084084702d6ff1641e993699a"
 
 [[package]]
+name = "btreemultimap"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aba7eaea18547dd4915e745859622e5f796e5b08f5d594735ed0e08d051f97ca"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "build_const"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1793,6 +1802,7 @@ name = "rrr-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "btreemultimap",
  "bytes",
  "cpal",
  "js-sys",

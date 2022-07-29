@@ -167,12 +167,12 @@ impl<T: TimeTrait> Game<T> {
         let frame = self.pixels.get_frame();
         clear(frame);
 
-        let time_on_screen = 2000;
+        let time_on_screen = 1800;
         let field_height = 768.0;
         let note_height = 64.0;
         let start_position = field_height;
         let end_position = -note_height;
-        let lane_offset = 96.0;
+        let lane_offset = 72.0;
 
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
