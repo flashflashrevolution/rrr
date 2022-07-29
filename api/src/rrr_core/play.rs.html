@@ -240,6 +240,11 @@
 <span id="234">234</span>
 <span id="235">235</span>
 <span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::btree_map::Range</span>, <span class="ident">time::Duration</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
@@ -341,14 +346,19 @@
     <span class="doccomment">/// Remove this after we create the `ChartDriver`.</span>
     <span class="doccomment">/// # Errors</span>
     <span class="doccomment">/// Turntable could slice into an invalid set of notes.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Range</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Range</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">f64</span>) {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">progress</span>()
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">u64</span>) {
         <span class="comment">// gameplay logic</span>
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">delta_time</span>);
-        <span class="kw">let</span> <span class="ident">_chart_view</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>();
+        <span class="kw">let</span> <span class="ident">_chart_view</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">2000</span>);
 
         <span class="comment">// Small state machine that controls whether the music should be started.</span>
         <span class="comment">// I can use the tape deck for this _maybe_, but for now could just have a bool.</span>
@@ -366,7 +376,7 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">Duration</span>) {
-        <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>();
+        <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">2000</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
             .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>)
             .<span class="ident">min_by</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">x_note</span>), (<span class="kw">_</span>, <span class="ident">y_note</span>)<span class="op">|</span> {

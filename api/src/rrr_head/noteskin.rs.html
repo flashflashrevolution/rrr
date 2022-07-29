@@ -178,12 +178,12 @@
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::sprites::Drawable</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Definition</span> {
-    <span class="ident">note_width</span>: <span class="ident">usize</span>,
-    <span class="ident">note_height</span>: <span class="ident">usize</span>,
-    <span class="ident">color_indexs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span>,
-    <span class="ident">rotations</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
-    <span class="ident">image</span>: <span class="ident">DynamicImage</span>,
-    <span class="ident">rows</span>: <span class="ident">usize</span>,
+    <span class="kw">pub</span> <span class="ident">note_width</span>: <span class="ident">usize</span>,
+    <span class="kw">pub</span> <span class="ident">note_height</span>: <span class="ident">usize</span>,
+    <span class="kw">pub</span> <span class="ident">color_indexs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Color</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">rotations</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">image</span>: <span class="ident">DynamicImage</span>,
+    <span class="kw">pub</span> <span class="ident">rows</span>: <span class="ident">usize</span>,
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">Note</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {

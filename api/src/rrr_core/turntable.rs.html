@@ -79,10 +79,6 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-<span id="76">76</span>
-<span id="77">77</span>
-<span id="78">78</span>
-<span id="79">79</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">record::Record</span>};
 <span class="kw">use</span> <span class="ident">std::ops::Bound::Included</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::btree_map::Range</span>, <span class="ident">time::Duration</span>};
@@ -97,7 +93,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loaded</span> {}
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Playing</span> {
-    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">f64</span>,
+    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u64</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TurntableState</span> {}
@@ -120,7 +116,7 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
         <span class="ident">Turntable</span> {
             <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
-            <span class="ident">state</span>: <span class="ident">Playing</span> { <span class="ident">progress</span>: <span class="number">0.0</span> },
+            <span class="ident">state</span>: <span class="ident">Playing</span> { <span class="ident">progress</span>: <span class="number">0</span> },
         }
     }
 }
@@ -134,31 +130,27 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">f64</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">u64</span>) {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">+</span><span class="op">=</span> <span class="ident">delta_time</span>;
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>.<span class="ident">as_secs_f64</span>() {
-            <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">=</span> <span class="number">0.0</span>;
-        }
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>.<span class="ident">as_secs_f64</span>()
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">u64</span>
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
     }
 
-    <span class="comment">// TODO: Implement a method of tracking how far the slice should be.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Range</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Range</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
 
-        <span class="kw">let</span> <span class="ident">extent</span> <span class="op">=</span> <span class="ident">Duration::new</span>(<span class="number">2</span>, <span class="number">0</span>);
+        <span class="kw">let</span> <span class="ident">extent</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="ident">range_in_milliseconds</span>);
         <span class="ident">chart</span>.<span class="ident">range</span>((
-            <span class="ident">Included</span>(<span class="ident">Duration::from_secs_f64</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>)),
-            <span class="ident">Included</span>(<span class="ident">Duration::from_secs_f64</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>) <span class="op">+</span> <span class="ident">extent</span>),
+            <span class="ident">Included</span>(<span class="ident">Duration::from_millis</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>)),
+            <span class="ident">Included</span>(<span class="ident">Duration::from_millis</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>) <span class="op">+</span> <span class="ident">extent</span>),
         ))
     }
 }
