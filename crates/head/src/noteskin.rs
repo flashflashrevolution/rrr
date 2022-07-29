@@ -6,12 +6,12 @@ use rrr_core::note::Color;
 use crate::sprites::Drawable;
 
 pub(crate) struct Definition {
-    note_width: usize,
-    note_height: usize,
-    color_indexs: Vec<Color>,
-    rotations: Vec<usize>,
-    image: DynamicImage,
-    rows: usize,
+    pub note_width: usize,
+    pub note_height: usize,
+    pub color_indexs: Vec<Color>,
+    pub rotations: Vec<usize>,
+    pub image: DynamicImage,
+    pub rows: usize,
 }
 
 pub(crate) struct Note<'a> {

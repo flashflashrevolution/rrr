@@ -21,14 +21,14 @@ fn main() {
             panic!("Failed to create record.");
         };
 
-        let delta = 1.0;
+        let delta = 1000;
         while !playing_turntable.is_finished() {
             playing_turntable.tick(delta);
             sleep(std::time::Duration::from_secs_f64(1.0));
             println!(
                 "Progress: {:?} || View: {:?}",
                 playing_turntable.progress(),
-                playing_turntable.view()
+                playing_turntable.view(delta * 2)
             );
         }
     }

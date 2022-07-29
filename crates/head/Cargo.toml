@@ -27,6 +27,7 @@ release = ["log/release_max_level_off"]
 anyhow = "1.0.58"
 cfg-if = "1.0.0"
 image = { version = "0.24.3", default-features = false, features = ["png"] }
+lerp = "0.4"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/JMS55/pixels.git", branch = "main" }
 rrr-core = { path = "../core" }

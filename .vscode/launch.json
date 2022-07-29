@@ -7,10 +7,11 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'rrr-head'",
+            "name": "Debug unit tests in executable 'rrr-head'",
             "cargo": {
                 "args": [
-                    "build",
+                    "test",
+                    "--no-run",
                     "--bin=rrr-head",
                     "--package=rrr-head"
                 ],
@@ -44,11 +45,158 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug unit tests in executable 'rrr-head'",
+            "name": "Debug example 'loaders'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=loaders",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "loaders",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'loaders'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
+                    "--example=loaders",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "loaders",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'positioning'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=positioning",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "positioning",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'positioning'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=positioning",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "positioning",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'record'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=record",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "record",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'record'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=record",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "record",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'turntable'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=turntable",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "turntable",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'turntable'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=turntable",
+                    "--package=rrr-core"
+                ],
+                "filter": {
+                    "name": "turntable",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'rrr-head'",
+            "cargo": {
+                "args": [
+                    "build",
                     "--bin=rrr-head",
                     "--package=rrr-head"
                 ],

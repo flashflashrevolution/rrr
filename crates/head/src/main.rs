@@ -48,11 +48,12 @@ mod visibility;
 
 use crate::geo::Point;
 use anyhow::{Error, Result};
+use lerp::Lerp;
 use log::error;
 use pixels::{Pixels, SurfaceTexture};
 use rrr_core::{
     download_chart,
-    note::Color,
+    note::{self, Color},
     play,
     play::Play,
     time::{performance::Time, TimeTrait},
@@ -152,7 +153,7 @@ impl<T: TimeTrait> Game<T> {
         self.drift_x += 0.;
         self.drift_y -= 0.;
 
-        let delta_time = self.current_instant.sub(&self.previous_instant);
+        let delta_time = (self.current_instant.sub(&self.previous_instant) * 1000.) as u64;
 
         if let Some(stage) = &mut self.play_stage {
             stage.tick(delta_time);
@@ -166,15 +167,31 @@ impl<T: TimeTrait> Game<T> {
         let frame = self.pixels.get_frame();
         clear(frame);
 
+        let time_on_screen = 2000;
+        let field_height = 768.0;
+        let note_height = 64.0;
+        let start_position = field_height;
+        let end_position = -note_height;
+        let lane_offset = 96.0;
+
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
-                if let view = play.view() {
-                    // Filter out notes that aren't on screen.
-                    // Render all notes.
-                    let x_limit = WIDTH as usize / 64 as usize;
-                    for (i, (_, note)) in view.enumerate() {
-                        let x = (((i % x_limit) * 64) as f64) + self.drift_x;
-                        let y = (((i / x_limit) * 64) as f64) + self.drift_y;
+                if let view = play.view(time_on_screen) {
+                    let chart_progress = play.progress();
+
+                    for (duration, note) in view {
+                        let note_progress = duration.as_millis() as u64 - chart_progress;
+                        let normalized = note_progress as f64 / time_on_screen as f64;
+                        let position = end_position.lerp(start_position, normalized);
+
+                        let lane_index = match note.direction {
+                            note::Direction::Left => 0.,
+                            note::Direction::Down => 1.,
+                            note::Direction::Up => 2.,
+                            note::Direction::Right => 3.,
+                        };
+                        let x = lane_offset * lane_index;
+                        let y = position;
                         blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
                     }
                 }

@@ -12,7 +12,7 @@ pub struct Empty {}
 pub struct Loaded {}
 
 pub struct Playing {
-    pub progress: f64,
+    pub progress: u64,
 }
 
 pub trait TurntableState {}
@@ -35,7 +35,7 @@ impl Turntable<Loaded> {
     pub fn play(self) -> Turntable<Playing> {
         Turntable {
             record: self.record,
-            state: Playing { progress: 0.0 },
+            state: Playing { progress: 0 },
         }
     }
 }
@@ -49,31 +49,27 @@ impl Turntable<Playing> {
         }
     }
 
-    pub fn tick(&mut self, delta_time: f64) {
+    pub fn tick(&mut self, delta_time: u64) {
         self.state.progress += delta_time;
-        if self.state.progress >= self.record.duration.as_secs_f64() {
-            self.state.progress = 0.0;
-        }
     }
 
     #[must_use]
     pub fn is_finished(&self) -> bool {
-        self.state.progress >= self.record.duration.as_secs_f64()
+        self.state.progress >= self.record.duration.as_millis() as u64
     }
 
     #[must_use]
-    pub fn progress(&self) -> f64 {
+    pub fn progress(&self) -> u64 {
         self.state.progress
     }
 
-    // TODO: Implement a method of tracking how far the slice should be.
-    pub fn view(&self) -> Range<'_, Duration, CompiledNote> {
+    pub fn view(&self, range_in_milliseconds: u64) -> Range<'_, Duration, CompiledNote> {
         let chart = &self.record.optimized_chart;
 
-        let extent = Duration::new(2, 0);
+        let extent = Duration::from_millis(range_in_milliseconds);
         chart.range((
-            Included(Duration::from_secs_f64(self.state.progress)),
-            Included(Duration::from_secs_f64(self.state.progress) + extent),
+            Included(Duration::from_millis(self.state.progress)),
+            Included(Duration::from_millis(self.state.progress) + extent),
         ))
     }
 }

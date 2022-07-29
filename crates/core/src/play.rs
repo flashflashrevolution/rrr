@@ -99,14 +99,19 @@ impl Play<Active> {
     /// Remove this after we create the `ChartDriver`.
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
-    pub fn view(&self) -> Range<'_, Duration, CompiledNote> {
-        self.state.turntable.view()
+    pub fn view(&self, range_in_milliseconds: u64) -> Range<'_, Duration, CompiledNote> {
+        self.state.turntable.view(range_in_milliseconds)
     }
 
-    pub fn tick(&mut self, delta_time: f64) {
+    #[must_use]
+    pub fn progress(&self) -> u64 {
+        self.state.turntable.progress()
+    }
+
+    pub fn tick(&mut self, delta_time: u64) {
         // gameplay logic
         self.state.turntable.tick(delta_time);
-        let _chart_view = self.state.turntable.view();
+        let _chart_view = self.state.turntable.view(2000);
 
         // Small state machine that controls whether the music should be started.
         // I can use the tape deck for this _maybe_, but for now could just have a bool.
@@ -124,7 +129,7 @@ impl Play<Active> {
     }
 
     pub fn do_action(&mut self, direction: Direction, ts: Duration) {
-        let view_result = self.state.turntable.view();
+        let view_result = self.state.turntable.view(2000);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| direction == note.direction)
             .min_by(|(_, x_note), (_, y_note)| {
