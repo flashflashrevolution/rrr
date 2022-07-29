@@ -12,15 +12,22 @@
 }
 
 /* soon class with drop shadow */
-.soon {
+.progress {
     position: absolute;
+    left: 60%;
+    top: 20%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 1000;
 }
 
 /* soon-inner black text */
-.soon-inner {
+.progress-inner {
     margin: 1em;
     position: relative;
-    color: #2D3837;
+    color: #FFFFFF;
+    font-weight: 700;
+    pointer-events: none;
 }
 
 .sm {

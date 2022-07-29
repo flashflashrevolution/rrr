@@ -62,6 +62,7 @@ use rrr_core::{
 
 use sprites::blit;
 
+use web_sys::Document;
 use winit::{
     dpi::LogicalSize,
     event::{
@@ -264,17 +265,25 @@ fn build_window(
     }
 }
 
+#[cfg(target_arch = "wasm32")]
+use web_sys::{Element, HtmlCanvasElement, HtmlElement, Window};
+
+#[cfg(target_arch = "wasm32")]
+struct Elements {
+    update_progress: Element,
+}
+
 async fn run() -> Result<(), Error> {
     let event_loop = EventLoop::new();
     let window = build_window(&event_loop)?;
 
     #[cfg(target_arch = "wasm32")]
     {
+        use gloo::events::EventListener;
         use std::rc::Rc;
         use wasm_bindgen::closure::Closure;
         use wasm_bindgen::prelude::*;
         use wasm_bindgen::JsCast;
-        use web_sys::{Element, HtmlCanvasElement, HtmlElement};
         use winit::platform::web::WindowExtWebSys;
 
         // Initialize winit window with current dimensions of browser client
@@ -378,6 +387,19 @@ async fn run_game_loop(
 
     window.focus_window();
 
+    #[cfg(target_arch = "wasm32")]
+    let elements = {
+        use wasm_bindgen::JsCast;
+
+        let update_progress: Element = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc: Document| doc.get_element_by_id("progress"))
+            .and_then(|elem: Element| Some(elem))
+            .unwrap();
+
+        Elements { update_progress }
+    };
+
     let mut modifiers = ModifiersState::default();
 
     event_loop.run(move |in_event, _, control_flow| {
@@ -435,6 +457,14 @@ async fn run_game_loop(
                     *control_flow = ControlFlow::Exit;
                 }
                 game.update();
+
+                #[cfg(target_arch = "wasm32")]
+                if let Some(play) = &game.play_stage {
+                    elements
+                        .update_progress
+                        .set_inner_html(&play.progress().to_string().as_str());
+                }
+
                 window.request_redraw();
             }
             Event::RedrawEventsCleared => {
