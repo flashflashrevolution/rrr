@@ -1822,7 +1822,6 @@ dependencies = [
  "web-sys",
  "wgpu",
  "winit",
- "winit_input_helper",
 ]
 
 [[package]]
@@ -2886,15 +2885,6 @@ dependencies = [
  "web-sys",
  "winapi",
  "x11-dl",
-]
-
-[[package]]
-name = "winit_input_helper"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f114b4fe1f38c80027543eb8a0711634fb9136a5cd18e8e990122aaea21f9302"
-dependencies = [
- "winit",
 ]
 
 [[package]]
