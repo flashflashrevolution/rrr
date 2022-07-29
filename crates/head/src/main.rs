@@ -64,8 +64,8 @@ use sprites::blit;
 use winit::{
     dpi::LogicalSize,
     event::{
-        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, VirtualKeyCode,
-        WindowEvent,
+        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, Touch, TouchPhase,
+        VirtualKeyCode, WindowEvent,
     },
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
@@ -322,6 +322,26 @@ async fn run() -> Result<(), Error> {
     run_game_loop(window, event_loop).await
 }
 
+fn do_toggle_game_state_debug(game: &mut Game<Time>) {
+    if game.play_stage.is_none() {
+        if let Some(raw_chart) = download_chart(3348) {
+            let parser_compressed = SwfParser::new(*raw_chart);
+            let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                let parsing = ready_to_parse.parse();
+                // TODO: Make this async, remove intermediate state and just await it.
+                let parsed = parsing.tick();
+                Some(parsed.produce_tape())
+            } else {
+                None
+            };
+
+            game.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
+        }
+    } else {
+        game.play_stage = None;
+    }
+}
+
 async fn run_game_loop(
     window: winit::window::Window,
     event_loop: EventLoop<()>,
@@ -355,6 +375,11 @@ async fn run_game_loop(
                 WindowEvent::Focused(focused) => {
                     log::info!("Window {:?} focused: {:?}", &window.id(), focused);
                 }
+                WindowEvent::Touch(touch) => {
+                    if touch.phase == TouchPhase::Ended {
+                        do_toggle_game_state_debug(&mut game);
+                    }
+                }
                 WindowEvent::KeyboardInput {
                     input:
                         KeyboardInput {
@@ -370,26 +395,7 @@ async fn run_game_loop(
                         G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
                         H => window.set_cursor_visible(modifiers.shift()),
                         Space => {
-                            if game.play_stage.is_none() {
-                                if let Some(raw_chart) = download_chart(3348) {
-                                    let parser_compressed = SwfParser::new(*raw_chart);
-                                    let record = if let Ok(ready_to_parse) =
-                                        parser_compressed.decompress()
-                                    {
-                                        let parsing = ready_to_parse.parse();
-                                        // TODO: Make this async, remove intermediate state and just await it.
-                                        let parsed = parsing.tick();
-                                        Some(parsed.produce_tape())
-                                    } else {
-                                        None
-                                    };
-
-                                    game.play_stage =
-                                        Some(Play::new(Turntable::load(record.unwrap())).start());
-                                }
-                            } else {
-                                game.play_stage = None;
-                            }
+                            do_toggle_game_state_debug(&mut game);
                         }
                         _ => log::info!("Key: {:?}", key),
                     }
