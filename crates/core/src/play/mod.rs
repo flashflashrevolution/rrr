@@ -1,39 +1,16 @@
-use std::{collections::btree_map::Range, time::Duration};
+pub mod actions;
+pub mod stats;
 
-use btreemultimap::MultiRange;
-
+use self::{
+    actions::{ActionState, NoteAction},
+    stats::PlayStats,
+};
 use crate::{
     note::{Color, CompiledNote, Direction},
     turntable, Turntable,
 };
-
-pub struct PlayStats {
-    amazings: u32,
-    perfects: u32,
-    goods: u32,
-    averages: u32,
-    misses: u32,
-    boos: u32,
-}
-
-impl PlayStats {
-    #[must_use]
-    pub fn default() -> Self {
-        Self {
-            amazings: 0,
-            perfects: 0,
-            goods: 0,
-            averages: 0,
-            misses: 0,
-            boos: 0,
-        }
-    }
-}
-
-pub struct NoteAction {
-    note: CompiledNote,
-    timestamp: Duration,
-}
+use btreemultimap::MultiRange;
+use std::time::Duration;
 
 pub struct Play<S: PlayState> {
     stats: PlayStats,
@@ -112,23 +89,11 @@ impl Play<Active> {
     }
 
     pub fn tick(&mut self, delta_time: u64) {
-        // gameplay logic
         self.state.turntable.tick(delta_time);
-        let _chart_view = self.state.turntable.view(2000);
 
-        // Small state machine that controls whether the music should be started.
-        // I can use the tape deck for this _maybe_, but for now could just have a bool.
-
-        // game starts in play mode, notes should begin moving as soon as the player hits the spacebar.
-        // notes are not consumable right now, no accuracy no key presses.
-        // Remove arrow from the render list when it:
-        // -- moves past the end of the screen.
-
-        // TODO: Spawn arrows and begin to move them up the field at delta rate.
-        // - Get chart.
-        // - Spawn arrows in order based on time-to-target offset. (See how we do this in R^3).
-        // - Destroy arrows when they hit the top of the screen.
-        // - Destroy arrows when they are on a recepor when the player activates it.
+        // TODO (gh-142): Destroy arrows when they hit the top of the screen, store a miss judgement.
+        // TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.
+        // TODO (gh-142): Flag any note that has an associated judgement so that it is not rendered.
     }
 
     pub fn do_action(&mut self, direction: Direction, ts: Duration) {
@@ -136,12 +101,16 @@ impl Play<Active> {
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| direction == note.direction)
             .min_by(|(_, x_note), (_, y_note)| {
-                x_note.timestamp.diff(&ts).cmp(&y_note.timestamp.diff(&ts))
+                x_note
+                    .timestamp
+                    .abs_dif(&ts)
+                    .cmp(&y_note.timestamp.abs_dif(&ts))
             })
         {
             self.state.actions.push(NoteAction {
                 note: closest_note.clone(),
                 timestamp: ts,
+                state: ActionState::Hit,
             });
         } else {
             self.state.actions.push(NoteAction {
@@ -152,6 +121,7 @@ impl Play<Active> {
                     timestamp: ts,
                 },
                 timestamp: ts,
+                state: ActionState::Boo,
             });
         }
 
@@ -197,16 +167,23 @@ impl Play<Concluded> {
 
 pub trait Difference {
     #[must_use]
-    fn diff(self, right: &Duration) -> Self;
+    fn abs_dif(self, right: &Duration) -> Self;
+
+    #[must_use]
+    fn diff(self, right: &Duration) -> i128;
 }
 
 impl Difference for Duration {
-    fn diff(self, right: &Duration) -> Duration {
+    fn abs_dif(self, right: &Duration) -> Duration {
         if self < *right {
             *right - self
         } else {
             self - *right
         }
+    }
+
+    fn diff(self, right: &Duration) -> i128 {
+        self.as_millis() as i128 - right.as_millis() as i128
     }
 }
 
@@ -219,8 +196,8 @@ mod tests {
         let ts0 = Duration::from_millis(100);
         let ts1 = Duration::from_millis(130);
 
-        assert_eq!(ts0.diff(&ts1), Duration::from_millis(30));
-        assert_eq!(ts1.diff(&ts0), Duration::from_millis(30));
+        assert_eq!(ts0.abs_dif(&ts1), Duration::from_millis(30));
+        assert_eq!(ts1.abs_dif(&ts0), Duration::from_millis(30));
     }
 
     #[test]
@@ -236,7 +213,7 @@ mod tests {
         #[allow(clippy::expect_used)]
         let closest_note = ts_list
             .iter()
-            .min_by(|x, y| x.diff(&target_ts).cmp(&y.diff(&target_ts)))
+            .min_by(|x, y| x.abs_dif(&target_ts).cmp(&y.abs_dif(&target_ts)))
             .expect("no closest note found");
 
         assert_eq!(closest_note, &ts1);
