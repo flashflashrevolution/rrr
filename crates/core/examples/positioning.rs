@@ -5,7 +5,6 @@ fn main() {
         let parser_compressed = SwfParser::new(*raw_chart);
         let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
             let parsing = ready_to_parse.parse();
-            // TODO: Make this async, remove intermediate state and just await it.
             let parsed = parsing.tick();
             Some(parsed.produce_tape())
         } else {
