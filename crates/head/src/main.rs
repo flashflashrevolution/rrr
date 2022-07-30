@@ -374,12 +374,11 @@ async fn run_game_loop(
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
 
-    let intensity = (44.0 / 255.0).powf(2.2);
     let pixels = if let Ok(pixels) = PixelsBuilder::new(WIDTH, HEIGHT, surface_texture)
         .clear_color(pixels::wgpu::Color {
-            r: intensity,
-            g: intensity,
-            b: intensity,
+            r: 0.,
+            g: 0.,
+            b: 0.,
             a: 1.0,
         })
         .build_async()

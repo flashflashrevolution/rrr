@@ -64,10 +64,23 @@ pub(crate) fn blit<'a, S>(
 
             let source_pixel = pixels.get_pixel(source_x, source_y);
 
-            screen[i] = source_pixel[0];
-            screen[i + 1] = source_pixel[1];
-            screen[i + 2] = source_pixel[2];
-            screen[i + 3] = source_pixel[3];
+            if source_pixel[3] != 0 {
+                screen[i + 3] = 255
+                    - ((255 - screen[i + 3]) as f32 * ((255 - source_pixel[3]) as f32) / 255.)
+                        as u8;
+
+                screen[i + 0] = ((screen[i + 0] as f32 * (255 - source_pixel[3]) as f32
+                    + source_pixel[0] as f32 * source_pixel[3] as f32)
+                    / 255.) as u8;
+
+                screen[i + 1] = ((screen[i + 1] as f32 * (255 - source_pixel[3]) as f32
+                    + source_pixel[1] as f32 * source_pixel[3] as f32)
+                    / 255.) as u8;
+
+                screen[i + 2] = ((screen[i + 2] as f32 * (255 - source_pixel[3]) as f32
+                    + source_pixel[2] as f32 * source_pixel[3] as f32)
+                    / 255.) as u8;
+            }
         }
     }
 }
