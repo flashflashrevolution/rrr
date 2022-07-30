@@ -478,6 +478,41 @@
 <span id="472">472</span>
 <span id="473">473</span>
 <span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">elided_lifetimes_in_paths</span>,
@@ -528,9 +563,9 @@
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::geo::Point</span>;
 <span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
-<span class="kw">use</span> <span class="ident">lerp::Lerp</span>;
+<span class="kw">use</span> <span class="ident">lerp</span>::{<span class="ident">num_traits::Float</span>, <span class="ident">Lerp</span>};
 <span class="kw">use</span> <span class="ident">log::error</span>;
-<span class="kw">use</span> <span class="ident">pixels</span>::{<span class="ident">Pixels</span>, <span class="ident">SurfaceTexture</span>};
+<span class="kw">use</span> <span class="ident">pixels</span>::{<span class="ident">Pixels</span>, <span class="ident">PixelsBuilder</span>, <span class="ident">SurfaceTexture</span>};
 <span class="kw">use</span> <span class="ident">rrr_core</span>::{
     <span class="ident">download_chart</span>,
     <span class="ident">note</span>::{<span class="self">self</span>, <span class="ident">Color</span>},
@@ -542,6 +577,7 @@
 
 <span class="kw">use</span> <span class="ident">sprites::blit</span>;
 
+<span class="kw">use</span> <span class="ident">wgpu</span>::{<span class="ident">BlendState</span>, <span class="ident">TextureFormat</span>};
 <span class="kw">use</span> <span class="ident">winit</span>::{
     <span class="ident">dpi::LogicalSize</span>,
     <span class="ident">event</span>::{
@@ -739,9 +775,16 @@
             .<span class="ident">with_title</span>(<span class="string">&quot;Rust Rust Revolution&quot;</span>)
             .<span class="ident">with_inner_size</span>(<span class="ident">size</span>)
             .<span class="ident">with_resizable</span>(<span class="bool-val">false</span>)
-            .<span class="ident">with_transparent</span>(<span class="bool-val">true</span>)
             .<span class="ident">build</span>(<span class="ident">event_loop</span>)
     }
+}
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="ident">Element</span>, <span class="ident">HtmlCanvasElement</span>, <span class="ident">HtmlElement</span>, <span class="ident">Window</span>};
+
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="kw">struct</span> <span class="ident">Elements</span> {
+    <span class="ident">update_progress</span>: <span class="ident">Element</span>,
 }
 
 <span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Error</span><span class="op">&gt;</span> {
@@ -750,11 +793,11 @@
 
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
     {
+        <span class="kw">use</span> <span class="ident">gloo::events::EventListener</span>;
         <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
         <span class="kw">use</span> <span class="ident">wasm_bindgen::closure::Closure</span>;
         <span class="kw">use</span> <span class="ident">wasm_bindgen::prelude</span>::<span class="kw-2">*</span>;
         <span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-        <span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="ident">Element</span>, <span class="ident">HtmlCanvasElement</span>, <span class="ident">HtmlElement</span>};
         <span class="kw">use</span> <span class="ident">winit::platform::web::WindowExtWebSys</span>;
 
         <span class="comment">// Initialize winit window with current dimensions of browser client</span>
@@ -845,21 +888,42 @@
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">anyhow::Error</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">window_size</span> <span class="op">=</span> <span class="ident">window</span>.<span class="ident">inner_size</span>();
     <span class="kw">let</span> <span class="ident">surface_texture</span> <span class="op">=</span> <span class="ident">SurfaceTexture::new</span>(<span class="ident">window_size</span>.<span class="ident">width</span>, <span class="ident">window_size</span>.<span class="ident">height</span>, <span class="kw-2">&amp;</span><span class="ident">window</span>);
-    <span class="kw">let</span> <span class="ident">pixels</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">pixels</span>) <span class="op">=</span> <span class="ident">Pixels::new_async</span>(<span class="ident">WIDTH</span>, <span class="ident">HEIGHT</span>, <span class="ident">surface_texture</span>).<span class="kw">await</span> {
+
+    <span class="kw">let</span> <span class="ident">intensity</span> <span class="op">=</span> (<span class="number">44.0</span> <span class="op">/</span> <span class="number">255.0</span>).<span class="ident">powf</span>(<span class="number">2.2</span>);
+    <span class="kw">let</span> <span class="ident">pixels</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">pixels</span>) <span class="op">=</span> <span class="ident">PixelsBuilder::new</span>(<span class="ident">WIDTH</span>, <span class="ident">HEIGHT</span>, <span class="ident">surface_texture</span>)
+        .<span class="ident">clear_color</span>(<span class="ident">pixels::wgpu::Color</span> {
+            <span class="ident">r</span>: <span class="ident">intensity</span>,
+            <span class="ident">g</span>: <span class="ident">intensity</span>,
+            <span class="ident">b</span>: <span class="ident">intensity</span>,
+            <span class="ident">a</span>: <span class="number">1.0</span>,
+        })
+        .<span class="ident">build_async</span>()
+        .<span class="kw">await</span>
+    {
         <span class="ident">pixels</span>
     } <span class="kw">else</span> {
         <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Could not initialize Pixels renderer.&quot;</span>))<span class="question-mark">?</span>
     };
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">game</span> <span class="op">=</span> <span class="ident">Game</span>::<span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span><span class="ident">::new</span>(<span class="prelude-val">None</span>, <span class="ident">pixels</span>, <span class="prelude-val">None</span>);
-
     <span class="ident">game</span>.<span class="ident">init</span>();
     <span class="ident">game</span>.<span class="ident">load</span>(<span class="number">3348</span>);
-
     <span class="ident">window</span>.<span class="ident">focus_window</span>();
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">modifiers</span> <span class="op">=</span> <span class="ident">ModifiersState::default</span>();
+    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+    <span class="kw">let</span> <span class="ident">elements</span> <span class="op">=</span> {
+        <span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
 
+        <span class="kw">let</span> <span class="ident">update_progress</span>: <span class="ident">Element</span> <span class="op">=</span> <span class="ident">web_sys::window</span>()
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">win</span>: <span class="ident">Window</span><span class="op">|</span> <span class="ident">win</span>.<span class="ident">document</span>())
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">doc</span><span class="op">|</span> <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;progress&quot;</span>))
+            .<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">elem</span>: <span class="ident">Element</span><span class="op">|</span> <span class="prelude-val">Some</span>(<span class="ident">elem</span>))
+            .<span class="ident">unwrap</span>();
+
+        <span class="ident">Elements</span> { <span class="ident">update_progress</span> }
+    };
+
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">modifiers</span> <span class="op">=</span> <span class="ident">ModifiersState::default</span>();
     <span class="ident">event_loop</span>.<span class="ident">run</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">in_event</span>, <span class="kw">_</span>, <span class="ident">control_flow</span><span class="op">|</span> {
         <span class="kw-2">*</span><span class="ident">control_flow</span> <span class="op">=</span> <span class="ident">ControlFlow::Poll</span>;
 
@@ -915,6 +979,14 @@
                     <span class="kw-2">*</span><span class="ident">control_flow</span> <span class="op">=</span> <span class="ident">ControlFlow::Exit</span>;
                 }
                 <span class="ident">game</span>.<span class="ident">update</span>();
+
+                <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">play_stage</span> {
+                    <span class="ident">elements</span>
+                        .<span class="ident">update_progress</span>
+                        .<span class="ident">set_inner_html</span>(<span class="kw-2">&amp;</span><span class="ident">play</span>.<span class="ident">progress</span>().<span class="ident">to_string</span>().<span class="ident">as_str</span>());
+                }
+
                 <span class="ident">window</span>.<span class="ident">request_redraw</span>();
             }
             <span class="ident">Event::RedrawEventsCleared</span> =&gt; {
@@ -925,13 +997,11 @@
     });
 }
 
-<span class="kw">fn</span> <span class="ident">clear</span>(<span class="ident">screen</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) {
-    <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">byte</span>) <span class="kw">in</span> <span class="ident">screen</span>.<span class="ident">iter_mut</span>().<span class="ident">enumerate</span>() {
-        <span class="kw-2">*</span><span class="ident">byte</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">i</span> <span class="op">%</span> <span class="number">4</span> <span class="op">==</span> <span class="number">3</span> { <span class="number">255</span> } <span class="kw">else</span> { <span class="number">0</span> };
-    }
+<span class="kw">fn</span> <span class="ident">clear</span>(<span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) {
+    <span class="ident">frame</span>.<span class="ident">fill</span>(<span class="number">0</span>);
 }
 
-<span class="kw">fn</span> <span class="ident">rect</span>(<span class="ident">screen</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>], <span class="ident">x</span>: <span class="ident">f64</span>, <span class="ident">y</span>: <span class="ident">f64</span>, <span class="ident">width</span>: <span class="ident">f64</span>, <span class="ident">height</span>: <span class="ident">f64</span>) {
+<span class="kw">fn</span> <span class="ident">rect</span>(<span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>], <span class="ident">x</span>: <span class="ident">f64</span>, <span class="ident">y</span>: <span class="ident">f64</span>, <span class="ident">width</span>: <span class="ident">f64</span>, <span class="ident">height</span>: <span class="ident">f64</span>) {
     <span class="kw">let</span> <span class="ident">x_min</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">f64::max</span>(<span class="number">0.</span>, <span class="ident">x</span>);
     <span class="kw">let</span> <span class="ident">x_max</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">f64::min</span>(<span class="ident">WIDTH</span> <span class="kw">as</span> <span class="ident">f64</span>, <span class="ident">x</span> <span class="op">+</span> <span class="ident">width</span>);
     <span class="kw">let</span> <span class="ident">y_min</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">f64::max</span>(<span class="number">0.</span>, <span class="ident">y</span>);
@@ -945,13 +1015,13 @@
     <span class="kw">for</span> <span class="ident">row</span> <span class="kw">in</span> <span class="ident">y_min_u</span>..<span class="ident">y_max_u</span> {
         <span class="kw">for</span> <span class="ident">column</span> <span class="kw">in</span> <span class="ident">x_min_u</span>..<span class="ident">x_max_u</span> {
             <span class="kw">let</span> <span class="ident">i</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">row</span> <span class="op">*</span> (<span class="ident">WIDTH</span> <span class="kw">as</span> <span class="ident">usize</span>) <span class="op">+</span> <span class="ident">column</span>) <span class="op">*</span> <span class="number">4</span>;
-            <span class="ident">screen</span>[<span class="ident">i</span>] <span class="op">=</span> <span class="number">0x5e</span>;
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> <span class="number">0x48</span>;
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="op">=</span> <span class="number">0xe8</span>;
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">3</span>] <span class="op">=</span> <span class="number">0xff</span>;
+            <span class="ident">frame</span>[<span class="ident">i</span>] <span class="op">=</span> <span class="number">0x5e</span>;
+            <span class="ident">frame</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> <span class="number">0x48</span>;
+            <span class="ident">frame</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="op">=</span> <span class="number">0xe8</span>;
+            <span class="ident">frame</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">3</span>] <span class="op">=</span> <span class="number">0xff</span>;
         }
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (9067d5277 2022-07-28)" ></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (3924dac7b 2022-07-29)" ></div>
 </body></html>
