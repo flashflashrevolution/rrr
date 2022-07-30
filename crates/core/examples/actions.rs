@@ -1,10 +1,15 @@
-use std::time::Duration;
+use std::{
+    collections::{HashMap, HashSet},
+    fmt::Display,
+    time::Duration,
+};
 
 use rrr_core::{
-    note::{self, CompiledNote},
+    note::{self, CompiledNote, Direction},
     play::{self, Difference},
 };
 
+#[derive(Debug)]
 struct JudgeWindow(i8);
 static JUDGE: &[JudgeWindow] = &[
     JudgeWindow(-118),
@@ -35,12 +40,18 @@ struct Judgement<'a> {
 }
 
 fn main() {
-    let view = [
+    let view = vec![
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
             timestamp: Duration::from_millis(40),
+        },
+        note::CompiledNote {
+            beat_position: 0,
+            color: note::Color::Red,
+            direction: note::Direction::Up,
+            timestamp: Duration::from_millis(44),
         },
         note::CompiledNote {
             beat_position: 0,
@@ -90,16 +101,18 @@ fn main() {
             direction: note::Direction::Down,
             timestamp: Duration::from_millis(270),
         },
+        note::CompiledNote {
+            beat_position: 0,
+            color: note::Color::Red,
+            direction: note::Direction::Down,
+            timestamp: Duration::from_millis(350),
+        },
     ];
 
     let current_receptor_ms_position = 160u64;
 
     // "Keyboard input"
     let key_actions = [
-        (
-            note::Direction::Up,
-            Duration::from_millis(current_receptor_ms_position),
-        ),
         (
             note::Direction::Up,
             Duration::from_millis(current_receptor_ms_position),
@@ -112,22 +125,19 @@ fn main() {
             note::Direction::Down,
             Duration::from_millis(current_receptor_ms_position),
         ),
-        (
-            note::Direction::Down,
-            Duration::from_millis(current_receptor_ms_position),
-        ),
     ];
 
     // Need the judgement code to be in here. Probably don't need "Note Actions" just judgements /w associated note. So a NoteActionBuilder produces a judgement.
 
     // Calculate missed notes, build a miss action for those notes, hash-map for processed notes.
-    let missed_notes = view
+    let missed_notes: HashSet<CompiledNote> = view
         .iter()
         .filter(|note| {
             note.timestamp
                 < Duration::from_millis(current_receptor_ms_position - i8::abs(JUDGE[0].0) as u64)
         })
-        .collect::<Vec<&CompiledNote>>();
+        .cloned()
+        .collect();
 
     println!("Missed notes: {:?}", missed_notes);
 
@@ -136,8 +146,6 @@ fn main() {
     // Build a hit key action for that note.
 
     // Calculate misses, and flag.
-    let mut note_actions = Vec::<Judgement>::new();
-
     // Problem: Given a view of N notes, and a set of "key actions":
     // -- In the lane declared in the "key action", which note in either direction is closest, and has not been "actioned" yet?
 
@@ -146,32 +154,25 @@ fn main() {
     // 2. For each key action, find the lane, find the earliest note, and build a NoteAction.
     // 3. If no note within actionable range, build a BooAction.
 
-    for (direction, ts) in key_actions {
-        // let diff = note.timestamp.diff(&self.timestamp);
-        // // Create definition list for offsets. Hard code for now.
-        // let judge = {
-        //     let mut last_judge = None;
-        //     for judge in JUDGE {
-        //         if diff > judge.0 {
-        //             last_judge.replace(judge);
-        //         }
-        //     }
-        //     last_judge
-        // };
+    for note in view {
+        if !missed_notes.contains(&note) {
+            let diff = note
+                .timestamp
+                .diff(&Duration::from_millis(current_receptor_ms_position));
 
-        // Filter out notes that are past the current timestamp.
-        let closest_note = view
-            .iter()
-            .filter(|note| direction == note.direction)
-            .filter(|note| !missed_notes.contains(note))
-            .collect::<Vec<&CompiledNote>>();
+            let judge = {
+                let mut last_judge = None;
+                for judge in JUDGE {
+                    if diff > judge.0.into() {
+                        last_judge.replace(judge);
+                    }
+                }
+                last_judge
+            };
 
-        print!("{:?}", closest_note);
-
-        //note_actions.push(closest_note);
-    }
-
-    for action in note_actions {
-        println!("{:?}", action);
+            if let Some(judge) = judge {
+                println!("{:?}", judge);
+            }
+        }
     }
 }
