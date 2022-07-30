@@ -48,9 +48,9 @@ mod visibility;
 
 use crate::geo::Point;
 use anyhow::{Error, Result};
-use lerp::Lerp;
+use lerp::{num_traits::Float, Lerp};
 use log::error;
-use pixels::{Pixels, SurfaceTexture};
+use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     download_chart,
     note::{self, Color},
@@ -62,7 +62,7 @@ use rrr_core::{
 
 use sprites::blit;
 
-use web_sys::Document;
+use wgpu::{BlendState, TextureFormat};
 use winit::{
     dpi::LogicalSize,
     event::{
@@ -260,7 +260,6 @@ fn build_window(
             .with_title("Rust Rust Revolution")
             .with_inner_size(size)
             .with_resizable(false)
-            .with_transparent(true)
             .build(event_loop)
     }
 }
@@ -374,17 +373,26 @@ async fn run_game_loop(
 ) -> Result<(), anyhow::Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
-    let pixels = if let Ok(pixels) = Pixels::new_async(WIDTH, HEIGHT, surface_texture).await {
+
+    let intensity = (44.0 / 255.0).powf(2.2);
+    let pixels = if let Ok(pixels) = PixelsBuilder::new(WIDTH, HEIGHT, surface_texture)
+        .clear_color(pixels::wgpu::Color {
+            r: intensity,
+            g: intensity,
+            b: intensity,
+            a: 1.0,
+        })
+        .build_async()
+        .await
+    {
         pixels
     } else {
         Err(anyhow::anyhow!("Could not initialize Pixels renderer."))?
     };
 
     let mut game = Game::<Time>::new(None, pixels, None);
-
     game.init();
     game.load(3348);
-
     window.focus_window();
 
     #[cfg(target_arch = "wasm32")]
@@ -393,7 +401,7 @@ async fn run_game_loop(
 
         let update_progress: Element = web_sys::window()
             .and_then(|win: Window| win.document())
-            .and_then(|doc: Document| doc.get_element_by_id("progress"))
+            .and_then(|doc| doc.get_element_by_id("progress"))
             .and_then(|elem: Element| Some(elem))
             .unwrap();
 
@@ -401,7 +409,6 @@ async fn run_game_loop(
     };
 
     let mut modifiers = ModifiersState::default();
-
     event_loop.run(move |in_event, _, control_flow| {
         *control_flow = ControlFlow::Poll;
 
@@ -475,13 +482,11 @@ async fn run_game_loop(
     });
 }
 
-fn clear(screen: &mut [u8]) {
-    for (i, byte) in screen.iter_mut().enumerate() {
-        *byte = if i % 4 == 3 { 255 } else { 0 };
-    }
+fn clear(frame: &mut [u8]) {
+    frame.fill(0);
 }
 
-fn rect(screen: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
+fn rect(frame: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
     let x_min: f64 = f64::max(0., x);
     let x_max: f64 = f64::min(WIDTH as f64, x + width);
     let y_min: f64 = f64::max(0., y);
@@ -495,10 +500,10 @@ fn rect(screen: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
     for row in y_min_u..y_max_u {
         for column in x_min_u..x_max_u {
             let i: usize = (row * (WIDTH as usize) + column) * 4;
-            screen[i] = 0x5e;
-            screen[i + 1] = 0x48;
-            screen[i + 2] = 0xe8;
-            screen[i + 3] = 0xff;
+            frame[i] = 0x5e;
+            frame[i + 1] = 0x48;
+            frame[i + 2] = 0xe8;
+            frame[i + 3] = 0xff;
         }
     }
 }

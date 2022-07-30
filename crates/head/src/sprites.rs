@@ -1,5 +1,5 @@
-use crate::{Point, HEIGHT, WIDTH};
-use image::{DynamicImage, GenericImageView, Rgba, SubImage};
+use crate::{HEIGHT, WIDTH};
+use image::{DynamicImage, GenericImageView, SubImage};
 use rrr_core::note::Direction;
 use std::f64;
 
