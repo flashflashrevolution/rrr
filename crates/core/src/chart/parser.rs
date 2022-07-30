@@ -13,6 +13,7 @@ use swf::{
     SwfBuf, UTF_8,
 };
 use thiserror::Error;
+use rand::Rng;
 
 #[derive(Error, Debug)]
 enum ChartParseError {
@@ -101,7 +102,8 @@ impl SwfParser<Parsing> {
             match tag {
                 swf::Tag::DefineSound(_) => log::info!("DefineSound"),
                 swf::Tag::DoAction(action) => {
-                    let res = SwfParser::parse_action(action, swf_reader.version());
+                    // let res = SwfParser::parse_action(action, swf_reader.version());
+                    let res = SwfParser::parse_action();
                     if let Ok(chart) = res {
                         chart_data = chart;
                     }
@@ -135,83 +137,110 @@ impl SwfParser<Parsing> {
         }
     }
 
-    fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<CompiledNote>> {
-        let mut action_reader = avm1::read::Reader::new(action_raw, version);
-        let mut is_chart_data = false;
-        let mut constant_pool: Option<ConstantPool<'_>> = None;
-        let mut value_stack: Vec<Value<'_>> = Vec::with_capacity(4);
+    fn parse_action() -> anyhow::Result<Vec<CompiledNote>> {
         let mut beat_box: Vec<CompiledNote> = Vec::new();
-
-        let mut done = false;
-        while !done {
-            if let Ok(action) = action_reader.read_action() {
-                match action {
-                    avm1::types::Action::ConstantPool(cp) => {
-                        constant_pool.replace(cp);
-                    }
-
-                    avm1::types::Action::Push(mut push_object) => {
-                        if let ControlFlow::Break(_) =
-                            parse_push_action(is_chart_data, &mut push_object, &mut value_stack)
-                        {
-                            continue;
-                        }
-                    }
-
-                    avm1::types::Action::End | avm1::types::Action::Stop => {
-                        done = true;
-                    }
-
-                    avm1::types::Action::GetVariable => {
-                        is_chart_data = true;
-                    }
-
-                    avm1::types::Action::InitArray => {
-                        // Ignore the first `InitArray`, data at this point is garbage.
-                        if value_stack.is_empty() {
-                            continue;
-                        }
-
-                        let beat_position = parse_beat_position(&mut value_stack);
-                        let direction = parse_direction(&mut value_stack, &constant_pool);
-                        let color = parse_color(&mut value_stack, &constant_pool);
-                        let timestamp = parse_timestamp(&mut value_stack);
-
-                        if let (Ok(bp), Ok(dir), Ok(col), Ok(ts)) =
-                            (beat_position, direction, color, timestamp)
-                        {
-                            beat_box.push(CompiledNote {
-                                beat_position: bp,
-                                direction: dir,
-                                color: col,
-                                timestamp: ts,
-                            });
-                        } else {
-                            bail!(ChartParseError::Timestamp);
-                        }
-                    }
-
-                    avm1::types::Action::SetMember => {
-                        is_chart_data = false;
-                    }
-
-                    _ => {
-                        log::error!("Unexpectedly unhandled action: {:?}", action);
-                    }
-                }
-            }
-        }
-
-        if beat_box.is_empty() {
-            if is_chart_data {
-                bail!(ChartParseError::BeatPosition);
+        for i in 0..100000 {
+            let mut rng = rand::thread_rng();
+            let direction_index = rng.gen_range(0..4);
+            let direction: Direction;
+            match direction_index {
+                0 => direction = Direction::Up,
+                1 => direction = Direction::Left,
+                2 => direction = Direction::Down,
+                3 => direction = Direction::Right,
+                _ => unreachable!(),
             }
 
-            bail!("Not chart data.");
+            let nanos: u64 = (f64::sqrt(i as f64) * 500000000.) as u64;
+
+            beat_box.push(CompiledNote {
+                beat_position: 0,
+                color: Color::Red,
+                direction: direction,
+                timestamp: Duration::from_nanos(nanos)
+            });
         }
 
         Ok(beat_box)
     }
+
+    // fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<CompiledNote>> {
+    //     let mut action_reader = avm1::read::Reader::new(action_raw, version);
+    //     let mut is_chart_data = false;
+    //     let mut constant_pool: Option<ConstantPool<'_>> = None;
+    //     let mut value_stack: Vec<Value<'_>> = Vec::with_capacity(4);
+    //     let mut beat_box: Vec<CompiledNote> = Vec::new();
+
+    //     let mut done = false;
+    //     while !done {
+    //         if let Ok(action) = action_reader.read_action() {
+    //             match action {
+    //                 avm1::types::Action::ConstantPool(cp) => {
+    //                     constant_pool.replace(cp);
+    //                 }
+
+    //                 avm1::types::Action::Push(mut push_object) => {
+    //                     if let ControlFlow::Break(_) =
+    //                         parse_push_action(is_chart_data, &mut push_object, &mut value_stack)
+    //                     {
+    //                         continue;
+    //                     }
+    //                 }
+
+    //                 avm1::types::Action::End | avm1::types::Action::Stop => {
+    //                     done = true;
+    //                 }
+
+    //                 avm1::types::Action::GetVariable => {
+    //                     is_chart_data = true;
+    //                 }
+
+    //                 avm1::types::Action::InitArray => {
+    //                     // Ignore the first `InitArray`, data at this point is garbage.
+    //                     if value_stack.is_empty() {
+    //                         continue;
+    //                     }
+
+    //                     let beat_position = parse_beat_position(&mut value_stack);
+    //                     let direction = parse_direction(&mut value_stack, &constant_pool);
+    //                     let color = parse_color(&mut value_stack, &constant_pool);
+    //                     let timestamp = parse_timestamp(&mut value_stack);
+
+    //                     if let (Ok(bp), Ok(dir), Ok(col), Ok(ts)) =
+    //                         (beat_position, direction, color, timestamp)
+    //                     {
+    //                         beat_box.push(CompiledNote {
+    //                             beat_position: bp,
+    //                             direction: dir,
+    //                             color: col,
+    //                             timestamp: ts,
+    //                         });
+    //                     } else {
+    //                         bail!(ChartParseError::Timestamp);
+    //                     }
+    //                 }
+
+    //                 avm1::types::Action::SetMember => {
+    //                     is_chart_data = false;
+    //                 }
+
+    //                 _ => {
+    //                     log::error!("Unexpectedly unhandled action: {:?}", action);
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     if beat_box.is_empty() {
+    //         if is_chart_data {
+    //             bail!(ChartParseError::BeatPosition);
+    //         }
+
+    //         bail!("Not chart data.");
+    //     }
+
+    //     Ok(beat_box)
+    // }
 }
 
 impl SwfParser<Parsed> {

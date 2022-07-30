@@ -39,6 +39,8 @@ strum = { version = "0.24.1", features = ["derive"] }
 swf = { package = "swf", git = "https://github.com/ruffle-rs/ruffle.git", rev = "78ebf06f55eff05db6939166973bbfa08641300b" }
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
 thiserror = "1.0.31"
+rand = "0.8.5"
+getrandom = { version = "0.2", features = ["js"] }
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }

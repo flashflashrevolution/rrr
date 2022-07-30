@@ -88,6 +88,10 @@ struct Game<T: TimeTrait> {
     rect_y: f64,
     drift_x: f64,
     drift_y: f64,
+    frame_number: usize,
+    next_update_ms: u64,
+    frame_time_memory: [f64; 10],
+    notes_on_screen: u64,
 }
 
 impl<T: TimeTrait> Game<T> {
@@ -106,6 +110,10 @@ impl<T: TimeTrait> Game<T> {
             rect_y: 150.,
             drift_x: 0.,
             drift_y: 0.,
+            frame_number: 0,
+            next_update_ms: 1000,
+            frame_time_memory: [0., 0., 0., 0., 0., 0., 0., 0., 0., 0.],
+            notes_on_screen: 0,
         }
     }
 
@@ -153,11 +161,26 @@ impl<T: TimeTrait> Game<T> {
         self.rect_y += 1.;
         self.drift_x += 0.;
         self.drift_y -= 0.;
+        self.frame_number += 1;
+        
 
         let delta_time = (self.current_instant.sub(&self.previous_instant) * 1000.) as u64;
+        let delta_time_f = self.current_instant.sub(&self.previous_instant) * 1000.;
+        // log::info!("delta time = {}", delta_time);
+        self.frame_time_memory[self.frame_number % self.frame_time_memory.len()] = delta_time_f;
 
         if let Some(stage) = &mut self.play_stage {
             stage.tick(delta_time);
+
+            if stage.progress() > self.next_update_ms {
+                let mut sum: f64 = 0.;
+                for i in 0..self.frame_time_memory.len() {
+                    sum += self.frame_time_memory[i];
+                }
+                let average_frame_time: f64 = sum / (self.frame_time_memory.len() as f64);
+                log::info!("average frame time = {} ms, {} notes", average_frame_time, self.notes_on_screen);
+                self.next_update_ms += 1000;
+            }
         }
     }
 
@@ -175,6 +198,7 @@ impl<T: TimeTrait> Game<T> {
         let end_position = -note_height;
         let lane_offset = 72.0;
 
+        let mut notes_on_screen = 0;
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
                 if let view = play.view(time_on_screen) {
@@ -194,10 +218,12 @@ impl<T: TimeTrait> Game<T> {
                         let x = lane_offset * lane_index;
                         let y = position;
                         blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
+                        notes_on_screen += 1;
                     }
                 }
             }
         }
+        self.notes_on_screen = notes_on_screen;
 
         rect(frame, self.rect_x, self.rect_y, 32., 32.);
     }
