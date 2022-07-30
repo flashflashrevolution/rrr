@@ -77,6 +77,19 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">HEIGHT</span>, <span class="ident">WIDTH</span>};
 <span class="kw">use</span> <span class="ident">image</span>::{<span class="ident">DynamicImage</span>, <span class="ident">GenericImageView</span>, <span class="ident">SubImage</span>};
 <span class="kw">use</span> <span class="ident">rrr_core::note::Direction</span>;
@@ -143,10 +156,23 @@
 
             <span class="kw">let</span> <span class="ident">source_pixel</span> <span class="op">=</span> <span class="ident">pixels</span>.<span class="ident">get_pixel</span>(<span class="ident">source_x</span>, <span class="ident">source_y</span>);
 
-            <span class="ident">screen</span>[<span class="ident">i</span>] <span class="op">=</span> <span class="ident">source_pixel</span>[<span class="number">0</span>];
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> <span class="ident">source_pixel</span>[<span class="number">1</span>];
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="op">=</span> <span class="ident">source_pixel</span>[<span class="number">2</span>];
-            <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">3</span>] <span class="op">=</span> <span class="ident">source_pixel</span>[<span class="number">3</span>];
+            <span class="kw">if</span> <span class="ident">source_pixel</span>[<span class="number">3</span>] <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">3</span>] <span class="op">=</span> <span class="number">255</span>
+                    <span class="op">-</span> ((<span class="number">255</span> <span class="op">-</span> <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">3</span>]) <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> ((<span class="number">255</span> <span class="op">-</span> <span class="ident">source_pixel</span>[<span class="number">3</span>]) <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">/</span> <span class="number">255.</span>)
+                        <span class="kw">as</span> <span class="ident">u8</span>;
+
+                <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">0</span>] <span class="op">=</span> ((<span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">0</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> (<span class="number">255</span> <span class="op">-</span> <span class="ident">source_pixel</span>[<span class="number">3</span>]) <span class="kw">as</span> <span class="ident">f32</span>
+                    <span class="op">+</span> <span class="ident">source_pixel</span>[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">source_pixel</span>[<span class="number">3</span>] <span class="kw">as</span> <span class="ident">f32</span>)
+                    <span class="op">/</span> <span class="number">255.</span>) <span class="kw">as</span> <span class="ident">u8</span>;
+
+                <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="op">=</span> ((<span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">1</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> (<span class="number">255</span> <span class="op">-</span> <span class="ident">source_pixel</span>[<span class="number">3</span>]) <span class="kw">as</span> <span class="ident">f32</span>
+                    <span class="op">+</span> <span class="ident">source_pixel</span>[<span class="number">1</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">source_pixel</span>[<span class="number">3</span>] <span class="kw">as</span> <span class="ident">f32</span>)
+                    <span class="op">/</span> <span class="number">255.</span>) <span class="kw">as</span> <span class="ident">u8</span>;
+
+                <span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="op">=</span> ((<span class="ident">screen</span>[<span class="ident">i</span> <span class="op">+</span> <span class="number">2</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> (<span class="number">255</span> <span class="op">-</span> <span class="ident">source_pixel</span>[<span class="number">3</span>]) <span class="kw">as</span> <span class="ident">f32</span>
+                    <span class="op">+</span> <span class="ident">source_pixel</span>[<span class="number">2</span>] <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="ident">source_pixel</span>[<span class="number">3</span>] <span class="kw">as</span> <span class="ident">f32</span>)
+                    <span class="op">/</span> <span class="number">255.</span>) <span class="kw">as</span> <span class="ident">u8</span>;
+            }
         }
     }
 }
