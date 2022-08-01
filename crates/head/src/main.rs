@@ -46,9 +46,8 @@ mod noteskin;
 mod sprites;
 mod visibility;
 
-use crate::geo::Point;
 use anyhow::{Error, Result};
-use lerp::{num_traits::Float, Lerp};
+use lerp::Lerp;
 use log::error;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
@@ -57,17 +56,13 @@ use rrr_core::{
     play,
     play::Play,
     time::{performance::Time, TimeTrait},
-    turntable, Record, SwfParser, Turntable, TurntableState,
+    SwfParser, Turntable,
 };
-
 use sprites::blit;
-
-use wgpu::{BlendState, TextureFormat};
 use winit::{
     dpi::LogicalSize,
     event::{
-        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, Touch, TouchPhase,
-        VirtualKeyCode, WindowEvent,
+        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, TouchPhase, WindowEvent,
     },
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
@@ -109,9 +104,9 @@ impl<T: TimeTrait> Game<T> {
         }
     }
 
-    pub fn load(&mut self, chart_id: usize) {}
+    pub(crate) fn load(&mut self, chart_id: usize) {}
 
-    pub fn init(&mut self) {
+    pub(crate) fn init(&mut self) {
         let noteskin_bytes = get_noteskin();
         let noteskin_image = match image::load_from_memory(noteskin_bytes) {
             Ok(image) => image,
@@ -120,10 +115,6 @@ impl<T: TimeTrait> Game<T> {
                 return;
             }
         };
-        let rgba_representation = noteskin_image.to_rgba8();
-        let image_bytes = rgba_representation.into_raw();
-
-        // Definition for the default noteskin.
         self.noteskin.replace(noteskin::Definition::new(
             64,
             64,
