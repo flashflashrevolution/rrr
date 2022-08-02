@@ -46,9 +46,8 @@ mod noteskin;
 mod sprites;
 mod visibility;
 
-use crate::geo::Point;
 use anyhow::{Error, Result};
-use lerp::{num_traits::Float, Lerp};
+use lerp::Lerp;
 use log::error;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
@@ -57,17 +56,13 @@ use rrr_core::{
     play,
     play::Play,
     time::{performance::Time, TimeTrait},
-    turntable, Record, SwfParser, Turntable, TurntableState,
+    SwfParser, Turntable,
 };
-
 use sprites::blit;
-
-use wgpu::{BlendState, TextureFormat};
 use winit::{
     dpi::LogicalSize,
     event::{
-        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, Touch, TouchPhase,
-        VirtualKeyCode, WindowEvent,
+        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, TouchPhase, WindowEvent,
     },
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
@@ -76,7 +71,7 @@ use winit::{
 use std::f64;
 
 const WIDTH: u32 = 512;
-const HEIGHT: u32 = 768;
+const HEIGHT: u32 = 720;
 
 struct Game<T: TimeTrait> {
     noteskin: Option<noteskin::Definition>,
@@ -109,9 +104,9 @@ impl<T: TimeTrait> Game<T> {
         }
     }
 
-    pub fn load(&mut self, chart_id: usize) {}
+    pub(crate) fn load(&mut self, chart_id: usize) {}
 
-    pub fn init(&mut self) {
+    pub(crate) fn init(&mut self) {
         let noteskin_bytes = get_noteskin();
         let noteskin_image = match image::load_from_memory(noteskin_bytes) {
             Ok(image) => image,
@@ -120,10 +115,6 @@ impl<T: TimeTrait> Game<T> {
                 return;
             }
         };
-        let rgba_representation = noteskin_image.to_rgba8();
-        let image_bytes = rgba_representation.into_raw();
-
-        // Definition for the default noteskin.
         self.noteskin.replace(noteskin::Definition::new(
             64,
             64,
@@ -169,11 +160,12 @@ impl<T: TimeTrait> Game<T> {
         clear(frame);
 
         let time_on_screen = 1800;
-        let field_height = 768.0;
+        let field_height = HEIGHT as f64;
         let note_height = 64.0;
         let start_position = field_height;
         let end_position = -note_height;
         let lane_offset = 72.0;
+        let offset = WIDTH as f64 / 2.0 - 32.0;
 
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
@@ -186,12 +178,12 @@ impl<T: TimeTrait> Game<T> {
                         let position = end_position.lerp(start_position, normalized);
 
                         let lane_index = match note.direction {
-                            note::Direction::Left => 0.,
-                            note::Direction::Down => 1.,
-                            note::Direction::Up => 2.,
-                            note::Direction::Right => 3.,
+                            note::Direction::Left => -1.5,
+                            note::Direction::Down => -0.5,
+                            note::Direction::Up => 0.5,
+                            note::Direction::Right => 1.5,
                         };
-                        let x = lane_offset * lane_index;
+                        let x = offset + (lane_offset * lane_index);
                         let y = position;
                         blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
                     }

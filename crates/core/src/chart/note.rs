@@ -1,4 +1,7 @@
-use std::time::Duration;
+use std::{
+    fmt::{Display, Formatter},
+    time::Duration,
+};
 use strum::{EnumCount, EnumIter};
 
 use serde::{Deserialize, Serialize};
@@ -45,6 +48,16 @@ pub struct CompiledNote {
     pub color: Color,
     pub direction: Direction,
     pub timestamp: Duration,
+}
+
+impl Display for CompiledNote {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{:?} {:?} {}",
+            self.color, self.direction, self.beat_position
+        )
+    }
 }
 
 impl Ord for CompiledNote {

@@ -28,7 +28,7 @@ features = ["serde"]
 [dependencies]
 anyhow = "1.0.59"
 btreemultimap = "0.1.0"
-bytes = "1.2.0"
+bytes = "1.2.1"
 lerp = "0.4"
 log = "0.4.17"
 rb = "0.4.0"
