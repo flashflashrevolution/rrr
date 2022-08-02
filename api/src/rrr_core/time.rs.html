@@ -40,9 +40,19 @@
 <span id="40">40</span>
 <span id="41">41</span>
 <span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TimeTrait</span>: <span class="ident">Copy</span> {
     <span class="kw">fn</span> <span class="ident">now</span>() -&gt; <span class="self">Self</span>;
     <span class="kw">fn</span> <span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">f64</span>;
+    <span class="kw">fn</span> <span class="ident">as_secs_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span>;
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span>
@@ -56,6 +66,10 @@
     <span class="kw">impl</span> <span class="ident">TimeTrait</span> <span class="kw">for</span> <span class="ident">Time</span> {
         <span class="kw">fn</span> <span class="ident">now</span>() -&gt; <span class="self">Self</span> {
             <span class="self">Self</span>(<span class="ident">Instant::now</span>())
+        }
+
+        <span class="kw">fn</span> <span class="ident">as_secs_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span> {
+            <span class="self">self</span>.<span class="number">0</span>.<span class="ident">elapsed</span>().<span class="ident">as_secs_f64</span>()
         }
 
         <span class="kw">fn</span> <span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">f64</span> {
@@ -75,6 +89,10 @@
     <span class="kw">impl</span> <span class="ident">TimeTrait</span> <span class="kw">for</span> <span class="ident">Time</span> {
         <span class="kw">fn</span> <span class="ident">now</span>() -&gt; <span class="self">Self</span> {
             <span class="self">Self</span>(<span class="ident">window</span>().<span class="ident">unwrap</span>().<span class="ident">performance</span>().<span class="ident">unwrap</span>().<span class="ident">now</span>() <span class="op">/</span> <span class="number">1000.</span>)
+        }
+
+        <span class="kw">fn</span> <span class="ident">as_secs_f64</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span> {
+            <span class="self">self</span>.<span class="number">0</span>
         }
 
         <span class="kw">fn</span> <span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">f64</span> {
