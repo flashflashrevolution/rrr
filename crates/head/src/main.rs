@@ -59,6 +59,7 @@ use rrr_core::{
     SwfParser, Turntable,
 };
 use sprites::blit;
+use std::f64;
 use winit::{
     dpi::LogicalSize,
     event::{
@@ -67,8 +68,6 @@ use winit::{
     event_loop::{ControlFlow, EventLoop},
     window::WindowBuilder,
 };
-
-use std::f64;
 
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 720;
@@ -429,23 +428,7 @@ async fn run_game_loop(
                         },
                     ..
                 } => {
-                    use crate::note::Direction;
-                    use winit::event::VirtualKeyCode::{
-                        Down, Escape, Left, Right, Space, Up, G, H,
-                    };
-                    match key {
-                        Escape => *control_flow = ControlFlow::Exit,
-                        Up => game.do_action(Direction::Up),
-                        Down => game.do_action(Direction::Down),
-                        Left => game.do_action(Direction::Left),
-                        Right => game.do_action(Direction::Right),
-                        G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
-                        H => window.set_cursor_visible(modifiers.shift()),
-                        Space => {
-                            do_toggle_game_state_debug(&mut game);
-                        }
-                        _ => log::info!("Key: {:?}", key),
-                    }
+                    handle_keyboard_input(key, control_flow, &mut game, &window, modifiers);
                 }
                 WindowEvent::ModifiersChanged(m) => modifiers = m,
                 _ => (),
@@ -482,6 +465,29 @@ async fn run_game_loop(
             _ => (),
         }
     });
+}
+
+fn handle_keyboard_input(
+    key: winit::event::VirtualKeyCode,
+    control_flow: &mut ControlFlow,
+    game: &mut Game<Time>,
+    window: &winit::window::Window,
+    modifiers: ModifiersState,
+) {
+    use winit::event::VirtualKeyCode::{Down, Escape, Left, Right, Space, Up, G, H};
+    match key {
+        Escape => *control_flow = ControlFlow::Exit,
+        Up => game.do_action(Direction::Up),
+        Down => game.do_action(Direction::Down),
+        Left => game.do_action(Direction::Left),
+        Right => game.do_action(Direction::Right),
+        G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
+        H => window.set_cursor_visible(modifiers.shift()),
+        Space => {
+            do_toggle_game_state_debug(game);
+        }
+        _ => log::info!("Key: {:?}", key),
+    }
 }
 
 fn clear(frame: &mut [u8]) {
