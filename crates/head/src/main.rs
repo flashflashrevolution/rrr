@@ -52,7 +52,7 @@ use log::error;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     download_chart,
-    note::{self, Color},
+    note::{self, Color, Direction},
     play,
     play::Play,
     time::{performance::Time, TimeTrait},
@@ -146,6 +146,13 @@ impl<T: TimeTrait> Game<T> {
         }
     }
 
+    fn do_action(&mut self, direction: Direction) {
+        let current_instant = T::now().as_secs_f64();
+        if let Some(stage) = &mut self.play_stage {
+            stage.do_action(direction, current_instant as i128);
+        }
+    }
+
     /// Draw the `World` state to the frame buffer.
     ///
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
@@ -166,9 +173,9 @@ impl<T: TimeTrait> Game<T> {
                 if let view = play.view(time_on_screen) {
                     let chart_progress = play.progress();
 
-                    for (&duration, note) in
-                        view.filter(|(_, note)| !play.missed_notes().contains(*note))
-                    {
+                    for (&duration, note) in view.filter(|(_, note)| {
+                        !play.missed_notes().contains(*note) && !play.actions().contains_key(note)
+                    }) {
                         let note_progress = duration - chart_progress as i128;
                         let normalized = note_progress as f64 / time_on_screen as f64;
                         let position = end_position.lerp(start_position, normalized);
@@ -422,9 +429,16 @@ async fn run_game_loop(
                         },
                     ..
                 } => {
-                    use winit::event::VirtualKeyCode::{Escape, Space, G, H};
+                    use crate::note::Direction;
+                    use winit::event::VirtualKeyCode::{
+                        Down, Escape, Left, Right, Space, Up, G, H,
+                    };
                     match key {
                         Escape => *control_flow = ControlFlow::Exit,
+                        Up => game.do_action(Direction::Up),
+                        Down => game.do_action(Direction::Down),
+                        Left => game.do_action(Direction::Left),
+                        Right => game.do_action(Direction::Right),
                         G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
                         H => window.set_cursor_visible(modifiers.shift()),
                         Space => {

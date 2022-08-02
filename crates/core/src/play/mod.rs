@@ -10,7 +10,7 @@ use crate::{
     note::{Color, CompiledNote, Direction},
     turntable, Turntable,
 };
-use btreemultimap::MultiRange;
+use btreemultimap::{BTreeMultiMap, MultiRange};
 use std::collections::HashSet;
 
 pub struct Play<S: PlayState> {
@@ -24,7 +24,7 @@ pub struct Ready {
 
 pub struct Active {
     turntable: Turntable<turntable::Playing>,
-    actions: Vec<NoteAction>,
+    actions: BTreeMultiMap<CompiledNote, NoteAction>,
     missed: HashSet<CompiledNote>,
 }
 
@@ -53,7 +53,7 @@ impl Play<Ready> {
             stats: PlayStats::default(),
             state: Active {
                 turntable: self.state.turntable.play(),
-                actions: Vec::default(),
+                actions: BTreeMultiMap::default(),
                 missed: HashSet::default(),
             },
         }
@@ -96,6 +96,11 @@ impl Play<Active> {
         &self.state.missed
     }
 
+    #[must_use]
+    pub fn actions(&self) -> &BTreeMultiMap<CompiledNote, NoteAction> {
+        &self.state.actions
+    }
+
     pub fn tick(&mut self, delta_time: u64) {
         self.state.turntable.tick(delta_time);
         self.check_miss();
@@ -128,23 +133,32 @@ impl Play<Active> {
                     .cmp(&y_note.timestamp.abs_dif(&ts))
             })
         {
-            self.state.actions.push(NoteAction {
-                note: closest_note.clone(),
-                timestamp: ts,
-                state: ActionState::Hit,
-            });
-        } else {
-            self.state.actions.push(NoteAction {
-                note: CompiledNote {
-                    beat_position: -1,
-                    color: Color::Receptor,
-                    direction,
+            self.state.actions.insert(
+                closest_note.clone(),
+                NoteAction {
+                    note: closest_note.clone(),
                     timestamp: ts,
+                    state: ActionState::Hit,
                 },
+            );
+        } else {
+            let note = CompiledNote {
+                beat_position: -1,
+                color: Color::Receptor,
+                direction,
                 timestamp: ts,
-                state: ActionState::Boo,
-            });
+            };
+            self.state.actions.insert(
+                note.clone(),
+                NoteAction {
+                    note,
+                    timestamp: ts,
+                    state: ActionState::Boo,
+                },
+            );
         }
+
+        println!("{:?}", self.state.actions);
 
         // TODO: Result and Optional need to be managed better here.
         // Possibility of invalid chart during gameplay is not good.

@@ -1,6 +1,7 @@
 pub trait TimeTrait: Copy {
     fn now() -> Self;
     fn sub(&self, other: &Self) -> f64;
+    fn as_secs_f64(&self) -> f64;
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -14,6 +15,10 @@ pub mod performance {
     impl TimeTrait for Time {
         fn now() -> Self {
             Self(Instant::now())
+        }
+
+        fn as_secs_f64(&self) -> f64 {
+            self.0.elapsed().as_secs_f64()
         }
 
         fn sub(&self, other: &Self) -> f64 {
@@ -33,6 +38,10 @@ pub mod performance {
     impl TimeTrait for Time {
         fn now() -> Self {
             Self(window().unwrap().performance().unwrap().now() / 1000.)
+        }
+
+        fn as_secs_f64(&self) -> f64 {
+            self.0
         }
 
         fn sub(&self, other: &Self) -> f64 {
