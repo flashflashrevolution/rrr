@@ -24,7 +24,7 @@ fn main() {
         let delta = 1000;
         while !playing_turntable.is_finished() {
             playing_turntable.tick(delta);
-            sleep(std::time::Duration::from_secs_f64(1.0));
+            sleep(1.0);
             println!(
                 "Progress: {:?} || View: {:?}",
                 playing_turntable.progress(),

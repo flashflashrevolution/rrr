@@ -3,7 +3,7 @@ use crate::{
     CompiledChart, Record,
 };
 use anyhow::bail;
-use std::{ops::ControlFlow, time::Duration};
+use std::ops::ControlFlow;
 use swf::{
     avm1::{
         self,
@@ -221,9 +221,9 @@ impl SwfParser<Parsed> {
     }
 }
 
-fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<Duration> {
+fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i128> {
     if let Some(Value::Int(ms)) = value_stack.pop() {
-        Ok(Duration::from_millis(ms.try_into().unwrap()))
+        Ok(ms.try_into().unwrap())
     } else {
         bail!(ChartParseError::Timestamp);
     }

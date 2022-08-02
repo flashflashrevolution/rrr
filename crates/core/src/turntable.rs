@@ -1,7 +1,6 @@
 use crate::{note::CompiledNote, record::Record};
 use btreemultimap::MultiRange;
 use std::ops::Bound::Included;
-use std::time::Duration;
 
 pub struct Turntable<S: TurntableState> {
     record: Record,
@@ -56,7 +55,7 @@ impl Turntable<Playing> {
 
     #[must_use]
     pub fn is_finished(&self) -> bool {
-        self.state.progress >= self.record.duration.as_millis() as u64
+        self.state.progress as i128 >= self.record.duration
     }
 
     #[must_use]
@@ -64,13 +63,11 @@ impl Turntable<Playing> {
         self.state.progress
     }
 
-    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, Duration, CompiledNote> {
+    pub fn view(&self, range_in_milliseconds: i128) -> MultiRange<'_, i128, CompiledNote> {
         let chart = &self.record.optimized_chart;
-
-        let extent = Duration::from_millis(range_in_milliseconds);
         chart.range((
-            Included(Duration::from_millis(self.state.progress)),
-            Included(Duration::from_millis(self.state.progress) + extent),
+            Included(self.state.progress as i128),
+            Included(self.state.progress as i128 + range_in_milliseconds),
         ))
     }
 }

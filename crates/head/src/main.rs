@@ -81,8 +81,6 @@ struct Game<T: TimeTrait> {
     current_instant: T,
     rect_x: f64,
     rect_y: f64,
-    drift_x: f64,
-    drift_y: f64,
 }
 
 impl<T: TimeTrait> Game<T> {
@@ -99,8 +97,6 @@ impl<T: TimeTrait> Game<T> {
             current_instant: T::now(),
             rect_x: 100.,
             rect_y: 150.,
-            drift_x: 0.,
-            drift_y: 0.,
         }
     }
 
@@ -142,8 +138,6 @@ impl<T: TimeTrait> Game<T> {
 
         self.rect_x += 1.;
         self.rect_y += 1.;
-        self.drift_x += 0.;
-        self.drift_y -= 0.;
 
         let delta_time = (self.current_instant.sub(&self.previous_instant) * 1000.) as u64;
 
@@ -172,8 +166,10 @@ impl<T: TimeTrait> Game<T> {
                 if let view = play.view(time_on_screen) {
                     let chart_progress = play.progress();
 
-                    for (duration, note) in view {
-                        let note_progress = duration.as_millis() as u64 - chart_progress;
+                    for (&duration, note) in
+                        view.filter(|(_, note)| !play.missed_notes().contains(*note))
+                    {
+                        let note_progress = duration - chart_progress as i128;
                         let normalized = note_progress as f64 / time_on_screen as f64;
                         let position = end_position.lerp(start_position, normalized);
 
@@ -449,12 +445,13 @@ async fn run_game_loop(
                 _ => (),
             },
             Event::MainEventsCleared => {
-                game.draw();
                 if let Err(e) = game.pixels.render() {
                     log::error!("pixels.render() failed: {}", e);
                     *control_flow = ControlFlow::Exit;
                 }
+
                 game.update();
+                game.draw();
 
                 #[cfg(target_arch = "wasm32")]
                 if let Some(play) = &game.play_stage {

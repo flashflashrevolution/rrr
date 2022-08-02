@@ -1,5 +1,3 @@
-use std::time::Duration;
-
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -24,7 +22,7 @@ impl CompiledChart {
     }
 
     #[must_use]
-    pub fn get_duration(&self) -> Result<Duration, anyhow::Error> {
+    pub fn get_duration(&self) -> Result<i128, anyhow::Error> {
         if let Some(last_note) = self.notes.first() {
             Ok(last_note.timestamp)
         } else {
@@ -62,7 +60,7 @@ impl Chart {
                     beat_position: 100,
                     color: Color::Red,
                     direction: Direction::Up,
-                    timestamp: Duration::from_millis(0)
+                    timestamp: 0i128
                 };
                 100
             ],

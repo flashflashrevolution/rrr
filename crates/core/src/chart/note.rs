@@ -1,7 +1,4 @@
-use std::{
-    fmt::{Display, Formatter},
-    time::Duration,
-};
+use std::fmt::{Display, Formatter};
 use strum::{EnumCount, EnumIter};
 
 use serde::{Deserialize, Serialize};
@@ -47,7 +44,7 @@ pub struct CompiledNote {
     pub beat_position: i32,
     pub color: Color,
     pub direction: Direction,
-    pub timestamp: Duration,
+    pub timestamp: i128,
 }
 
 impl Display for CompiledNote {

@@ -1,7 +1,6 @@
 use std::{
     collections::{HashMap, HashSet},
     fmt::Display,
-    time::Duration,
 };
 
 use rrr_core::{
@@ -45,67 +44,67 @@ fn main() {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(40),
+            timestamp: 40,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(44),
+            timestamp: 44,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(80),
+            timestamp: 80,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(110),
+            timestamp: 110,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(160),
+            timestamp: 160,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Up,
-            timestamp: Duration::from_millis(180),
+            timestamp: 180,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Left,
-            timestamp: Duration::from_millis(240),
+            timestamp: 240,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Down,
-            timestamp: Duration::from_millis(240),
+            timestamp: 240,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Down,
-            timestamp: Duration::from_millis(260),
+            timestamp: 260,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Down,
-            timestamp: Duration::from_millis(270),
+            timestamp: 270,
         },
         note::CompiledNote {
             beat_position: 0,
             color: note::Color::Red,
             direction: note::Direction::Down,
-            timestamp: Duration::from_millis(350),
+            timestamp: 350,
         },
     ];
 
@@ -113,18 +112,9 @@ fn main() {
 
     // "Keyboard input"
     let key_actions = [
-        (
-            note::Direction::Up,
-            Duration::from_millis(current_receptor_ms_position),
-        ),
-        (
-            note::Direction::Left,
-            Duration::from_millis(current_receptor_ms_position),
-        ),
-        (
-            note::Direction::Down,
-            Duration::from_millis(current_receptor_ms_position),
-        ),
+        (note::Direction::Up, current_receptor_ms_position),
+        (note::Direction::Left, current_receptor_ms_position),
+        (note::Direction::Down, current_receptor_ms_position),
     ];
 
     // Need the judgement code to be in here. Probably don't need "Note Actions" just judgements /w associated note. So a NoteActionBuilder produces a judgement.
@@ -132,10 +122,7 @@ fn main() {
     // Calculate missed notes, build a miss action for those notes, hash-map for processed notes.
     let missed_notes: HashSet<CompiledNote> = view
         .iter()
-        .filter(|note| {
-            note.timestamp
-                < Duration::from_millis(current_receptor_ms_position - i8::abs(JUDGE[0].0) as u64)
-        })
+        .filter(|note| note.timestamp < current_receptor_ms_position - i8::abs(JUDGE[0].0 as u64))
         .cloned()
         .collect();
 
@@ -156,9 +143,7 @@ fn main() {
 
     for note in view {
         if !missed_notes.contains(&note) {
-            let diff = note
-                .timestamp
-                .diff(&Duration::from_millis(current_receptor_ms_position));
+            let diff = note.timestamp.diff(&current_receptor_ms_position);
 
             let judge = {
                 let mut last_judge = None;

@@ -1,4 +1,4 @@
-use std::{fmt::Display, time::Duration};
+use std::fmt::Display;
 
 use crate::note::CompiledNote;
 
@@ -12,7 +12,7 @@ pub enum ActionState {
 #[derive(Debug)]
 pub struct NoteAction {
     pub note: CompiledNote,
-    pub timestamp: Duration,
+    pub timestamp: i128,
     pub state: ActionState,
 }
 

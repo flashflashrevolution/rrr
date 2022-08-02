@@ -1,4 +1,5 @@
 pub mod actions;
+pub mod judge;
 pub mod stats;
 
 use self::{
@@ -10,7 +11,7 @@ use crate::{
     turntable, Turntable,
 };
 use btreemultimap::MultiRange;
-use std::time::Duration;
+use std::collections::HashSet;
 
 pub struct Play<S: PlayState> {
     stats: PlayStats,
@@ -24,6 +25,7 @@ pub struct Ready {
 pub struct Active {
     turntable: Turntable<turntable::Playing>,
     actions: Vec<NoteAction>,
+    missed: HashSet<CompiledNote>,
 }
 
 pub struct Concluded {
@@ -52,6 +54,7 @@ impl Play<Ready> {
             state: Active {
                 turntable: self.state.turntable.play(),
                 actions: Vec::default(),
+                missed: HashSet::default(),
             },
         }
     }
@@ -79,8 +82,8 @@ impl Play<Active> {
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
     #[must_use]
-    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, Duration, CompiledNote> {
-        self.state.turntable.view(range_in_milliseconds)
+    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, i128, CompiledNote> {
+        self.state.turntable.view(range_in_milliseconds.into())
     }
 
     #[must_use]
@@ -88,15 +91,33 @@ impl Play<Active> {
         self.state.turntable.progress()
     }
 
+    #[must_use]
+    pub fn missed_notes(&self) -> &HashSet<CompiledNote> {
+        &self.state.missed
+    }
+
     pub fn tick(&mut self, delta_time: u64) {
         self.state.turntable.tick(delta_time);
+        self.check_miss();
 
         // TODO (gh-142): Destroy arrows when they hit the top of the screen, store a miss judgement.
         // TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.
         // TODO (gh-142): Flag any note that has an associated judgement so that it is not rendered.
     }
 
-    pub fn do_action(&mut self, direction: Direction, ts: Duration) {
+    fn check_miss(&mut self) {
+        let view = self.view(3600);
+        let missed = view.filter(|(&ts, _)| {
+            println!("{:?} || {:?}", ts, self.progress() as i128);
+            self.progress() as i128 + i128::abs(judge::JUDGE[0].0 as i128) > ts
+        });
+        let mapped_notes = missed.map(|(_, note)| note.clone());
+        self.state
+            .missed
+            .extend(mapped_notes.collect::<HashSet<CompiledNote>>());
+    }
+
+    pub fn do_action(&mut self, direction: Direction, ts: i128) {
         let view_result = self.state.turntable.view(2000);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| direction == note.direction)
@@ -167,14 +188,14 @@ impl Play<Concluded> {
 
 pub trait Difference {
     #[must_use]
-    fn abs_dif(self, right: &Duration) -> Self;
+    fn abs_dif(self, right: &i128) -> Self;
 
     #[must_use]
-    fn diff(self, right: &Duration) -> i128;
+    fn diff(self, right: &i128) -> i128;
 }
 
-impl Difference for Duration {
-    fn abs_dif(self, right: &Duration) -> Duration {
+impl Difference for i128 {
+    fn abs_dif(self, right: &i128) -> i128 {
         if self < *right {
             *right - self
         } else {
@@ -182,40 +203,7 @@ impl Difference for Duration {
         }
     }
 
-    fn diff(self, right: &Duration) -> i128 {
-        self.as_millis() as i128 - right.as_millis() as i128
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_getting_the_difference_between_durations() {
-        let ts0 = Duration::from_millis(100);
-        let ts1 = Duration::from_millis(130);
-
-        assert_eq!(ts0.abs_dif(&ts1), Duration::from_millis(30));
-        assert_eq!(ts1.abs_dif(&ts0), Duration::from_millis(30));
-    }
-
-    #[test]
-    fn find_closest_duration() {
-        let ts0 = Duration::from_millis(100);
-        let ts1 = Duration::from_millis(130);
-        let ts2 = Duration::from_millis(150);
-        let ts3 = Duration::from_millis(170);
-        let ts_list = vec![ts0, ts1, ts2, ts3];
-
-        let target_ts = Duration::from_millis(140);
-
-        #[allow(clippy::expect_used)]
-        let closest_note = ts_list
-            .iter()
-            .min_by(|x, y| x.abs_dif(&target_ts).cmp(&y.abs_dif(&target_ts)))
-            .expect("no closest note found");
-
-        assert_eq!(closest_note, &ts1);
+    fn diff(self, right: &i128) -> i128 {
+        self - right
     }
 }
