@@ -165,6 +165,7 @@ impl<T: TimeTrait> Game<T> {
         let start_position = field_height;
         let end_position = -note_height;
         let lane_offset = 72.0;
+        let offset = WIDTH as f64 / 2.0 - 32.0;
 
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
@@ -177,12 +178,12 @@ impl<T: TimeTrait> Game<T> {
                         let position = end_position.lerp(start_position, normalized);
 
                         let lane_index = match note.direction {
-                            note::Direction::Left => 0.,
-                            note::Direction::Down => 1.,
-                            note::Direction::Up => 2.,
-                            note::Direction::Right => 3.,
+                            note::Direction::Left => -1.5,
+                            note::Direction::Down => -0.5,
+                            note::Direction::Up => 0.5,
+                            note::Direction::Right => 1.5,
                         };
-                        let x = lane_offset * lane_index;
+                        let x = offset + (lane_offset * lane_index);
                         let y = position;
                         blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
                     }
