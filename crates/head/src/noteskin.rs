@@ -58,23 +58,6 @@ impl Definition {
         &self.rotations
     }
 
-    // fn get_pixels_for_color(&self, color: Color) -> Vec<&u8> {
-    //     let image_source = &self.image;
-    //     let width = self.note_width;
-    //     let height = self.note_height;
-    //     let color_index = self.color_indexs.iter().position(|c| *c == color).unwrap();
-    //     let row_offset = (height * color_index) % (self.rows * height);
-    //     let col_offset = (height * color_index) / (self.rows * width);
-    //     let mut image = Vec::<&u8>::with_capacity(width * height);
-    //     for x in 0..width {
-    //         for y in 0..height {
-    //             let index = (row_offset + y) * width + col_offset + x;
-    //             image.push(&image_source[index]);
-    //         }
-    //     }
-    //     image
-    // }
-
     pub(crate) fn get_note(&self, color: Color) -> Note<'_> {
         let width = self.note_width;
         let height = self.note_height;
