@@ -207,19 +207,8 @@
 <span id="207">207</span>
 <span id="208">208</span>
 <span id="209">209</span>
-<span id="210">210</span>
-<span id="211">211</span>
-<span id="212">212</span>
-<span id="213">213</span>
-<span id="214">214</span>
-<span id="215">215</span>
-<span id="216">216</span>
-<span id="217">217</span>
-<span id="218">218</span>
-<span id="219">219</span>
-<span id="220">220</span>
-<span id="221">221</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">judge</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">stats</span>;
 
 <span class="kw">use</span> <span class="self">self</span>::{
@@ -231,7 +220,7 @@
     <span class="ident">turntable</span>, <span class="ident">Turntable</span>,
 };
 <span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span class="kw">use</span> <span class="ident">std::collections::HashSet</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">PlayState</span><span class="op">&gt;</span> {
     <span class="ident">stats</span>: <span class="ident">PlayStats</span>,
@@ -245,6 +234,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Active</span> {
     <span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Playing</span><span class="op">&gt;</span>,
     <span class="ident">actions</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">NoteAction</span><span class="op">&gt;</span>,
+    <span class="ident">missed</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">CompiledNote</span><span class="op">&gt;</span>,
 }
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Concluded</span> {
@@ -273,6 +263,7 @@
             <span class="ident">state</span>: <span class="ident">Active</span> {
                 <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">play</span>(),
                 <span class="ident">actions</span>: <span class="ident">Vec::default</span>(),
+                <span class="ident">missed</span>: <span class="ident">HashSet::default</span>(),
             },
         }
     }
@@ -300,8 +291,8 @@
     <span class="doccomment">/// # Errors</span>
     <span class="doccomment">/// Turntable could slice into an invalid set of notes.</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>.<span class="ident">into</span>())
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -309,15 +300,33 @@
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">progress</span>()
     }
 
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">missed_notes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">missed</span>
+    }
+
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">u64</span>) {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">delta_time</span>);
+        <span class="self">self</span>.<span class="ident">check_miss</span>();
 
         <span class="comment">// TODO (gh-142): Destroy arrows when they hit the top of the screen, store a miss judgement.</span>
         <span class="comment">// TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.</span>
         <span class="comment">// TODO (gh-142): Flag any note that has an associated judgement so that it is not rendered.</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">Duration</span>) {
+    <span class="kw">fn</span> <span class="ident">check_miss</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">view</span>(<span class="number">3600</span>);
+        <span class="kw">let</span> <span class="ident">missed</span> <span class="op">=</span> <span class="ident">view</span>.<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>, <span class="kw">_</span>)<span class="op">|</span> {
+            <span class="macro">println!</span>(<span class="string">&quot;{:?} || {:?}&quot;</span>, <span class="ident">ts</span>, <span class="self">self</span>.<span class="ident">progress</span>() <span class="kw">as</span> <span class="ident">i128</span>);
+            <span class="self">self</span>.<span class="ident">progress</span>() <span class="kw">as</span> <span class="ident">i128</span> <span class="op">+</span> <span class="ident">i128::abs</span>(<span class="ident">judge::JUDGE</span>[<span class="number">0</span>].<span class="number">0</span> <span class="kw">as</span> <span class="ident">i128</span>) <span class="op">&gt;</span> <span class="ident">ts</span>
+        });
+        <span class="kw">let</span> <span class="ident">mapped_notes</span> <span class="op">=</span> <span class="ident">missed</span>.<span class="ident">map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">note</span>.<span class="ident">clone</span>());
+        <span class="self">self</span>.<span class="ident">state</span>
+            .<span class="ident">missed</span>
+            .<span class="ident">extend</span>(<span class="ident">mapped_notes</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">CompiledNote</span><span class="op">&gt;</span><span class="op">&gt;</span>());
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) {
         <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">2000</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
             .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>)
@@ -388,14 +397,14 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Difference</span> {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="self">Self</span>;
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">i128</span>;
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span>;
 }
 
-<span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">Duration</span> {
-    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">Duration</span> {
+<span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">i128</span> {
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
         <span class="kw">if</span> <span class="self">self</span> <span class="op">&lt;</span> <span class="kw-2">*</span><span class="ident">right</span> {
             <span class="kw-2">*</span><span class="ident">right</span> <span class="op">-</span> <span class="self">self</span>
         } <span class="kw">else</span> {
@@ -403,41 +412,8 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">i128</span> {
-        <span class="self">self</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">i128</span> <span class="op">-</span> <span class="ident">right</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">i128</span>
-    }
-}
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_getting_the_difference_between_durations</span>() {
-        <span class="kw">let</span> <span class="ident">ts0</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">100</span>);
-        <span class="kw">let</span> <span class="ident">ts1</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">130</span>);
-
-        <span class="macro">assert_eq!</span>(<span class="ident">ts0</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts1</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
-        <span class="macro">assert_eq!</span>(<span class="ident">ts1</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts0</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
-    }
-
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">find_closest_duration</span>() {
-        <span class="kw">let</span> <span class="ident">ts0</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">100</span>);
-        <span class="kw">let</span> <span class="ident">ts1</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">130</span>);
-        <span class="kw">let</span> <span class="ident">ts2</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">150</span>);
-        <span class="kw">let</span> <span class="ident">ts3</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">170</span>);
-        <span class="kw">let</span> <span class="ident">ts_list</span> <span class="op">=</span> <span class="macro">vec!</span>[<span class="ident">ts0</span>, <span class="ident">ts1</span>, <span class="ident">ts2</span>, <span class="ident">ts3</span>];
-
-        <span class="kw">let</span> <span class="ident">target_ts</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">140</span>);
-
-        <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::expect_used</span>)]</span>
-        <span class="kw">let</span> <span class="ident">closest_note</span> <span class="op">=</span> <span class="ident">ts_list</span>
-            .<span class="ident">iter</span>()
-            .<span class="ident">min_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>).<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>)))
-            .<span class="ident">expect</span>(<span class="string">&quot;no closest note found&quot;</span>);
-
-        <span class="macro">assert_eq!</span>(<span class="ident">closest_note</span>, <span class="kw-2">&amp;</span><span class="ident">ts1</span>);
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
+        <span class="self">self</span> <span class="op">-</span> <span class="ident">right</span>
     }
 }
 </code></pre></div>

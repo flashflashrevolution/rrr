@@ -134,13 +134,7 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
-<span id="137">137</span>
-<span id="138">138</span>
-<span id="139">139</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
-    <span class="ident">fmt</span>::{<span class="ident">Display</span>, <span class="ident">Formatter</span>},
-    <span class="ident">time::Duration</span>,
-};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="ident">Display</span>, <span class="ident">Formatter</span>};
 <span class="kw">use</span> <span class="ident">strum</span>::{<span class="ident">EnumCount</span>, <span class="ident">EnumIter</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -186,7 +180,7 @@
     <span class="kw">pub</span> <span class="ident">beat_position</span>: <span class="ident">i32</span>,
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
     <span class="kw">pub</span> <span class="ident">direction</span>: <span class="ident">Direction</span>,
-    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">Duration</span>,
+    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">i128</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {

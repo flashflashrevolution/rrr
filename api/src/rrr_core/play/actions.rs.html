@@ -21,7 +21,7 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt::Display</span>, <span class="ident">time::Duration</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt::Display</span>;
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::note::CompiledNote</span>;
 
@@ -35,7 +35,7 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NoteAction</span> {
     <span class="kw">pub</span> <span class="ident">note</span>: <span class="ident">CompiledNote</span>,
-    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">Duration</span>,
+    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">i128</span>,
     <span class="kw">pub</span> <span class="ident">state</span>: <span class="ident">ActionState</span>,
 }
 

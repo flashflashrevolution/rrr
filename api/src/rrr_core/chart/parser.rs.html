@@ -316,7 +316,7 @@
     <span class="ident">CompiledChart</span>, <span class="ident">Record</span>,
 };
 <span class="kw">use</span> <span class="ident">anyhow::bail</span>;
-<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">ops::ControlFlow</span>, <span class="ident">time::Duration</span>};
+<span class="kw">use</span> <span class="ident">std::ops::ControlFlow</span>;
 <span class="kw">use</span> <span class="ident">swf</span>::{
     <span class="ident">avm1</span>::{
         <span class="self">self</span>,
@@ -534,9 +534,9 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">parse_timestamp</span>(<span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">parse_timestamp</span>(<span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">i128</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::Int</span>(<span class="ident">ms</span>)) <span class="op">=</span> <span class="ident">value_stack</span>.<span class="ident">pop</span>() {
-        <span class="prelude-val">Ok</span>(<span class="ident">Duration::from_millis</span>(<span class="ident">ms</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()))
+        <span class="prelude-val">Ok</span>(<span class="ident">ms</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>())
     } <span class="kw">else</span> {
         <span class="macro">bail!</span>(<span class="ident">ChartParseError::Timestamp</span>);
     }

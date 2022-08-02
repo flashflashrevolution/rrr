@@ -71,13 +71,9 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
-<span id="74">74</span>
-<span id="75">75</span>
-<span id="76">76</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">record::Record</span>};
 <span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
 <span class="kw">use</span> <span class="ident">std::ops::Bound::Included</span>;
-<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">TurntableState</span><span class="op">&gt;</span> {
     <span class="ident">record</span>: <span class="ident">Record</span>,
@@ -132,7 +128,7 @@
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">u64</span>
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -140,13 +136,11 @@
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">Duration</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
-
-        <span class="kw">let</span> <span class="ident">extent</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="ident">range_in_milliseconds</span>);
         <span class="ident">chart</span>.<span class="ident">range</span>((
-            <span class="ident">Included</span>(<span class="ident">Duration::from_millis</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>)),
-            <span class="ident">Included</span>(<span class="ident">Duration::from_millis</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>) <span class="op">+</span> <span class="ident">extent</span>),
+            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span>),
+            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">+</span> <span class="ident">range_in_milliseconds</span>),
         ))
     }
 }
