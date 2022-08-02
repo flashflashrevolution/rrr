@@ -147,23 +147,6 @@
 <span id="147">147</span>
 <span id="148">148</span>
 <span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-<span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
 </pre><pre class="rust"><code><span class="comment">// Ingest a spritesheet of noteskins, with metadata describing the notes.</span>
 
 <span class="kw">use</span> <span class="ident">image</span>::{<span class="ident">imageops</span>, <span class="ident">DynamicImage</span>, <span class="ident">GenericImageView</span>, <span class="ident">Pixels</span>, <span class="ident">SubImage</span>};
@@ -223,23 +206,6 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_rotations</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">usize</span>] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">rotations</span>
     }
-
-    <span class="comment">// fn get_pixels_for_color(&amp;self, color: Color) -&gt; Vec&lt;&amp;u8&gt; {</span>
-    <span class="comment">//     let image_source = &amp;self.image;</span>
-    <span class="comment">//     let width = self.note_width;</span>
-    <span class="comment">//     let height = self.note_height;</span>
-    <span class="comment">//     let color_index = self.color_indexs.iter().position(|c| *c == color).unwrap();</span>
-    <span class="comment">//     let row_offset = (height * color_index) % (self.rows * height);</span>
-    <span class="comment">//     let col_offset = (height * color_index) / (self.rows * width);</span>
-    <span class="comment">//     let mut image = Vec::&lt;&amp;u8&gt;::with_capacity(width * height);</span>
-    <span class="comment">//     for x in 0..width {</span>
-    <span class="comment">//         for y in 0..height {</span>
-    <span class="comment">//             let index = (row_offset + y) * width + col_offset + x;</span>
-    <span class="comment">//             image.push(&amp;image_source[index]);</span>
-    <span class="comment">//         }</span>
-    <span class="comment">//     }</span>
-    <span class="comment">//     image</span>
-    <span class="comment">// }</span>
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">get_note</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">color</span>: <span class="ident">Color</span>) -&gt; <span class="ident">Note</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">width</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">note_width</span>;
@@ -331,4 +297,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (f9cba6374 2022-07-31)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (fe3342816 2022-08-01)" ></div></body></html>

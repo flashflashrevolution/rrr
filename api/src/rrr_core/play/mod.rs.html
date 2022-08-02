@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>play.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rrr_core/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -219,65 +219,19 @@
 <span id="219">219</span>
 <span id="220">220</span>
 <span id="221">221</span>
-<span id="222">222</span>
-<span id="223">223</span>
-<span id="224">224</span>
-<span id="225">225</span>
-<span id="226">226</span>
-<span id="227">227</span>
-<span id="228">228</span>
-<span id="229">229</span>
-<span id="230">230</span>
-<span id="231">231</span>
-<span id="232">232</span>
-<span id="233">233</span>
-<span id="234">234</span>
-<span id="235">235</span>
-<span id="236">236</span>
-<span id="237">237</span>
-<span id="238">238</span>
-<span id="239">239</span>
-<span id="240">240</span>
-<span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">collections::btree_map::Range</span>, <span class="ident">time::Duration</span>};
+</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">stats</span>;
 
-<span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
-
+<span class="kw">use</span> <span class="self">self</span>::{
+    <span class="ident">actions</span>::{<span class="ident">ActionState</span>, <span class="ident">NoteAction</span>},
+    <span class="ident">stats::PlayStats</span>,
+};
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">note</span>::{<span class="ident">Color</span>, <span class="ident">CompiledNote</span>, <span class="ident">Direction</span>},
     <span class="ident">turntable</span>, <span class="ident">Turntable</span>,
 };
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlayStats</span> {
-    <span class="ident">amazings</span>: <span class="ident">u32</span>,
-    <span class="ident">perfects</span>: <span class="ident">u32</span>,
-    <span class="ident">goods</span>: <span class="ident">u32</span>,
-    <span class="ident">averages</span>: <span class="ident">u32</span>,
-    <span class="ident">misses</span>: <span class="ident">u32</span>,
-    <span class="ident">boos</span>: <span class="ident">u32</span>,
-}
-
-<span class="kw">impl</span> <span class="ident">PlayStats</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">amazings</span>: <span class="number">0</span>,
-            <span class="ident">perfects</span>: <span class="number">0</span>,
-            <span class="ident">goods</span>: <span class="number">0</span>,
-            <span class="ident">averages</span>: <span class="number">0</span>,
-            <span class="ident">misses</span>: <span class="number">0</span>,
-            <span class="ident">boos</span>: <span class="number">0</span>,
-        }
-    }
-}
-
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NoteAction</span> {
-    <span class="ident">note</span>: <span class="ident">CompiledNote</span>,
-    <span class="ident">timestamp</span>: <span class="ident">Duration</span>,
-}
+<span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
+<span class="kw">use</span> <span class="ident">std::time::Duration</span>;
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">PlayState</span><span class="op">&gt;</span> {
     <span class="ident">stats</span>: <span class="ident">PlayStats</span>,
@@ -356,23 +310,11 @@
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">u64</span>) {
-        <span class="comment">// gameplay logic</span>
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">delta_time</span>);
-        <span class="kw">let</span> <span class="ident">_chart_view</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">2000</span>);
 
-        <span class="comment">// Small state machine that controls whether the music should be started.</span>
-        <span class="comment">// I can use the tape deck for this _maybe_, but for now could just have a bool.</span>
-
-        <span class="comment">// game starts in play mode, notes should begin moving as soon as the player hits the spacebar.</span>
-        <span class="comment">// notes are not consumable right now, no accuracy no key presses.</span>
-        <span class="comment">// Remove arrow from the render list when it:</span>
-        <span class="comment">// -- moves past the end of the screen.</span>
-
-        <span class="comment">// TODO: Spawn arrows and begin to move them up the field at delta rate.</span>
-        <span class="comment">// - Get chart.</span>
-        <span class="comment">// - Spawn arrows in order based on time-to-target offset. (See how we do this in R^3).</span>
-        <span class="comment">// - Destroy arrows when they hit the top of the screen.</span>
-        <span class="comment">// - Destroy arrows when they are on a recepor when the player activates it.</span>
+        <span class="comment">// TODO (gh-142): Destroy arrows when they hit the top of the screen, store a miss judgement.</span>
+        <span class="comment">// TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.</span>
+        <span class="comment">// TODO (gh-142): Flag any note that has an associated judgement so that it is not rendered.</span>
     }
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">Duration</span>) {
@@ -380,12 +322,16 @@
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
             .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>)
             .<span class="ident">min_by</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">x_note</span>), (<span class="kw">_</span>, <span class="ident">y_note</span>)<span class="op">|</span> {
-                <span class="ident">x_note</span>.<span class="ident">timestamp</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>).<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y_note</span>.<span class="ident">timestamp</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>))
+                <span class="ident">x_note</span>
+                    .<span class="ident">timestamp</span>
+                    .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>)
+                    .<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y_note</span>.<span class="ident">timestamp</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>))
             })
         {
             <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>.<span class="ident">push</span>(<span class="ident">NoteAction</span> {
                 <span class="ident">note</span>: <span class="ident">closest_note</span>.<span class="ident">clone</span>(),
                 <span class="ident">timestamp</span>: <span class="ident">ts</span>,
+                <span class="ident">state</span>: <span class="ident">ActionState::Hit</span>,
             });
         } <span class="kw">else</span> {
             <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>.<span class="ident">push</span>(<span class="ident">NoteAction</span> {
@@ -396,6 +342,7 @@
                     <span class="ident">timestamp</span>: <span class="ident">ts</span>,
                 },
                 <span class="ident">timestamp</span>: <span class="ident">ts</span>,
+                <span class="ident">state</span>: <span class="ident">ActionState::Boo</span>,
             });
         }
 
@@ -441,16 +388,23 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Difference</span> {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="self">Self</span>;
+
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">i128</span>;
 }
 
 <span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">Duration</span> {
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">Duration</span> {
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">Duration</span> {
         <span class="kw">if</span> <span class="self">self</span> <span class="op">&lt;</span> <span class="kw-2">*</span><span class="ident">right</span> {
             <span class="kw-2">*</span><span class="ident">right</span> <span class="op">-</span> <span class="self">self</span>
         } <span class="kw">else</span> {
             <span class="self">self</span> <span class="op">-</span> <span class="kw-2">*</span><span class="ident">right</span>
         }
+    }
+
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">Duration</span>) -&gt; <span class="ident">i128</span> {
+        <span class="self">self</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">i128</span> <span class="op">-</span> <span class="ident">right</span>.<span class="ident">as_millis</span>() <span class="kw">as</span> <span class="ident">i128</span>
     }
 }
 
@@ -463,8 +417,8 @@
         <span class="kw">let</span> <span class="ident">ts0</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">100</span>);
         <span class="kw">let</span> <span class="ident">ts1</span> <span class="op">=</span> <span class="ident">Duration::from_millis</span>(<span class="number">130</span>);
 
-        <span class="macro">assert_eq!</span>(<span class="ident">ts0</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">ts1</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
-        <span class="macro">assert_eq!</span>(<span class="ident">ts1</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">ts0</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">ts0</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts1</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">ts1</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts0</span>), <span class="ident">Duration::from_millis</span>(<span class="number">30</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -480,11 +434,11 @@
         <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::expect_used</span>)]</span>
         <span class="kw">let</span> <span class="ident">closest_note</span> <span class="op">=</span> <span class="ident">ts_list</span>
             .<span class="ident">iter</span>()
-            .<span class="ident">min_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>).<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="ident">diff</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>)))
+            .<span class="ident">min_by</span>(<span class="op">|</span><span class="ident">x</span>, <span class="ident">y</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>).<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">target_ts</span>)))
             .<span class="ident">expect</span>(<span class="string">&quot;no closest note found&quot;</span>);
 
         <span class="macro">assert_eq!</span>(<span class="ident">closest_note</span>, <span class="kw-2">&amp;</span><span class="ident">ts1</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (f9cba6374 2022-07-31)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (fe3342816 2022-08-01)" ></div></body></html>

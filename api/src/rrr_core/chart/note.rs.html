@@ -124,7 +124,23 @@
 <span id="124">124</span>
 <span id="125">125</span>
 <span id="126">126</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::time::Duration</span>;
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fmt</span>::{<span class="ident">Display</span>, <span class="ident">Formatter</span>},
+    <span class="ident">time::Duration</span>,
+};
 <span class="kw">use</span> <span class="ident">strum</span>::{<span class="ident">EnumCount</span>, <span class="ident">EnumIter</span>};
 
 <span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
@@ -171,6 +187,16 @@
     <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
     <span class="kw">pub</span> <span class="ident">direction</span>: <span class="ident">Direction</span>,
     <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">Duration</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">std::fmt::Result</span> {
+        <span class="macro">write!</span>(
+            <span class="ident">f</span>,
+            <span class="string">&quot;{:?} {:?} {}&quot;</span>,
+            <span class="self">self</span>.<span class="ident">color</span>, <span class="self">self</span>.<span class="ident">direction</span>, <span class="self">self</span>.<span class="ident">beat_position</span>
+        )
+    }
 }
 
 <span class="kw">impl</span> <span class="ident">Ord</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {
@@ -251,4 +277,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (f9cba6374 2022-07-31)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (fe3342816 2022-08-01)" ></div></body></html>
