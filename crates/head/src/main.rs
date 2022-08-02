@@ -71,7 +71,7 @@ use winit::{
 use std::f64;
 
 const WIDTH: u32 = 512;
-const HEIGHT: u32 = 768;
+const HEIGHT: u32 = 720;
 
 struct Game<T: TimeTrait> {
     noteskin: Option<noteskin::Definition>,
@@ -160,7 +160,7 @@ impl<T: TimeTrait> Game<T> {
         clear(frame);
 
         let time_on_screen = 1800;
-        let field_height = 768.0;
+        let field_height = HEIGHT as f64;
         let note_height = 64.0;
         let start_position = field_height;
         let end_position = -note_height;
