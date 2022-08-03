@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["actions",""],["judge",""],["stats",""]],"struct":[["Active",""],["Concluded",""],["Play",""],["Ready",""]],"trait":[["Difference",""],["PlayState",""]]};
+window.SIDEBAR_ITEMS = {"mod":[["actions",""],["judge",""]],"struct":[["Active",""],["Concluded",""],["Play",""],["Ready",""]],"trait":[["Difference",""],["PlayState",""]]};

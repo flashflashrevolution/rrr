@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"static":[["JUDGE",""]],"struct":[["JudgeWindow",""]]};
+window.SIDEBAR_ITEMS = {"static":[["JUDGE",""]],"struct":[["Judge",""],["JudgeWindow",""],["JudgementReport",""]],"type":[["Judgement",""]]};
