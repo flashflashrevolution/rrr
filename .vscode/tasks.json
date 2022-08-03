@@ -24,6 +24,38 @@
             },
         },
         {
+            "label": "build-wasm-release",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--release",
+                "--target=wasm32-unknown-unknown",
+                "--package",
+                "rrr-head",
+                "--target-dir",
+                "target",
+                "--features",
+                "release",
+            ],
+        },
+        {
+            "label": "bundle-wasm-release",
+            "type": "shell",
+            "command": "wasm-bindgen",
+            "args": [
+                 "--out-name",
+                 "rrr",
+                 "--out-dir",
+                 "dist",
+                 "--target",
+                 "web",
+                 "target/wasm32-unknown-unknown/release/rrr-head.wasm"
+            ],
+            "dependsOn": ["build-wasm-release"],
+            "problemMatcher": []
+        },
+        {
             "label": "Miniserve",
             "type": "shell",
             "isBackground": true,
