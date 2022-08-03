@@ -84,13 +84,17 @@ struct Game<T: TimeTrait> {
     noteskin: Option<noteskin::Definition>,
     pixels: Pixels,
     play_stage: Option<Play<play::Active>>,
+    start_instant: T,
     previous_instant: T,
     current_instant: T,
     rect_x: f64,
     rect_y: f64,
 }
 
-impl<T: TimeTrait> Game<T> {
+impl<T> Game<T>
+where
+    T: TimeTrait,
+{
     fn new(
         noteskin: Option<noteskin::Definition>,
         pixels: Pixels,
@@ -100,11 +104,16 @@ impl<T: TimeTrait> Game<T> {
             noteskin,
             pixels,
             play_stage,
+            start_instant: T::now(),
             previous_instant: T::now(),
             current_instant: T::now(),
             rect_x: 100.,
             rect_y: 150.,
         }
+    }
+
+    pub(crate) fn start(&mut self) {
+        self.start_instant = T::now();
     }
 
     pub(crate) fn load(&mut self, chart_id: usize) {}
@@ -154,9 +163,11 @@ impl<T: TimeTrait> Game<T> {
     }
 
     fn do_action(&mut self, direction: Direction) {
-        let current_instant = T::now().as_secs_f64();
         if let Some(stage) = &mut self.play_stage {
-            stage.do_action(direction, current_instant as i128);
+            stage.do_action(
+                direction,
+                (self.start_instant.as_secs_f64() * 1000.) as i128,
+            );
         }
     }
 
@@ -177,12 +188,47 @@ impl<T: TimeTrait> Game<T> {
 
         if let Some(play) = &self.play_stage {
             if let Some(noteskin) = &self.noteskin {
-                if let view = play.view(time_on_screen) {
-                    let chart_progress = play.progress();
+                let chart_progress = play.progress();
 
-                    for (&duration, note) in view.filter(|(_, note)| {
-                        !play.missed_notes().contains(*note) && !play.actions().contains_key(note)
-                    }) {
+                // Draw Receptors
+                let note_progress = 200; // Expected position of the receptor.
+                let normalized = note_progress as f64 / time_on_screen as f64;
+                let position = end_position.lerp(start_position, normalized);
+
+                let receptor_skin = noteskin.get_note(note::Color::Receptor);
+                blit(
+                    frame,
+                    offset + (lane_offset * -1.5),
+                    position,
+                    &note::Direction::Left,
+                    &receptor_skin,
+                );
+                blit(
+                    frame,
+                    offset + (lane_offset * -0.5),
+                    position,
+                    &note::Direction::Down,
+                    &receptor_skin,
+                );
+                blit(
+                    frame,
+                    offset + (lane_offset * 0.5),
+                    position,
+                    &note::Direction::Up,
+                    &receptor_skin,
+                );
+                blit(
+                    frame,
+                    offset + (lane_offset * 1.5),
+                    position,
+                    &note::Direction::Right,
+                    &receptor_skin,
+                );
+
+                if let view = play.view(time_on_screen) {
+                    for (&duration, note) in
+                        view.filter(|(_, note)| !play.judgements().contains_key(note))
+                    {
                         let note_progress = duration - chart_progress as i128;
                         let normalized = note_progress as f64 / time_on_screen as f64;
                         let position = end_position.lerp(start_position, normalized);
@@ -362,6 +408,7 @@ fn do_toggle_game_state_debug(game: &mut Game<Time>) {
                 None
             };
 
+            game.start();
             game.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
         }
     } else {
