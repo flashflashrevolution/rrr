@@ -71,10 +71,13 @@
 <span id="71">71</span>
 <span id="72">72</span>
 <span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">record::Record</span>};
 <span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
 <span class="kw">use</span> <span class="ident">std::ops::Bound::Included</span>;
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">TurntableState</span><span class="op">&gt;</span> {
     <span class="ident">record</span>: <span class="ident">Record</span>,
     <span class="ident">state</span>: <span class="ident">S</span>,
@@ -84,6 +87,7 @@
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loaded</span> {}
 
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Playing</span> {
     <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u64</span>,
 }
@@ -145,4 +149,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (fe3342816 2022-08-01)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.64.0-nightly (4493a0f47 2022-08-02)" ></div></body></html>
