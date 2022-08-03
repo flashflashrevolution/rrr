@@ -41,6 +41,14 @@
 #![forbid(unsafe_code)]
 #![feature(array_chunks)]
 
+#[cfg(target_arch = "wasm32")]
+extern crate wee_alloc;
+
+// Use `wee_alloc` as the global allocator.
+#[cfg(target_arch = "wasm32")]
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+
 mod geo;
 mod noteskin;
 mod sprites;

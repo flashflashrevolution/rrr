@@ -25,7 +25,7 @@ develop = [
 release = ["log/release_max_level_off"]
 
 [dependencies]
-anyhow = "1.0.59"
+anyhow = "1.0.60"
 cfg-if = "1.0.0"
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 lerp = "0.4"
@@ -44,6 +44,7 @@ console_log = { version = "0.2.0", features = ["color"], optional = true }
 gloo = "0.8.0"
 wasm-bindgen = "0.2.82"
 wasm-bindgen-futures = "0.4.32"
+wee_alloc = "0.4.5"
 wgpu = "0.13.1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
