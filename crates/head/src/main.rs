@@ -357,6 +357,9 @@ fn do_toggle_game_state_debug(game: &mut Game<Time>) {
             game.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
         }
     } else {
+        if let Some(play) = &game.play_stage {
+            log::info!("{:?}", play.judgements());
+        }
         game.play_stage = None;
     }
 }

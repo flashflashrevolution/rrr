@@ -4,6 +4,7 @@ pub mod stats;
 
 use self::{
     actions::{ActionState, NoteAction},
+    judge::JudgeWindow,
     stats::PlayStats,
 };
 use crate::{
@@ -22,10 +23,12 @@ pub struct Ready {
     turntable: Turntable<turntable::Loaded>,
 }
 
+#[derive(Clone)]
 pub struct Active {
     turntable: Turntable<turntable::Playing>,
     actions: BTreeMultiMap<CompiledNote, NoteAction>,
     missed: HashSet<CompiledNote>,
+    judgements: Vec<&'static JudgeWindow>,
 }
 
 pub struct Concluded {
@@ -55,6 +58,7 @@ impl Play<Ready> {
                 turntable: self.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
                 missed: HashSet::default(),
+                judgements: Vec::default(),
             },
         }
     }
@@ -105,25 +109,54 @@ impl Play<Active> {
         self.state.turntable.tick(delta_time);
         self.check_miss();
 
-        // TODO (gh-142): Destroy arrows when they hit the top of the screen, store a miss judgement.
         // TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.
-        // TODO (gh-142): Flag any note that has an associated judgement so that it is not rendered.
     }
 
     fn check_miss(&mut self) {
-        let view = self.view(3600);
-        let missed = view.filter(|(&ts, _)| {
-            println!("{:?} || {:?}", ts, self.progress() as i128);
-            self.progress() as i128 + i128::abs(judge::JUDGE[0].0 as i128) > ts
-        });
-        let mapped_notes = missed.map(|(_, note)| note.clone());
+        let current_receptor_position =
+            self.progress() as i128 + i128::abs(judge::JUDGE[0].0 as i128);
+        let mapped_notes = self
+            .view(3600)
+            .filter(|(&ts, _)| current_receptor_position > ts)
+            .map(|(_, note)| note.clone());
+
         self.state
             .missed
             .extend(mapped_notes.collect::<HashSet<CompiledNote>>());
     }
 
+    fn judge(&mut self, note_action: &NoteAction) {
+        let current_receptor_position =
+            self.progress() as i128 + i128::abs(judge::JUDGE[0].0 as i128);
+
+        if !self.state.missed.contains(&note_action.note) {
+            let diff = current_receptor_position - note_action.timestamp;
+
+            let judge = {
+                let mut last_judge = None;
+                for judge in judge::JUDGE {
+                    if diff > judge.0.into() {
+                        last_judge.replace(judge);
+                    }
+                }
+                last_judge
+            };
+
+            if let Some(some_judge) = judge {
+                log::info!("{:?} || {:?}", note_action.timestamp, some_judge);
+                self.state.judgements.push(some_judge);
+            }
+        }
+    }
+
+    #[must_use]
+    pub fn judgements(&self) -> &Vec<&'static JudgeWindow> {
+        &self.state.judgements
+    }
+
     pub fn do_action(&mut self, direction: Direction, ts: i128) {
-        let view_result = self.state.turntable.view(2000);
+        let play = self.state.clone();
+        let view_result = play.turntable.view(2000);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| direction == note.direction)
             .min_by(|(_, x_note), (_, y_note)| {
@@ -133,6 +166,14 @@ impl Play<Active> {
                     .cmp(&y_note.timestamp.abs_dif(&ts))
             })
         {
+            let note_action = NoteAction {
+                note: closest_note.clone(),
+                timestamp: ts,
+                state: ActionState::Hit,
+            };
+
+            self.judge(&note_action);
+
             self.state.actions.insert(
                 closest_note.clone(),
                 NoteAction {
@@ -157,8 +198,6 @@ impl Play<Active> {
                 },
             );
         }
-
-        println!("{:?}", self.state.actions);
 
         // TODO: Result and Optional need to be managed better here.
         // Possibility of invalid chart during gameplay is not good.

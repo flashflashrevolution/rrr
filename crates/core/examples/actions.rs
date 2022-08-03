@@ -5,7 +5,7 @@ use std::{
 
 use rrr_core::{
     note::{self, CompiledNote, Direction},
-    play::{self, Difference},
+    play::{self, judge, Difference},
 };
 
 #[derive(Debug)]
@@ -35,7 +35,7 @@ enum Accuracy {
 struct Judgement<'a> {
     note: Option<&'a CompiledNote>,
     accuracy: Accuracy,
-    timestamp: Option<Duration>,
+    timestamp: Option<i128>,
 }
 
 fn main() {
@@ -110,40 +110,26 @@ fn main() {
 
     let current_receptor_ms_position = 160u64;
 
-    // "Keyboard input"
     let key_actions = [
         (note::Direction::Up, current_receptor_ms_position),
         (note::Direction::Left, current_receptor_ms_position),
         (note::Direction::Down, current_receptor_ms_position),
     ];
 
-    // Need the judgement code to be in here. Probably don't need "Note Actions" just judgements /w associated note. So a NoteActionBuilder produces a judgement.
-
-    // Calculate missed notes, build a miss action for those notes, hash-map for processed notes.
-    let missed_notes: HashSet<CompiledNote> = view
+    let missed_view = view.clone();
+    let missed_notes: HashSet<&CompiledNote> = missed_view
         .iter()
-        .filter(|note| note.timestamp < current_receptor_ms_position - i8::abs(JUDGE[0].0 as u64))
-        .cloned()
+        .filter(|&note| {
+            current_receptor_ms_position as i128 + i128::abs(judge::JUDGE[0].0 as i128)
+                > note.timestamp
+        })
         .collect();
 
     println!("Missed notes: {:?}", missed_notes);
 
-    // For each key action, filter the lane.
-    // For each lane, find the note with the lowest timestamp.
-    // Build a hit key action for that note.
-
-    // Calculate misses, and flag.
-    // Problem: Given a view of N notes, and a set of "key actions":
-    // -- In the lane declared in the "key action", which note in either direction is closest, and has not been "actioned" yet?
-
-    // Steps:
-    // 1. For view, calculate misses and flag.
-    // 2. For each key action, find the lane, find the earliest note, and build a NoteAction.
-    // 3. If no note within actionable range, build a BooAction.
-
     for note in view {
         if !missed_notes.contains(&note) {
-            let diff = note.timestamp.diff(&current_receptor_ms_position);
+            let diff = current_receptor_ms_position as i128 - note.timestamp;
 
             let judge = {
                 let mut last_judge = None;

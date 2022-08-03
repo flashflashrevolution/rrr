@@ -2,6 +2,7 @@ use crate::{note::CompiledNote, record::Record};
 use btreemultimap::MultiRange;
 use std::ops::Bound::Included;
 
+#[derive(Clone)]
 pub struct Turntable<S: TurntableState> {
     record: Record,
     state: S,
@@ -11,6 +12,7 @@ pub struct Empty {}
 
 pub struct Loaded {}
 
+#[derive(Clone)]
 pub struct Playing {
     pub progress: u64,
 }

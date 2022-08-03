@@ -1,7 +1,7 @@
 use crate::{note::CompiledNote, CompiledChart};
 use btreemultimap::BTreeMultiMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Record {
     pub optimized_chart: BTreeMultiMap<i128, CompiledNote>,
     pub mp3: Vec<u8>,

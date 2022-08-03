@@ -2,14 +2,14 @@ use std::fmt::Display;
 
 use crate::note::CompiledNote;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum ActionState {
     Miss,
     Boo,
     Hit,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NoteAction {
     pub note: CompiledNote,
     pub timestamp: i128,

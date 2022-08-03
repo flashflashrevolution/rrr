@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Hash, Eq, PartialEq)]
 pub struct JudgeWindow(pub i8);
 pub static JUDGE: &[JudgeWindow] = &[
     JudgeWindow(-118),
