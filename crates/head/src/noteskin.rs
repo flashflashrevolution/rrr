@@ -94,6 +94,7 @@ mod tests {
 
     #[test]
     fn test_get_note() {
+        // TODO: Convert this include_bytes to FetchWorker. (Also change FetchWorker to BinaryFetchWorker)
         let noteskin_bytes = include_bytes!("../../../data/default_noteskin.png");
         let mut noteskin_image = match image::load_from_memory(noteskin_bytes) {
             Ok(image) => image,

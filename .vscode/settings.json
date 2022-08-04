@@ -8,5 +8,5 @@
     ],
     // Toggle this when you intend to work on WASM.
     // Fair warning, rust-analyzer rebuilds from scratch every time when enabled.
-    //"rust-analyzer.cargo.target": "wasm32-unknown-unknown"
+    "rust-analyzer.cargo.target": "wasm32-unknown-unknown"
 }

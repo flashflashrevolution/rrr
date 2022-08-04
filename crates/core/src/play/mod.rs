@@ -125,21 +125,22 @@ impl Play<Active> {
         let view_result = play.turntable.view(500);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
-            .min_by(|(_, x_note), (_, y_note)| {
-                x_note
-                    .timestamp
-                    .abs_dif(&ts)
-                    .cmp(&y_note.timestamp.abs_dif(&ts))
-            })
+            .next()
+        // .min_by(|(_, x_note), (_, y_note)| {
+        //     x_note
+        //         .timestamp
+        //         .abs_dif(&ts)
+        //         .cmp(&y_note.timestamp.abs_dif(&ts))
+        // })
         {
             self.state.judge.judge(ts, closest_note);
         }
     }
 
-    fn determine_judgable(&mut self, note: &CompiledNote, direction: &Direction, ts: i128) -> bool {
+    fn determine_judgable(&self, note: &CompiledNote, direction: &Direction, ts: i128) -> bool {
         let is_judged = self.state.actions.contains_key(note);
         let is_same_direction = *direction == note.direction;
-        let is_within_judge_range = note.timestamp.abs_dif(&ts) < 118;
+        let is_within_judge_range = note.timestamp.abs_dif(&ts) <= 118;
         !is_judged && is_same_direction && is_within_judge_range
     }
 }
