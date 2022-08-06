@@ -1,7 +1,7 @@
 pub trait TimeTrait: Copy {
     fn now() -> Self;
     fn sub(&self, other: &Self) -> f64;
-    fn as_secs_f64(&self) -> f64;
+    fn ms_since(&self) -> f64;
 }
 
 #[cfg(not(target_arch = "wasm32"))]
@@ -17,7 +17,7 @@ pub mod performance {
             Self(Instant::now())
         }
 
-        fn as_secs_f64(&self) -> f64 {
+        fn ms_since(&self) -> f64 {
             self.0.elapsed().as_secs_f64()
         }
 
@@ -30,6 +30,7 @@ pub mod performance {
 #[cfg(target_arch = "wasm32")]
 pub mod performance {
     use super::*;
+    use std::ops::Sub;
     use web_sys::window;
 
     #[derive(Copy, Clone)]
@@ -40,11 +41,18 @@ pub mod performance {
             Self(window().unwrap().performance().unwrap().now() / 1000.)
         }
 
-        fn as_secs_f64(&self) -> f64 {
-            self.0
+        fn ms_since(&self) -> f64 {
+            Self::now() - *self
         }
 
         fn sub(&self, other: &Self) -> f64 {
+            self.0 - other.0
+        }
+    }
+
+    impl Sub for Time {
+        type Output = f64;
+        fn sub(self, other: Self) -> f64 {
             self.0 - other.0
         }
     }

@@ -186,10 +186,7 @@ where
 
     fn do_action(&mut self, direction: Direction) {
         if let Some(stage) = &mut self.play_stage {
-            stage.do_action(
-                direction,
-                (self.start_instant.as_secs_f64() * 1000.) as i128,
-            );
+            stage.do_action(direction, (self.start_instant.ms_since() * 1000.) as i128);
         }
     }
 

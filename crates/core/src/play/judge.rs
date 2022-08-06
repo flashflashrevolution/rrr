@@ -52,7 +52,6 @@ impl Judge {
             };
 
             if let Some(some_judge) = judge {
-                log::info!("{:?} || {:?}", closest_note.timestamp, some_judge);
                 let local_note = closest_note.clone();
                 self.judgements.insert(local_note, some_judge);
             } else {
