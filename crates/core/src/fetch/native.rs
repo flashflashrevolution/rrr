@@ -16,9 +16,14 @@ impl Fetcher {
     pub fn new(chart_id: usize) -> Self {
         let (tx, rx): (Sender<BytesFetch>, Receiver<BytesFetch>) = std::sync::mpsc::channel();
         let handle = thread::spawn(move || {
+            let temp_hash = if let Some(hash) = option_env!("TEST_PREVIEW_HASH") {
+                hash.to_string()
+            } else {
+                "Fill hash here for local testing.".to_string()
+            };
             let url = format!(
                 "https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music",
-                ""
+                temp_hash
             );
             println!("{}", url);
             let dat = fetch_data(url);

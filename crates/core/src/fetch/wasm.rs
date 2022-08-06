@@ -26,7 +26,12 @@ impl Fetcher {
             })
             .spawn("bin/worker.js");
 
-        bridge.send(format!("https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music", ""));
+        let temp_hash = if let Some(hash) = option_env!("TEST_PREVIEW_HASH") {
+            hash.to_string()
+        } else {
+            "Fill hash here for local testing.".to_string()
+        };
+        bridge.send(format!("https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music", temp_hash));
         Self { bridge, rx }
     }
 
