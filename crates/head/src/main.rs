@@ -38,7 +38,7 @@
     clippy::verbose_file_reads
 )]
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
-//#![forbid(unsafe_code)]
+#![forbid(unsafe_code)]
 #![feature(array_chunks)]
 #![feature(poll_ready)]
 

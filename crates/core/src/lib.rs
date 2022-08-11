@@ -38,8 +38,7 @@
     clippy::verbose_file_reads
 )]
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
-//#![forbid(unsafe_code)]
-#![feature(core_intrinsics)]
+#![forbid(unsafe_code)]
 
 pub mod audio;
 pub mod chart;
