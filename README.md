@@ -5,7 +5,7 @@
 [![Chat]][discord]
 [![rustc](https://img.shields.io/badge/rustc-1.64-lightgray.svg?style=round)](https://www.rust-lang.org/)
 [![codecov](https://codecov.io/gh/flashflashrevolution/rrr/branch/main/graph/badge.svg?token=2V0ZGQ04IK)](https://codecov.io/gh/flashflashrevolution/rrr)
-[![loc](https://tokei.rs/b1/github/flashflashrevolution/rrr)](flashflashrevolution/rrr)
+[![loc](https://tokei.rs/b1/github/flashflashrevolution/rrr)](https://github.com/flashflashrevolution/rrr/)
 
 [actions]: https://github.com/flashflashrevolution/rrr/actions?query=branch%3Amain
 [build status]: https://img.shields.io/github/workflow/status/flashflashrevolution/rrr/CI/main?logo=github
