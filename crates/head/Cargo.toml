@@ -25,7 +25,7 @@ develop = [
 release = ["log/release_max_level_off"]
 
 [dependencies]
-anyhow = "1.0.60"
+anyhow = "1.0.61"
 cfg-if = "1.0.0"
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 lerp = "0.4"
