@@ -32,10 +32,7 @@ pub struct ManifestPayload {
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PlaylistPayload {
-    #[serde(rename = "songs")]
     pub songs: Vec<Song>,
-
-    #[serde(rename = "stats")]
     pub stats: HashMap<String, Stat>,
 }
 

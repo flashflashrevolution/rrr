@@ -2,9 +2,6 @@
 resolver = "2"
 members = ["crates/*"]
 
-[profile.dev]
-opt-level = 0
-
 [profile.release]
 lto = "thin"
 opt-level = 3
