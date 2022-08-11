@@ -53,6 +53,17 @@ jobs:
       - name: Generate the .wasm for web deploy.
         run: wasm-bindgen --no-typescript --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
 
+      - name: Build Workers
+        uses: actions-rs/cargo@v1.0.3
+        env:
+          TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
+        with:
+          command: build
+          args: --release --package rrr-core --target wasm32-unknown-unknown --target-dir target --features release
+
+      - name: Generate web workers
+        run: wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm
+
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0
         with:
