@@ -1,4 +1,3 @@
-mod beat;
 mod bpm;
 mod chart_impl;
 pub mod note;

@@ -15,11 +15,13 @@ pub static JUDGE: [JudgeWindow; 8] = [
 ];
 
 pub type Judgement = HashMap<CompiledNote, JudgeWindow>;
+pub type Boo = HashSet<i128>;
 
 #[derive(Debug, Clone)]
 pub struct Judge {
     pub judgements: Judgement,
     pub misses: HashSet<CompiledNote>,
+    pub boos: Boo,
     pub receptor_position: i128,
 }
 
@@ -30,18 +32,19 @@ impl Judge {
         Self {
             judgements: HashMap::default(),
             misses: HashSet::default(),
+            boos: HashSet::default(),
             receptor_position,
         }
     }
 
     pub fn judge(&mut self, current_timestamp: i128, closest_note: &CompiledNote) {
-        if !self.misses.contains(&closest_note) && !self.judgements.contains_key(&closest_note) {
+        if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
             let diff = current_timestamp - closest_note.timestamp;
 
             let judge = {
                 let mut last_judge = None;
                 for judge in JUDGE {
-                    if diff > judge.0.into() {
+                    if diff > judge.0 {
                         last_judge.replace(judge);
                     }
                 }
@@ -49,11 +52,10 @@ impl Judge {
             };
 
             if let Some(some_judge) = judge {
-                log::info!("{:?} || {:?}", closest_note.timestamp, some_judge);
                 let local_note = closest_note.clone();
                 self.judgements.insert(local_note, some_judge);
             } else {
-                log::info!("BOOOOO");
+                self.boos.insert(current_timestamp);
             }
         }
     }

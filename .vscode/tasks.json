@@ -40,6 +40,38 @@
             ],
         },
         {
+            "label": "build-release-workers",
+            "type": "shell",
+            "command": "cargo",
+            "args": [
+                "build",
+                "--release",
+                "--target=wasm32-unknown-unknown",
+                "--package",
+                "rrr-core",
+                "--target-dir",
+                "target",
+                "--features",
+                "release",
+            ],
+        },
+        {
+            "label": "bundle-release-worker",
+            "type": "shell",
+            "command": "wasm-bindgen",
+            "args": [
+                 "--out-name",
+                 "worker",
+                 "--out-dir",
+                 "dist",
+                 "--target",
+                 "no-modules",
+                 "target/wasm32-unknown-unknown/release/worker.wasm"
+            ],
+            "dependsOn": ["build-release-workers"],
+            "problemMatcher": []
+        },
+        {
             "label": "bundle-wasm-release",
             "type": "shell",
             "command": "wasm-bindgen",
@@ -52,7 +84,7 @@
                  "web",
                  "target/wasm32-unknown-unknown/release/rrr-head.wasm"
             ],
-            "dependsOn": ["build-wasm-release"],
+            "dependsOn": ["build-wasm-release", "bundle-release-worker"],
             "problemMatcher": []
         },
         {
@@ -122,6 +154,50 @@
                 "./web/*",
                 "-s",
                 "cargo build --release --package rrr-head --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm"
+            ],
+            "problemMatcher": [
+                {
+                    "pattern": [
+                        {
+                            "regexp": ".",
+                            "file": 1,
+                            "location": 2,
+                            "message": 3
+                        }
+                    ],
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": ".",
+                        "endsPattern": "."
+                    }
+                }
+            ]
+        },
+        {
+            "label": "WASM Worker Watch",
+            "type": "shell",
+            "isBackground": true,
+            "command": "cargo",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "new",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "args": [
+                "watch",
+                "-i",
+                ".git*",
+                "-i",
+                "target/*",
+                "-i",
+                ".vscode/*",
+                "-i",
+                "./web/*",
+                "-s",
+                "cargo build --release --package rrr-core --features release --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
             ],
             "problemMatcher": [
                 {

@@ -44,6 +44,8 @@ jobs:
 
       - name: Build
         uses: actions-rs/cargo@v1.0.3
+        env:
+          TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
           command: build
           args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target

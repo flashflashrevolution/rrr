@@ -42,7 +42,6 @@
 
 pub mod audio;
 pub mod chart;
-pub mod download_chart;
 pub mod fetch;
 pub mod loaders;
 pub mod play;
@@ -53,7 +52,6 @@ pub mod turntable;
 
 pub use audio::*;
 pub use chart::*;
-pub use download_chart::*;
 pub use record::*;
 pub use settings::*;
 pub use strum;

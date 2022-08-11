@@ -40,26 +40,19 @@
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
 #![feature(array_chunks)]
-
-#[cfg(target_arch = "wasm32")]
-extern crate wee_alloc;
-
-// Use `wee_alloc` as the global allocator.
-#[cfg(target_arch = "wasm32")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
+#![feature(poll_ready)]
 
 mod geo;
 mod noteskin;
 mod sprites;
 mod visibility;
 
-use anyhow::{Error, Result};
+use anyhow::Error;
 use lerp::Lerp;
 use log::error;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
-    download_chart,
+    fetch,
     note::{self, Color, Direction},
     play,
     play::Play,
@@ -84,6 +77,7 @@ struct Game<T: TimeTrait> {
     noteskin: Option<noteskin::Definition>,
     pixels: Pixels,
     play_stage: Option<Play<play::Active>>,
+    fetcher: Option<fetch::Fetcher>,
     start_instant: T,
     previous_instant: T,
     current_instant: T,
@@ -104,6 +98,7 @@ where
             noteskin,
             pixels,
             play_stage,
+            fetcher: None,
             start_instant: T::now(),
             previous_instant: T::now(),
             current_instant: T::now(),
@@ -160,14 +155,38 @@ where
         if let Some(stage) = &mut self.play_stage {
             stage.tick(delta_time);
         }
+
+        if let Some(mut fetcher) = self.fetcher.take() {
+            let result = fetcher.fetch();
+
+            match result {
+                Some(bytes) => match bytes {
+                    fetch::BytesFetch::Ok(chart) => {
+                        let parser_compressed = SwfParser::new(chart.to_vec());
+                        let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
+                            let parsing = ready_to_parse.parse();
+                            let parsed = parsing.tick();
+                            Some(parsed.produce_tape())
+                        } else {
+                            None
+                        };
+
+                        self.start();
+                        self.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
+                    }
+                    fetch::BytesFetch::Wait => todo!(),
+                    fetch::BytesFetch::Err(err) => log::error!("{}", err),
+                },
+                None => {
+                    self.fetcher.replace(fetcher);
+                }
+            }
+        }
     }
 
     fn do_action(&mut self, direction: Direction) {
         if let Some(stage) = &mut self.play_stage {
-            stage.do_action(
-                direction,
-                (self.start_instant.as_secs_f64() * 1000.) as i128,
-            );
+            stage.do_action(direction, (self.start_instant.ms_since() * 1000.) as i128);
         }
     }
 
@@ -190,7 +209,7 @@ where
             if let Some(noteskin) = &self.noteskin {
                 let chart_progress = play.progress();
 
-                // Draw Receptors
+                // TODO: Position of receptor is not consistent, as it is currently based on "time_on_screen".
                 let note_progress = 200; // Expected position of the receptor.
                 let normalized = note_progress as f64 / time_on_screen as f64;
                 let position = end_position.lerp(start_position, normalized);
@@ -225,24 +244,30 @@ where
                     &receptor_skin,
                 );
 
-                if let view = play.view(time_on_screen) {
-                    for (&duration, note) in
-                        view.filter(|(_, note)| !play.judgements().contains_key(note))
-                    {
-                        let note_progress = duration - chart_progress as i128;
-                        let normalized = note_progress as f64 / time_on_screen as f64;
-                        let position = end_position.lerp(start_position, normalized);
+                let view = play.view(time_on_screen);
+                for (&duration, note) in
+                    view.filter(|(_, note)| !play.judgements().contains_key(note))
+                {
+                    let note_progress = duration - chart_progress as i128;
+                    let normalized = note_progress as f64 / time_on_screen as f64;
+                    let position = end_position.lerp(start_position, normalized);
 
-                        let lane_index = match note.direction {
-                            note::Direction::Left => -1.5,
-                            note::Direction::Down => -0.5,
-                            note::Direction::Up => 0.5,
-                            note::Direction::Right => 1.5,
-                        };
-                        let x = offset + (lane_offset * lane_index);
-                        let y = position;
-                        blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
-                    }
+                    let lane_index = match note.direction {
+                        note::Direction::Left => -1.5,
+                        note::Direction::Down => -0.5,
+                        note::Direction::Up => 0.5,
+                        note::Direction::Right => 1.5,
+                    };
+                    let x = offset + (lane_offset * lane_index);
+                    let y = position;
+                    blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
+                }
+
+                let view = play.view(time_on_screen);
+                for (&duration, note) in
+                    view.filter(|(_, note)| play.judgements().contains_key(note))
+                {
+                    log::info!("Do not render: {:?}", note);
                 }
             }
         }
@@ -271,7 +296,6 @@ fn get_noteskin() -> &'static [u8] {
 
 fn main() {
     init_log();
-
     #[cfg(target_arch = "wasm32")]
     {
         use wasm_bindgen::UnwrapThrowExt;
@@ -397,19 +421,8 @@ async fn run() -> Result<(), Error> {
 
 fn do_toggle_game_state_debug(game: &mut Game<Time>) {
     if game.play_stage.is_none() {
-        if let Some(raw_chart) = download_chart(3348) {
-            let parser_compressed = SwfParser::new(*raw_chart);
-            let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
-                let parsing = ready_to_parse.parse();
-                // TODO: Make this async, remove intermediate state and just await it.
-                let parsed = parsing.tick();
-                Some(parsed.produce_tape())
-            } else {
-                None
-            };
-
-            game.start();
-            game.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
+        if game.fetcher.is_none() {
+            game.fetcher.replace(fetch::download_chart(3348));
         }
     } else {
         if let Some(play) = &game.play_stage {
@@ -458,6 +471,11 @@ async fn run_game_loop(
 
         Elements { update_progress }
     };
+
+    // For tomorrow.
+    // Need to collect any async dispatches and wait for them to finish before continuing.
+    // Need a futures::channel to send a bool back when the active async dispatch is finished.
+    // Then we can just continue with the next iteration.
 
     let mut modifiers = ModifiersState::default();
     event_loop.run(move |in_event, _, control_flow| {
