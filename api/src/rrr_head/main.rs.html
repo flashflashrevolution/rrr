@@ -573,6 +573,24 @@
 <span id="573">573</span>
 <span id="574">574</span>
 <span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">elided_lifetimes_in_paths</span>,
@@ -615,26 +633,19 @@
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>, <span class="ident">clippy::multiple_crate_versions</span>)]</span>
 <span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
 <span class="attribute">#![<span class="ident">feature</span>(<span class="ident">array_chunks</span>)]</span>
-
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
-<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">wee_alloc</span>;
-
-<span class="comment">// Use `wee_alloc` as the global allocator.</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
-<span class="attribute">#[<span class="ident">global_allocator</span>]</span>
-<span class="kw">static</span> <span class="ident">ALLOC</span>: <span class="ident">wee_alloc::WeeAlloc</span> <span class="op">=</span> <span class="ident">wee_alloc::WeeAlloc::INIT</span>;
+<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">poll_ready</span>)]</span>
 
 <span class="kw">mod</span> <span class="ident">geo</span>;
 <span class="kw">mod</span> <span class="ident">noteskin</span>;
 <span class="kw">mod</span> <span class="ident">sprites</span>;
 <span class="kw">mod</span> <span class="ident">visibility</span>;
 
-<span class="kw">use</span> <span class="ident">anyhow</span>::{<span class="ident">Error</span>, <span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">anyhow::Error</span>;
 <span class="kw">use</span> <span class="ident">lerp::Lerp</span>;
 <span class="kw">use</span> <span class="ident">log::error</span>;
 <span class="kw">use</span> <span class="ident">pixels</span>::{<span class="ident">Pixels</span>, <span class="ident">PixelsBuilder</span>, <span class="ident">SurfaceTexture</span>};
 <span class="kw">use</span> <span class="ident">rrr_core</span>::{
-    <span class="ident">download_chart</span>,
+    <span class="ident">fetch</span>,
     <span class="ident">note</span>::{<span class="self">self</span>, <span class="ident">Color</span>, <span class="ident">Direction</span>},
     <span class="ident">play</span>,
     <span class="ident">play::Play</span>,
@@ -659,6 +670,7 @@
     <span class="ident">noteskin</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">noteskin::Definition</span><span class="op">&gt;</span>,
     <span class="ident">pixels</span>: <span class="ident">Pixels</span>,
     <span class="ident">play_stage</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Play</span><span class="op">&lt;</span><span class="ident">play::Active</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">fetcher</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">fetch::Fetcher</span><span class="op">&gt;</span>,
     <span class="ident">start_instant</span>: <span class="ident">T</span>,
     <span class="ident">previous_instant</span>: <span class="ident">T</span>,
     <span class="ident">current_instant</span>: <span class="ident">T</span>,
@@ -679,6 +691,7 @@
             <span class="ident">noteskin</span>,
             <span class="ident">pixels</span>,
             <span class="ident">play_stage</span>,
+            <span class="ident">fetcher</span>: <span class="prelude-val">None</span>,
             <span class="ident">start_instant</span>: <span class="ident">T::now</span>(),
             <span class="ident">previous_instant</span>: <span class="ident">T::now</span>(),
             <span class="ident">current_instant</span>: <span class="ident">T::now</span>(),
@@ -735,14 +748,38 @@
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
             <span class="ident">stage</span>.<span class="ident">tick</span>(<span class="ident">delta_time</span>);
         }
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">fetcher</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">fetcher</span>.<span class="ident">take</span>() {
+            <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">fetcher</span>.<span class="ident">fetch</span>();
+
+            <span class="kw">match</span> <span class="ident">result</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">bytes</span>) =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
+                    <span class="ident">fetch::BytesFetch::Ok</span>(<span class="ident">chart</span>) =&gt; {
+                        <span class="kw">let</span> <span class="ident">parser_compressed</span> <span class="op">=</span> <span class="ident">SwfParser::new</span>(<span class="ident">chart</span>.<span class="ident">to_vec</span>());
+                        <span class="kw">let</span> <span class="ident">record</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ready_to_parse</span>) <span class="op">=</span> <span class="ident">parser_compressed</span>.<span class="ident">decompress</span>() {
+                            <span class="kw">let</span> <span class="ident">parsing</span> <span class="op">=</span> <span class="ident">ready_to_parse</span>.<span class="ident">parse</span>();
+                            <span class="kw">let</span> <span class="ident">parsed</span> <span class="op">=</span> <span class="ident">parsing</span>.<span class="ident">tick</span>();
+                            <span class="prelude-val">Some</span>(<span class="ident">parsed</span>.<span class="ident">produce_tape</span>())
+                        } <span class="kw">else</span> {
+                            <span class="prelude-val">None</span>
+                        };
+
+                        <span class="self">self</span>.<span class="ident">start</span>();
+                        <span class="self">self</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Play::new</span>(<span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>())).<span class="ident">start</span>());
+                    }
+                    <span class="ident">fetch::BytesFetch::Wait</span> =&gt; <span class="macro">todo!</span>(),
+                    <span class="ident">fetch::BytesFetch::Err</span>(<span class="ident">err</span>) =&gt; <span class="macro">log::error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">err</span>),
+                },
+                <span class="prelude-val">None</span> =&gt; {
+                    <span class="self">self</span>.<span class="ident">fetcher</span>.<span class="ident">replace</span>(<span class="ident">fetcher</span>);
+                }
+            }
+        }
     }
 
     <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
-            <span class="ident">stage</span>.<span class="ident">do_action</span>(
-                <span class="ident">direction</span>,
-                (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">as_secs_f64</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">i128</span>,
-            );
+            <span class="ident">stage</span>.<span class="ident">do_action</span>(<span class="ident">direction</span>, (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">i128</span>);
         }
     }
 
@@ -765,7 +802,7 @@
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">noteskin</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">noteskin</span> {
                 <span class="kw">let</span> <span class="ident">chart_progress</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">progress</span>();
 
-                <span class="comment">// Draw Receptors</span>
+                <span class="comment">// TODO: Position of receptor is not consistent, as it is currently based on &quot;time_on_screen&quot;.</span>
                 <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="number">200</span>; <span class="comment">// Expected position of the receptor.</span>
                 <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
                 <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">start_position</span>, <span class="ident">normalized</span>);
@@ -800,24 +837,30 @@
                     <span class="kw-2">&amp;</span><span class="ident">receptor_skin</span>,
                 );
 
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">time_on_screen</span>) {
-                    <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">duration</span>, <span class="ident">note</span>) <span class="kw">in</span>
-                        <span class="ident">view</span>.<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="op">!</span><span class="ident">play</span>.<span class="ident">judgements</span>().<span class="ident">contains_key</span>(<span class="ident">note</span>))
-                    {
-                        <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="ident">duration</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">i128</span>;
-                        <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
-                        <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">start_position</span>, <span class="ident">normalized</span>);
+                <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">time_on_screen</span>);
+                <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">duration</span>, <span class="ident">note</span>) <span class="kw">in</span>
+                    <span class="ident">view</span>.<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="op">!</span><span class="ident">play</span>.<span class="ident">judgements</span>().<span class="ident">contains_key</span>(<span class="ident">note</span>))
+                {
+                    <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="ident">duration</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">i128</span>;
+                    <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
+                    <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">start_position</span>, <span class="ident">normalized</span>);
 
-                        <span class="kw">let</span> <span class="ident">lane_index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">note</span>.<span class="ident">direction</span> {
-                            <span class="ident">note::Direction::Left</span> =&gt; <span class="op">-</span><span class="number">1.5</span>,
-                            <span class="ident">note::Direction::Down</span> =&gt; <span class="op">-</span><span class="number">0.5</span>,
-                            <span class="ident">note::Direction::Up</span> =&gt; <span class="number">0.5</span>,
-                            <span class="ident">note::Direction::Right</span> =&gt; <span class="number">1.5</span>,
-                        };
-                        <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> (<span class="ident">lane_offset</span> <span class="op">*</span> <span class="ident">lane_index</span>);
-                        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">position</span>;
-                        <span class="ident">blit</span>(<span class="ident">frame</span>, <span class="ident">x</span>, <span class="ident">y</span>, <span class="kw-2">&amp;</span><span class="ident">note</span>.<span class="ident">direction</span>, <span class="kw-2">&amp;</span><span class="ident">noteskin</span>.<span class="ident">get_note</span>(<span class="ident">note</span>.<span class="ident">color</span>));
-                    }
+                    <span class="kw">let</span> <span class="ident">lane_index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">note</span>.<span class="ident">direction</span> {
+                        <span class="ident">note::Direction::Left</span> =&gt; <span class="op">-</span><span class="number">1.5</span>,
+                        <span class="ident">note::Direction::Down</span> =&gt; <span class="op">-</span><span class="number">0.5</span>,
+                        <span class="ident">note::Direction::Up</span> =&gt; <span class="number">0.5</span>,
+                        <span class="ident">note::Direction::Right</span> =&gt; <span class="number">1.5</span>,
+                    };
+                    <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> (<span class="ident">lane_offset</span> <span class="op">*</span> <span class="ident">lane_index</span>);
+                    <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">position</span>;
+                    <span class="ident">blit</span>(<span class="ident">frame</span>, <span class="ident">x</span>, <span class="ident">y</span>, <span class="kw-2">&amp;</span><span class="ident">note</span>.<span class="ident">direction</span>, <span class="kw-2">&amp;</span><span class="ident">noteskin</span>.<span class="ident">get_note</span>(<span class="ident">note</span>.<span class="ident">color</span>));
+                }
+
+                <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">time_on_screen</span>);
+                <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">duration</span>, <span class="ident">note</span>) <span class="kw">in</span>
+                    <span class="ident">view</span>.<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">play</span>.<span class="ident">judgements</span>().<span class="ident">contains_key</span>(<span class="ident">note</span>))
+                {
+                    <span class="macro">log::info!</span>(<span class="string">&quot;Do not render: {:?}&quot;</span>, <span class="ident">note</span>);
                 }
             }
         }
@@ -846,7 +889,6 @@
 
 <span class="kw">fn</span> <span class="ident">main</span>() {
     <span class="ident">init_log</span>();
-
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
     {
         <span class="kw">use</span> <span class="ident">wasm_bindgen::UnwrapThrowExt</span>;
@@ -972,19 +1014,8 @@
 
 <span class="kw">fn</span> <span class="ident">do_toggle_game_state_debug</span>(<span class="ident">game</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Game</span><span class="op">&lt;</span><span class="ident">Time</span><span class="op">&gt;</span>) {
     <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">play_stage</span>.<span class="ident">is_none</span>() {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">raw_chart</span>) <span class="op">=</span> <span class="ident">download_chart</span>(<span class="number">3348</span>) {
-            <span class="kw">let</span> <span class="ident">parser_compressed</span> <span class="op">=</span> <span class="ident">SwfParser::new</span>(<span class="kw-2">*</span><span class="ident">raw_chart</span>);
-            <span class="kw">let</span> <span class="ident">record</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ready_to_parse</span>) <span class="op">=</span> <span class="ident">parser_compressed</span>.<span class="ident">decompress</span>() {
-                <span class="kw">let</span> <span class="ident">parsing</span> <span class="op">=</span> <span class="ident">ready_to_parse</span>.<span class="ident">parse</span>();
-                <span class="comment">// TODO: Make this async, remove intermediate state and just await it.</span>
-                <span class="kw">let</span> <span class="ident">parsed</span> <span class="op">=</span> <span class="ident">parsing</span>.<span class="ident">tick</span>();
-                <span class="prelude-val">Some</span>(<span class="ident">parsed</span>.<span class="ident">produce_tape</span>())
-            } <span class="kw">else</span> {
-                <span class="prelude-val">None</span>
-            };
-
-            <span class="ident">game</span>.<span class="ident">start</span>();
-            <span class="ident">game</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Play::new</span>(<span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>())).<span class="ident">start</span>());
+        <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">fetcher</span>.<span class="ident">is_none</span>() {
+            <span class="ident">game</span>.<span class="ident">fetcher</span>.<span class="ident">replace</span>(<span class="ident">fetch::download_chart</span>(<span class="number">3348</span>));
         }
     } <span class="kw">else</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">play_stage</span> {
@@ -1033,6 +1064,11 @@
 
         <span class="ident">Elements</span> { <span class="ident">update_progress</span> }
     };
+
+    <span class="comment">// For tomorrow.</span>
+    <span class="comment">// Need to collect any async dispatches and wait for them to finish before continuing.</span>
+    <span class="comment">// Need a futures::channel to send a bool back when the active async dispatch is finished.</span>
+    <span class="comment">// Then we can just continue with the next iteration.</span>
 
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">modifiers</span> <span class="op">=</span> <span class="ident">ModifiersState::default</span>();
     <span class="ident">event_loop</span>.<span class="ident">run</span>(<span class="kw">move</span> <span class="op">|</span><span class="ident">in_event</span>, <span class="kw">_</span>, <span class="ident">control_flow</span><span class="op">|</span> {

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":[["download_chart","Artificial download function which simply opens the file from disk."]]};

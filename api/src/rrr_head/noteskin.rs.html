@@ -147,6 +147,7 @@
 <span id="147">147</span>
 <span id="148">148</span>
 <span id="149">149</span>
+<span id="150">150</span>
 </pre><pre class="rust"><code><span class="comment">// Ingest a spritesheet of noteskins, with metadata describing the notes.</span>
 
 <span class="kw">use</span> <span class="ident">image</span>::{<span class="ident">imageops</span>, <span class="ident">DynamicImage</span>, <span class="ident">GenericImageView</span>, <span class="ident">Pixels</span>, <span class="ident">SubImage</span>};
@@ -243,6 +244,7 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_get_note</span>() {
+        <span class="comment">// TODO: Convert this include_bytes to FetchWorker. (Also change FetchWorker to BinaryFetchWorker)</span>
         <span class="kw">let</span> <span class="ident">noteskin_bytes</span> <span class="op">=</span> <span class="macro">include_bytes!</span>(<span class="string">&quot;../../../data/default_noteskin.png&quot;</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">noteskin_image</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">image::load_from_memory</span>(<span class="ident">noteskin_bytes</span>) {
             <span class="prelude-val">Ok</span>(<span class="ident">image</span>) =&gt; <span class="ident">image</span>,

@@ -181,6 +181,7 @@
 <span id="181">181</span>
 <span id="182">182</span>
 <span id="183">183</span>
+<span id="184">184</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">judge</span>;
 
@@ -308,21 +309,22 @@
         <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">500</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
             .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">determine_judgable</span>(<span class="ident">note</span>, <span class="kw-2">&amp;</span><span class="ident">direction</span>, <span class="ident">ts</span>))
-            .<span class="ident">min_by</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">x_note</span>), (<span class="kw">_</span>, <span class="ident">y_note</span>)<span class="op">|</span> {
-                <span class="ident">x_note</span>
-                    .<span class="ident">timestamp</span>
-                    .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>)
-                    .<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">y_note</span>.<span class="ident">timestamp</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>))
-            })
+            .<span class="ident">next</span>()
+        <span class="comment">// .min_by(|(_, x_note), (_, y_note)| {</span>
+        <span class="comment">//     x_note</span>
+        <span class="comment">//         .timestamp</span>
+        <span class="comment">//         .abs_dif(&amp;ts)</span>
+        <span class="comment">//         .cmp(&amp;y_note.timestamp.abs_dif(&amp;ts))</span>
+        <span class="comment">// })</span>
         {
             <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge</span>(<span class="ident">ts</span>, <span class="ident">closest_note</span>);
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">determine_judgable</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">note</span>: <span class="kw-2">&amp;</span><span class="ident">CompiledNote</span>, <span class="ident">direction</span>: <span class="kw-2">&amp;</span><span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">determine_judgable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">note</span>: <span class="kw-2">&amp;</span><span class="ident">CompiledNote</span>, <span class="ident">direction</span>: <span class="kw-2">&amp;</span><span class="ident">Direction</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">is_judged</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>.<span class="ident">contains_key</span>(<span class="ident">note</span>);
         <span class="kw">let</span> <span class="ident">is_same_direction</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>;
-        <span class="kw">let</span> <span class="ident">is_within_judge_range</span> <span class="op">=</span> <span class="ident">note</span>.<span class="ident">timestamp</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>) <span class="op">&lt;</span> <span class="number">118</span>;
+        <span class="kw">let</span> <span class="ident">is_within_judge_range</span> <span class="op">=</span> <span class="ident">note</span>.<span class="ident">timestamp</span>.<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>) <span class="op">&lt;</span><span class="op">=</span> <span class="number">118</span>;
         <span class="op">!</span><span class="ident">is_judged</span> <span class="op">&amp;&amp;</span> <span class="ident">is_same_direction</span> <span class="op">&amp;&amp;</span> <span class="ident">is_within_judge_range</span>
     }
 }

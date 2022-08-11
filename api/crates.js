@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["rrr_core","rrr_head"];
+window.ALL_CRATES = ["rrr_core","rrr_head","worker"];

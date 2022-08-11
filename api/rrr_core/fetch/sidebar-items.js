@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["fetch",""]],"struct":[["Artist",""],["Chart",""],["Payload",""]]};
+window.SIDEBAR_ITEMS = {"enum":[["BytesFetch",""]],"fn":[["download_chart",""]],"mod":[["playlist",""]],"struct":[["Artist",""],["Chart",""],["Fetcher",""],["ManifestPayload",""],["PlaylistPayload",""]]};
