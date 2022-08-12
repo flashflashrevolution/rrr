@@ -81,8 +81,6 @@ struct Game<T: TimeTrait> {
     start_instant: T,
     previous_instant: T,
     current_instant: T,
-    rect_x: f64,
-    rect_y: f64,
 }
 
 impl<T> Game<T>
@@ -102,8 +100,6 @@ where
             start_instant: T::now(),
             previous_instant: T::now(),
             current_instant: T::now(),
-            rect_x: 100.,
-            rect_y: 150.,
         }
     }
 
@@ -146,9 +142,6 @@ where
 
     fn update(&mut self) {
         self.current_instant = T::now();
-
-        self.rect_x += 1.;
-        self.rect_y += 1.;
 
         let delta_time = (self.current_instant.sub(&self.previous_instant) * 1000.) as u64;
 
@@ -209,75 +202,109 @@ where
             if let Some(noteskin) = &self.noteskin {
                 let chart_progress = play.progress();
 
-                // TODO: Position of receptor is not consistent, as it is currently based on "time_on_screen".
-                let note_progress = 200; // Expected position of the receptor.
-                let normalized = note_progress as f64 / time_on_screen as f64;
-                let position = end_position.lerp(start_position, normalized);
-
-                let receptor_skin = noteskin.get_note(note::Color::Receptor);
-                blit(
+                draw_receptors(
+                    time_on_screen,
+                    end_position,
+                    start_position,
+                    noteskin,
                     frame,
-                    offset + (lane_offset * -1.5),
-                    position,
-                    &note::Direction::Left,
-                    &receptor_skin,
-                );
-                blit(
-                    frame,
-                    offset + (lane_offset * -0.5),
-                    position,
-                    &note::Direction::Down,
-                    &receptor_skin,
-                );
-                blit(
-                    frame,
-                    offset + (lane_offset * 0.5),
-                    position,
-                    &note::Direction::Up,
-                    &receptor_skin,
-                );
-                blit(
-                    frame,
-                    offset + (lane_offset * 1.5),
-                    position,
-                    &note::Direction::Right,
-                    &receptor_skin,
+                    offset,
+                    lane_offset,
                 );
 
-                let view = play.view(time_on_screen);
-                for (&duration, note) in
-                    view.filter(|(_, note)| !play.judgements().contains_key(note))
-                {
-                    let note_progress = duration - chart_progress as i128;
-                    let normalized = note_progress as f64 / time_on_screen as f64;
-                    let position = end_position.lerp(start_position, normalized);
-
-                    let lane_index = match note.direction {
-                        note::Direction::Left => -1.5,
-                        note::Direction::Down => -0.5,
-                        note::Direction::Up => 0.5,
-                        note::Direction::Right => 1.5,
-                    };
-                    let x = offset + (lane_offset * lane_index);
-                    let y = position;
-                    blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
-                }
-
-                let view = play.view(time_on_screen);
-                for (&duration, note) in
-                    view.filter(|(_, note)| play.judgements().contains_key(note))
-                {
-                    log::info!("Do not render: {:?}", note);
-                }
+                draw_notes(
+                    play,
+                    time_on_screen,
+                    chart_progress,
+                    end_position,
+                    start_position,
+                    offset,
+                    lane_offset,
+                    frame,
+                    noteskin,
+                );
             }
         }
-
-        rect(frame, self.rect_x, self.rect_y, 32., 32.);
     }
 
     fn finish(&mut self) {
         self.previous_instant = self.current_instant;
     }
+}
+
+#[allow(clippy::too_many_arguments)]
+fn draw_notes(
+    play: &Play<play::Active>,
+    time_on_screen: u64,
+    chart_progress: u64,
+    end_position: f64,
+    start_position: f64,
+    offset: f64,
+    lane_offset: f64,
+    frame: &mut [u8],
+    noteskin: &noteskin::Definition,
+) {
+    let view = play.view(time_on_screen);
+    for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
+        let note_progress = duration - chart_progress as i128;
+        let normalized = note_progress as f64 / time_on_screen as f64;
+        let position = end_position.lerp(start_position, normalized);
+
+        let lane_index = match note.direction {
+            note::Direction::Left => -1.5,
+            note::Direction::Down => -0.5,
+            note::Direction::Up => 0.5,
+            note::Direction::Right => 1.5,
+        };
+        let x = offset + (lane_offset * lane_index);
+        let y = position;
+        blit(frame, x, y, &note.direction, &noteskin.get_note(note.color));
+    }
+}
+
+fn draw_receptors(
+    time_on_screen: u64,
+    end_position: f64,
+    start_position: f64,
+    noteskin: &noteskin::Definition,
+    frame: &mut [u8],
+    offset: f64,
+    lane_offset: f64,
+) {
+    // TODO: Position of receptor is not consistent, as it is currently based on "time_on_screen".
+    let note_progress = 200;
+    // Expected position of the receptor.
+    let normalized = note_progress as f64 / time_on_screen as f64;
+    let position = end_position.lerp(start_position, normalized);
+    let receptor_skin = noteskin.get_note(note::Color::Receptor);
+    blit(
+        frame,
+        offset + (lane_offset * -1.5),
+        position,
+        &note::Direction::Left,
+        &receptor_skin,
+    );
+    blit(
+        frame,
+        offset + (lane_offset * -0.5),
+        position,
+        &note::Direction::Down,
+        &receptor_skin,
+    );
+    blit(
+        frame,
+        offset + (lane_offset * 0.5),
+        position,
+        &note::Direction::Up,
+        &receptor_skin,
+    );
+    blit(
+        frame,
+        offset + (lane_offset * 1.5),
+        position,
+        &note::Direction::Right,
+        &receptor_skin,
+    );
 }
 
 cfg_if::cfg_if! {
@@ -336,20 +363,14 @@ fn build_window(
     }
 }
 
-#[cfg(target_arch = "wasm32")]
-use web_sys::{Element, HtmlCanvasElement, HtmlElement, Window};
-
-#[cfg(target_arch = "wasm32")]
-struct Elements {
-    update_progress: Element,
-}
-
 async fn run() -> Result<(), Error> {
     let event_loop = EventLoop::new();
     let window = build_window(&event_loop)?;
 
     #[cfg(target_arch = "wasm32")]
     {
+        use web_sys::{Element, HtmlCanvasElement, HtmlElement, Window};
+
         use gloo::events::EventListener;
         use std::rc::Rc;
         use wasm_bindgen::closure::Closure;
@@ -461,21 +482,20 @@ async fn run_game_loop(
 
     #[cfg(target_arch = "wasm32")]
     let elements = {
-        use wasm_bindgen::JsCast;
+        use web_sys::{Element, Window};
 
-        let update_progress: Element = web_sys::window()
+        struct Elements {
+            update_progress: Element,
+        }
+
+        let update_progress: Option<Element> = web_sys::window()
             .and_then(|win: Window| win.document())
-            .and_then(|doc| doc.get_element_by_id("progress"))
-            .and_then(|elem: Element| Some(elem))
-            .unwrap();
+            .and_then(|doc| doc.get_element_by_id("progress"));
 
-        Elements { update_progress }
+        Elements {
+            update_progress: update_progress.unwrap(),
+        }
     };
-
-    // For tomorrow.
-    // Need to collect any async dispatches and wait for them to finish before continuing.
-    // Need a futures::channel to send a bool back when the active async dispatch is finished.
-    // Then we can just continue with the next iteration.
 
     let mut modifiers = ModifiersState::default();
     event_loop.run(move |in_event, _, control_flow| {
@@ -568,26 +588,4 @@ fn handle_keyboard_input(
 
 fn clear(frame: &mut [u8]) {
     frame.fill(0);
-}
-
-fn rect(frame: &mut [u8], x: f64, y: f64, width: f64, height: f64) {
-    let x_min: f64 = f64::max(0., x);
-    let x_max: f64 = f64::min(WIDTH as f64, x + width);
-    let y_min: f64 = f64::max(0., y);
-    let y_max: f64 = f64::min(HEIGHT as f64, y + height);
-
-    let x_min_u: usize = x_min.round() as usize;
-    let x_max_u: usize = x_max.round() as usize;
-    let y_min_u: usize = y_min.round() as usize;
-    let y_max_u: usize = y_max.round() as usize;
-
-    for row in y_min_u..y_max_u {
-        for column in x_min_u..x_max_u {
-            let i: usize = (row * (WIDTH as usize) + column) * 4;
-            frame[i] = 0x5e;
-            frame[i + 1] = 0x48;
-            frame[i + 2] = 0xe8;
-            frame[i + 3] = 0xff;
-        }
-    }
 }
