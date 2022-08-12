@@ -48,7 +48,7 @@ mod sprites;
 mod visibility;
 
 use anyhow::Error;
-use lerp::Lerp;
+use lerp::{num_traits::AsPrimitive, Lerp};
 use log::error;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
@@ -164,8 +164,16 @@ where
                             None
                         };
 
+                        let turntable = Turntable::load(record.unwrap());
+
+                        let mut settings = play::settings::Settings::default();
+                        settings.lane_gap = 144;
+
+                        let play = Play::new(turntable).with_settings(settings);
+                        let play_started = play.start();
+                        self.play_stage = Some(play_started);
+
                         self.start();
-                        self.play_stage = Some(Play::new(Turntable::load(record.unwrap())).start());
                     }
                     fetch::BytesFetch::Wait => todo!(),
                     fetch::BytesFetch::Err(err) => log::error!("{}", err),
@@ -195,7 +203,6 @@ where
         let note_height = 64.0;
         let start_position = field_height;
         let end_position = -note_height;
-        let lane_offset = 72.0;
         let offset = WIDTH as f64 / 2.0 - 32.0;
 
         if let Some(play) = &self.play_stage {
@@ -203,13 +210,13 @@ where
                 let chart_progress = play.progress();
 
                 draw_receptors(
+                    play,
                     time_on_screen,
                     end_position,
                     start_position,
                     noteskin,
                     frame,
                     offset,
-                    lane_offset,
                 );
 
                 draw_notes(
@@ -219,7 +226,6 @@ where
                     end_position,
                     start_position,
                     offset,
-                    lane_offset,
                     frame,
                     noteskin,
                 );
@@ -240,7 +246,6 @@ fn draw_notes(
     end_position: f64,
     start_position: f64,
     offset: f64,
-    lane_offset: f64,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
 ) {
@@ -249,6 +254,7 @@ fn draw_notes(
         let note_progress = duration - chart_progress as i128;
         let normalized = note_progress as f64 / time_on_screen as f64;
         let position = end_position.lerp(start_position, normalized);
+        let lane_offset = play.settings().lane_gap as f64;
 
         let lane_index = match note.direction {
             note::Direction::Left => -1.5,
@@ -263,13 +269,13 @@ fn draw_notes(
 }
 
 fn draw_receptors(
+    play: &Play<play::Active>,
     time_on_screen: u64,
     end_position: f64,
     start_position: f64,
     noteskin: &noteskin::Definition,
     frame: &mut [u8],
     offset: f64,
-    lane_offset: f64,
 ) {
     // TODO: Position of receptor is not consistent, as it is currently based on "time_on_screen".
     let note_progress = 200;
@@ -277,6 +283,7 @@ fn draw_receptors(
     let normalized = note_progress as f64 / time_on_screen as f64;
     let position = end_position.lerp(start_position, normalized);
     let receptor_skin = noteskin.get_note(note::Color::Receptor);
+    let lane_offset = play.settings().lane_gap as f64;
     blit(
         frame,
         offset + (lane_offset * -1.5),

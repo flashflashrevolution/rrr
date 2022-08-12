@@ -1,5 +1,6 @@
 pub mod actions;
 pub mod judge;
+pub mod settings;
 
 use self::{
     actions::NoteAction,
@@ -10,10 +11,17 @@ use crate::{
     turntable, Turntable,
 };
 use btreemultimap::{BTreeMultiMap, MultiRange};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 pub struct Play<S: PlayState> {
     state: S,
+    settings: settings::Settings,
+}
+
+impl<S: PlayState> Play<S> {
+    pub fn settings(&self) -> &settings::Settings {
+        &self.settings
+    }
 }
 
 pub struct Ready {
@@ -42,6 +50,15 @@ impl Play<Ready> {
     pub fn new(turntable: Turntable<turntable::Loaded>) -> Self {
         Self {
             state: Ready { turntable },
+            settings: settings::Settings::default(),
+        }
+    }
+
+    #[must_use]
+    pub fn with_settings(self, settings: settings::Settings) -> Self {
+        Self {
+            state: self.state,
+            settings,
         }
     }
 
@@ -53,6 +70,7 @@ impl Play<Ready> {
                 actions: BTreeMultiMap::default(),
                 judge: Judge::new(200),
             },
+            settings: self.settings,
         }
     }
 }
@@ -64,6 +82,7 @@ impl Play<Active> {
             state: Ready {
                 turntable: self.state.turntable.stop(),
             },
+            settings: self.settings,
         }
     }
 
@@ -126,12 +145,6 @@ impl Play<Active> {
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
             .next()
-        // .min_by(|(_, x_note), (_, y_note)| {
-        //     x_note
-        //         .timestamp
-        //         .abs_dif(&ts)
-        //         .cmp(&y_note.timestamp.abs_dif(&ts))
-        // })
         {
             self.state.judge.judge(ts, closest_note);
         }
@@ -157,6 +170,7 @@ impl Play<Concluded> {
             state: Ready {
                 turntable: self.state.tape_deck,
             },
+            settings: self.settings,
         }
     }
 }
