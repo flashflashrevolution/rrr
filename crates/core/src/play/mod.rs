@@ -1,6 +1,5 @@
 pub mod actions;
 pub mod judge;
-pub mod settings;
 
 use self::{
     actions::NoteAction,
@@ -8,6 +7,7 @@ use self::{
 };
 use crate::{
     note::{CompiledNote, Direction},
+    settings::Settings,
     turntable, Turntable,
 };
 use btreemultimap::{BTreeMultiMap, MultiRange};
@@ -15,11 +15,11 @@ use std::collections::HashSet;
 
 pub struct Play<S: PlayState> {
     state: S,
-    settings: settings::Settings,
+    settings: Settings,
 }
 
 impl<S: PlayState> Play<S> {
-    pub fn settings(&self) -> &settings::Settings {
+    pub fn settings(&self) -> &Settings {
         &self.settings
     }
 }
@@ -50,12 +50,12 @@ impl Play<Ready> {
     pub fn new(turntable: Turntable<turntable::Loaded>) -> Self {
         Self {
             state: Ready { turntable },
-            settings: settings::Settings::default(),
+            settings: Settings::default(),
         }
     }
 
     #[must_use]
-    pub fn with_settings(self, settings: settings::Settings) -> Self {
+    pub fn with_settings(self, settings: Settings) -> Self {
         Self {
             state: self.state,
             settings,

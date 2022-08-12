@@ -85,7 +85,7 @@ mod tests {
 
     #[test]
     fn custom_settings() {
-        let settings = Settings::new();
+        let settings = Settings::default();
         let _rrr = RRR::with_settings(settings);
     }
 

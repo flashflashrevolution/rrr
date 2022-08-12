@@ -56,6 +56,7 @@ use rrr_core::{
     note::{self, Color, Direction},
     play,
     play::Play,
+    settings::{self, Settings},
     time::{performance::Time, time_trait::TimeTrait},
     SwfParser, Turntable,
 };
@@ -166,8 +167,11 @@ where
 
                         let turntable = Turntable::load(record.unwrap());
 
-                        let mut settings = play::settings::Settings::default();
-                        settings.lane_gap = 144;
+                        let mut settings = Settings::default();
+                        settings.lane_gap = 72;
+                        settings.receptor_vertical_position = 0;
+                        settings.scroll_direction = settings::ScrollDirection::Down;
+                        settings.scroll_speed = 800.0;
 
                         let play = Play::new(turntable).with_settings(settings);
                         let play_started = play.start();
