@@ -190,7 +190,7 @@ where
         let frame = self.pixels.get_frame();
         clear(frame);
 
-        let time_on_screen = 1800;
+        let time_on_screen = 1000;
         let field_height = HEIGHT as f64;
         let note_height = 64.0;
         let start_position = field_height;
