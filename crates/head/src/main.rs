@@ -56,7 +56,7 @@ use rrr_core::{
     note::{self, Color, Direction},
     play,
     play::Play,
-    time::{performance::Time, TimeTrait},
+    time::{performance::Time, time_trait::TimeTrait},
     SwfParser, Turntable,
 };
 use sprites::blit;
