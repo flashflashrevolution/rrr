@@ -74,7 +74,7 @@
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Settings</span> {
-    <span class="kw">pub</span> <span class="ident">scroll_speed</span>: <span class="ident">f32</span>,
+    <span class="kw">pub</span> <span class="ident">scroll_speed</span>: <span class="ident">u16</span>,
     <span class="kw">pub</span> <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>,
     <span class="kw">pub</span> <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection</span>,
     <span class="kw">pub</span> <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
@@ -84,7 +84,7 @@
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
         <span class="self">Self</span> {
-            <span class="ident">scroll_speed</span>: <span class="number">3000.0</span>,
+            <span class="ident">scroll_speed</span>: <span class="number">3000</span>,
             <span class="ident">judge_zero_point</span>: <span class="number">327</span>,
             <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection::Up</span>,
             <span class="ident">lane_gap</span>: <span class="number">72</span>,
@@ -95,7 +95,7 @@
 <span class="kw">impl</span> <span class="ident">Settings</span> {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
-        <span class="ident">scroll_speed</span>: <span class="ident">f32</span>,
+        <span class="ident">scroll_speed</span>: <span class="ident">u16</span>,
         <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>,
         <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection</span>,
         <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
@@ -116,7 +116,7 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">default_settings</span>() {
         <span class="kw">let</span> <span class="ident">settings</span> = <span class="ident">Settings::default</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">scroll_speed</span>, <span class="number">3000.0</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">scroll_speed</span>, <span class="number">3000</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">judge_zero_point</span>, <span class="number">327</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">scroll_direction</span>, <span class="ident">ScrollDirection::Up</span>);
         <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">lane_gap</span>, <span class="number">72</span>);
