@@ -279,7 +279,6 @@ fn draw_receptors(
     offset: f64,
     position: f64,
 ) {
-    let position = position;
     let receptor_skin = noteskin.get_note(note::Color::Receptor);
     let lane_offset = f64::from(play.settings().lane_gap);
     blit(
