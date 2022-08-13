@@ -194,15 +194,7 @@ where
                 if let noteskin = &renderer.noteskin {
                     let chart_progress = play.progress();
 
-                    draw_receptors(
-                        play,
-                        time_on_screen,
-                        end_position,
-                        start_position,
-                        noteskin,
-                        frame,
-                        offset,
-                    );
+                    draw_receptors(play, noteskin, frame, offset);
 
                     draw_notes(
                         play,
@@ -256,20 +248,14 @@ fn draw_notes(
 
 fn draw_receptors(
     play: &Play<play::Active>,
-    time_on_screen: u64,
-    end_position: f64,
-    start_position: f64,
     noteskin: &noteskin::Definition,
     frame: &mut [u8],
     offset: f64,
 ) {
-    // TODO: Position of receptor is not consistent, as it is currently based on "time_on_screen".
-    let note_progress = 200;
     // Expected position of the receptor.
-    let normalized = note_progress as f64 / time_on_screen as f64;
-    let position = end_position.lerp(start_position, normalized);
+    let position = f64::from(play.settings().receptor_vertical_position);
     let receptor_skin = noteskin.get_note(note::Color::Receptor);
-    let lane_offset = play.settings().lane_gap as f64;
+    let lane_offset = f64::from(play.settings().lane_gap);
     blit(
         frame,
         offset + (lane_offset * -1.5),
