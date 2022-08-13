@@ -55,7 +55,7 @@ mod tests {
     fn default_settings() {
         let settings = Settings::default();
         assert_eq!(settings.scroll_speed, 3000.0);
-        assert_eq!(settings.judge_zero_point, 490);
+        assert_eq!(settings.judge_zero_point, 327);
         assert_eq!(settings.scroll_direction, ScrollDirection::Up);
         assert_eq!(settings.lane_gap, 72);
     }
