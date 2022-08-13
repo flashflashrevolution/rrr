@@ -43,6 +43,7 @@
 pub mod audio;
 pub mod chart;
 pub mod fetch;
+pub mod lerp;
 pub mod loaders;
 pub mod play;
 pub mod record;

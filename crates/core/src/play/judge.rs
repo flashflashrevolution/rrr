@@ -1,6 +1,8 @@
 use crate::note::CompiledNote;
 use std::collections::{HashMap, HashSet};
 
+use super::Difference;
+
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct JudgeWindow(pub i128);
 pub static JUDGE: [JudgeWindow; 8] = [
@@ -22,24 +24,26 @@ pub struct Judge {
     pub judgements: Judgement,
     pub misses: HashSet<CompiledNote>,
     pub boos: Boo,
-    pub receptor_position: i128,
+    pub judgement_zero_point: u32,
 }
 
 impl Judge {
     /// Creates a new [`Judge`].
     #[must_use]
-    pub fn new(receptor_position: i128) -> Self {
+    pub fn new(judgement_zero_point: u32) -> Self {
         Self {
             judgements: HashMap::default(),
             misses: HashSet::default(),
             boos: HashSet::default(),
-            receptor_position,
+            judgement_zero_point,
         }
     }
 
     pub fn judge(&mut self, current_timestamp: i128, closest_note: &CompiledNote) {
         if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
-            let diff = current_timestamp - closest_note.timestamp;
+            let diff = closest_note
+                .timestamp
+                .diff(&(current_timestamp + i128::from(self.judgement_zero_point)));
 
             let judge = {
                 let mut last_judge = None;
@@ -53,10 +57,18 @@ impl Judge {
 
             if let Some(some_judge) = judge {
                 let local_note = closest_note.clone();
+                log::info!(
+                    "Judgement: {:?} on note: {:?} at ",
+                    some_judge,
+                    local_note.timestamp,
+                );
                 self.judgements.insert(local_note, some_judge);
             } else {
                 self.boos.insert(current_timestamp);
+                log::info!("Boo at: {:?}", current_timestamp);
             }
+        } else {
+            log::info!("Already judged: {:?}", closest_note);
         }
     }
 }

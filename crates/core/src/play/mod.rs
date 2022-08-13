@@ -6,6 +6,7 @@ use self::{
     judge::{Judge, Judgement},
 };
 use crate::{
+    lerp::Lerp,
     note::{CompiledNote, Direction},
     settings::Settings,
     turntable, Turntable,
@@ -68,7 +69,7 @@ impl Play<Ready> {
             state: Active {
                 turntable: self.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
-                judge: Judge::new(200),
+                judge: Judge::new(self.settings.judge_zero_point.try_into().unwrap()),
             },
             settings: self.settings,
         }
@@ -111,8 +112,8 @@ impl Play<Active> {
         &self.state.actions
     }
 
-    pub fn tick(&mut self, delta_time: u64) {
-        self.state.turntable.tick(delta_time);
+    pub fn tick(&mut self, progress: u64) {
+        self.state.turntable.tick(progress);
         self.check_miss();
 
         // TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.
@@ -153,7 +154,16 @@ impl Play<Active> {
     fn determine_judgable(&self, note: &CompiledNote, direction: &Direction, ts: i128) -> bool {
         let is_judged = self.state.actions.contains_key(note);
         let is_same_direction = *direction == note.direction;
-        let is_within_judge_range = note.timestamp.abs_dif(&ts) <= 118;
+        let is_within_judge_range = note
+            .timestamp
+            .abs_dif(&(ts + self.settings.judge_zero_point))
+            <= 118;
+        log::info!(
+            "note: {:?} || judge: {:?}",
+            note.timestamp
+                .abs_dif(&(ts + self.settings.judge_zero_point)),
+            118
+        );
         !is_judged && is_same_direction && is_within_judge_range
     }
 }
@@ -196,3 +206,51 @@ impl Difference for i128 {
         self - right
     }
 }
+
+// tests
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn screen_pos_to_lerp_time() -> f64 {
+        (-64.).inv_lerp(720., 64.)
+    }
+
+    fn lerp_time_to_screen_pos() -> f64 {
+        (-64.).lerp(720., screen_pos_to_lerp_time()).round()
+    }
+
+    fn ms_time_from_screen_height_time_on_screen_and_position() -> f64 {
+        let start_position = 720.;
+        let end_position = -64.;
+        let time_on_screen = 3000.;
+        let judge_position = 64.;
+
+        let normalized_note_progress = end_position.inv_lerp(start_position, judge_position);
+        let ms: f64 = normalized_note_progress * time_on_screen;
+
+        println!("normalized: {}", ms);
+        ms.round()
+    }
+
+    #[test]
+    fn test_screen_space_to_judgement_zero() {
+        assert!(screen_pos_to_lerp_time() - 0.163_265_306_122_448_97 <= f64::EPSILON);
+    }
+
+    #[test]
+    fn test_screen_lerp_time_to_screen_space() {
+        assert!((lerp_time_to_screen_pos() - 64.).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_ms_time_from_screen_height_time_on_screen_and_position() {
+        assert!(
+            (ms_time_from_screen_height_time_on_screen_and_position() - 490.0).abs() < f64::EPSILON
+        );
+    }
+}
+
+// What I should really be doing is determining exactly what ratio is between this zero point and the note.
+// So if a note has a ms timestamp of 2000, and the zero point is at 2000,
+// how many milliseconds is the is the receptor before that. Ex. (2000 - 120)

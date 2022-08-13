@@ -51,8 +51,8 @@ impl Turntable<Playing> {
         }
     }
 
-    pub fn tick(&mut self, delta_time: u64) {
-        self.state.progress += delta_time;
+    pub fn tick(&mut self, progress: u64) {
+        self.state.progress = progress;
     }
 
     #[must_use]

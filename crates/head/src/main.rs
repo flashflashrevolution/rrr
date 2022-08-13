@@ -48,10 +48,11 @@ mod sprites;
 mod visibility;
 
 use anyhow::Error;
-use lerp::Lerp;
+use lerp::num_traits::Float;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     fetch,
+    lerp::Lerp,
     note::{self, Direction},
     play,
     play::Play,
@@ -87,6 +88,11 @@ impl GameRenderer {
     }
 }
 
+struct Action {
+    direction: Direction,
+    ts: i128,
+}
+
 struct Game<T: TimeTrait> {
     renderer: Option<GameRenderer>,
     play_stage: Option<Play<play::Active>>,
@@ -94,6 +100,7 @@ struct Game<T: TimeTrait> {
     start_instant: T,
     previous_instant: T,
     current_instant: T,
+    action_queue: Vec<Action>,
 }
 
 impl<T> Game<T>
@@ -108,6 +115,7 @@ where
             start_instant: T::now(),
             previous_instant: T::now(),
             current_instant: T::now(),
+            action_queue: Vec::new(),
         }
     }
 
@@ -124,10 +132,14 @@ where
     fn update(&mut self) {
         self.current_instant = T::now();
 
-        let delta_time = (self.current_instant.sub(&self.previous_instant) * 1000.) as u64;
+        let current_progress = (self.start_instant.ms_since() * 1000.) as u64;
 
         if let Some(stage) = &mut self.play_stage {
-            stage.tick(delta_time);
+            stage.tick(current_progress);
+
+            for actions in self.action_queue.drain(..) {
+                stage.do_action(actions.direction, actions.ts);
+            }
         }
 
         if let Some(mut fetcher) = self.fetcher.take() {
@@ -149,9 +161,7 @@ where
 
                         let mut settings = Settings::default();
                         settings.lane_gap = 72;
-                        settings.receptor_vertical_position = 0;
                         settings.scroll_direction = settings::ScrollDirection::Down;
-                        settings.scroll_speed = 800.0;
 
                         let play = Play::new(turntable).with_settings(settings);
                         let play_started = play.start();
@@ -171,7 +181,10 @@ where
 
     fn do_action(&mut self, direction: Direction) {
         if let Some(stage) = &mut self.play_stage {
-            stage.do_action(direction, (self.start_instant.ms_since() * 1000.) as i128);
+            self.action_queue.push(Action {
+                direction,
+                ts: (self.start_instant.ms_since() * 1000.) as i128,
+            });
         }
     }
 
@@ -183,7 +196,7 @@ where
             let frame = renderer.pixels.get_frame();
             clear(frame);
 
-            let time_on_screen = 1000;
+            let time_on_screen = 3000;
             let field_height = HEIGHT as f64;
             let note_height = 64.0;
             let start_position = field_height;
@@ -194,7 +207,14 @@ where
                 if let noteskin = &renderer.noteskin {
                     let chart_progress = play.progress();
 
-                    draw_receptors(play, noteskin, frame, offset);
+                    let position = get_pos_from_ms(
+                        play.settings().judge_zero_point,
+                        start_position,
+                        end_position,
+                        time_on_screen,
+                    );
+
+                    draw_receptors(play, noteskin, frame, offset, position);
 
                     draw_notes(
                         play,
@@ -246,14 +266,20 @@ fn draw_notes(
     }
 }
 
+fn get_pos_from_ms(ms: i128, start_position: f64, end_position: f64, time_on_screen: u64) -> f64 {
+    let normalized = ms as f64 / time_on_screen as f64;
+    let pos = end_position.lerp(start_position, normalized as f64);
+    pos
+}
+
 fn draw_receptors(
     play: &Play<play::Active>,
     noteskin: &noteskin::Definition,
     frame: &mut [u8],
     offset: f64,
+    position: f64,
 ) {
-    // Expected position of the receptor.
-    let position = f64::from(play.settings().receptor_vertical_position);
+    let position = position + 32.0;
     let receptor_skin = noteskin.get_note(note::Color::Receptor);
     let lane_offset = f64::from(play.settings().lane_gap);
     blit(
