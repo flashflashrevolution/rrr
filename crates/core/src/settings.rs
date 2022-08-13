@@ -12,7 +12,7 @@ pub enum ScrollDirection {
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Settings {
-    pub scroll_speed: f32,
+    pub scroll_speed: u16,
     pub judge_zero_point: i128,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
@@ -22,7 +22,7 @@ impl Default for Settings {
     #[must_use]
     fn default() -> Self {
         Self {
-            scroll_speed: 3000.0,
+            scroll_speed: 3000,
             judge_zero_point: 327,
             scroll_direction: ScrollDirection::Up,
             lane_gap: 72,
@@ -33,7 +33,7 @@ impl Default for Settings {
 impl Settings {
     #[must_use]
     pub fn new(
-        scroll_speed: f32,
+        scroll_speed: u16,
         judge_zero_point: i128,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
@@ -54,7 +54,7 @@ mod tests {
     #[test]
     fn default_settings() {
         let settings = Settings::default();
-        assert_eq!(settings.scroll_speed, 3000.0);
+        assert_eq!(settings.scroll_speed, 3000);
         assert_eq!(settings.judge_zero_point, 327);
         assert_eq!(settings.scroll_direction, ScrollDirection::Up);
         assert_eq!(settings.lane_gap, 72);

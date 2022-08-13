@@ -160,8 +160,9 @@ where
                         let turntable = Turntable::load(record.unwrap());
 
                         let mut settings = Settings::default();
+                        settings.scroll_speed = 3000;
                         settings.lane_gap = 72;
-                        settings.scroll_direction = settings::ScrollDirection::Down;
+                        settings.scroll_direction = settings::ScrollDirection::Up;
 
                         let play = Play::new(turntable).with_settings(settings);
                         let play_started = play.start();
@@ -196,15 +197,22 @@ where
             let frame = renderer.pixels.get_frame();
             clear(frame);
 
-            let time_on_screen = 3000;
-            let field_height = HEIGHT as f64;
-            let note_height = 64.0;
-            let start_position = field_height;
-            let end_position = -note_height;
-            let offset = WIDTH as f64 / 2.0 - 32.0;
-
             if let Some(play) = &self.play_stage {
                 if let noteskin = &renderer.noteskin {
+                    let time_on_screen = u64::from(play.settings().scroll_speed);
+                    let field_height = HEIGHT as f64;
+                    let note_height = noteskin.note_height as f64;
+                    let offset = WIDTH as f64 / 2.0 - noteskin.note_width as f64 * 0.5;
+
+                    let start_position = match play.settings().scroll_direction {
+                        settings::ScrollDirection::Down => -note_height,
+                        settings::ScrollDirection::Up => field_height,
+                    };
+                    let end_position = match play.settings().scroll_direction {
+                        settings::ScrollDirection::Down => field_height,
+                        settings::ScrollDirection::Up => -note_height,
+                    };
+
                     let chart_progress = play.progress();
 
                     let position = get_pos_from_ms(
