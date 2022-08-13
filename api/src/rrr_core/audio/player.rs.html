@@ -177,9 +177,9 @@
 };
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AudioPlayer</span> {
-    <span class="ident">output</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">AudioOutput</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">decoder</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Mp3Decoder</span><span class="op">&gt;</span>,
-    <span class="ident">reader</span>: <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">Mp3Reader</span><span class="op">&gt;</span>,
+    <span class="ident">output</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">AudioOutput</span>&gt;&gt;,
+    <span class="ident">decoder</span>: <span class="ident">Box</span>&lt;<span class="ident">Mp3Decoder</span>&gt;,
+    <span class="ident">reader</span>: <span class="ident">Box</span>&lt;<span class="ident">Mp3Reader</span>&gt;,
     <span class="ident">_track_id</span>: <span class="ident">u32</span>,
     <span class="ident">remaining_samples</span>: <span class="ident">usize</span>,
 }
@@ -187,14 +187,14 @@
 <span class="kw">impl</span> <span class="ident">AudioPlayer</span> {
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">/// # Errors</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_new</span>(<span class="ident">mp3</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">mss</span> <span class="op">=</span> <span class="ident">MediaSourceStream::new</span>(
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">try_new</span>(<span class="ident">mp3</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">anyhow::Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let</span> <span class="ident">mss</span> = <span class="ident">MediaSourceStream::new</span>(
             <span class="ident">Box::new</span>(<span class="ident">Cursor::new</span>(<span class="ident">mp3</span>.<span class="ident">to_owned</span>())),
             <span class="ident">MediaSourceStreamOptions::default</span>(),
         );
-        <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">Mp3Reader::try_new</span>(<span class="ident">mss</span>, <span class="kw-2">&amp;</span><span class="ident">FormatOptions::default</span>())<span class="question-mark">?</span>);
-        <span class="kw">let</span> <span class="ident">track</span> <span class="op">=</span> <span class="ident">reader</span>.<span class="ident">default_track</span>().<span class="ident">context</span>(<span class="string">&quot;no tracks present&quot;</span>)<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">Mp3Decoder::try_new</span>(
+        <span class="kw">let</span> <span class="ident">reader</span> = <span class="ident">Box::new</span>(<span class="ident">Mp3Reader::try_new</span>(<span class="ident">mss</span>, <span class="kw-2">&amp;</span><span class="ident">FormatOptions::default</span>())<span class="question-mark">?</span>);
+        <span class="kw">let</span> <span class="ident">track</span> = <span class="ident">reader</span>.<span class="ident">default_track</span>().<span class="ident">context</span>(<span class="string">&quot;no tracks present&quot;</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">decoder</span> = <span class="ident">Box::new</span>(<span class="ident">Mp3Decoder::try_new</span>(
             <span class="kw-2">&amp;</span><span class="ident">track</span>.<span class="ident">codec_params</span>,
             <span class="kw-2">&amp;</span><span class="ident">DecoderOptions::default</span>(),
         )<span class="question-mark">?</span>);
@@ -209,14 +209,14 @@
     }
 
     <span class="doccomment">/// # Panics</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TimeStamp</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="ident">TimeStamp</span>&gt; {
         <span class="kw">loop</span> {
             <span class="comment">// Demux an encoded packet from the media format.</span>
-            <span class="kw">let</span> <span class="ident">packet</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="ident">packet</span> = <span class="kw">if</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> == <span class="number">0</span> {
                 <span class="kw">match</span> <span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">next_packet</span>() {
                     <span class="prelude-val">Ok</span>(<span class="ident">packet</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">packet</span>),
                     <span class="prelude-val">Err</span>(<span class="ident">SymphoniaError::IoError</span>(<span class="ident">io</span>))
-                        <span class="kw">if</span> <span class="ident">io</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io::ErrorKind::UnexpectedEof</span> =&gt;
+                        <span class="kw">if</span> <span class="ident">io</span>.<span class="ident">kind</span>() == <span class="ident">io::ErrorKind::UnexpectedEof</span> =&gt;
                     {
                         <span class="kw">return</span> <span class="prelude-val">None</span>; <span class="comment">// End of this stream.</span>
                     }
@@ -229,13 +229,13 @@
                 <span class="prelude-val">None</span>
             };
 
-            <span class="kw">while</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">metadata</span>().<span class="ident">is_latest</span>() {
+            <span class="kw">while</span> !<span class="self">self</span>.<span class="ident">reader</span>.<span class="ident">metadata</span>().<span class="ident">is_latest</span>() {
                 <span class="comment">// Consume any new metadata that has been read since the last</span>
                 <span class="comment">// packet.</span>
             }
 
             <span class="comment">// Decode the packet into an audio buffer.</span>
-            <span class="kw">let</span> <span class="ident">temp_decoded</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">&gt;</span> <span class="number">0</span> {
+            <span class="kw">let</span> <span class="ident">temp_decoded</span> = <span class="kw">if</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> &gt; <span class="number">0</span> {
                 <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">decoder</span>.<span class="ident">last_decoded</span>())
             } <span class="kw">else</span> {
                 <span class="self">self</span>.<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="ident">packet</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>())
@@ -247,43 +247,43 @@
                     <span class="kw">if</span> <span class="self">self</span>.<span class="ident">output</span>.<span class="ident">is_none</span>() {
                         <span class="comment">// Get the audio buffer specification. This is a description of the decoded</span>
                         <span class="comment">// audio buffer&#39;s sample format and sample rate.</span>
-                        <span class="kw">let</span> <span class="ident">spec</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">decoded</span>.<span class="ident">spec</span>();
+                        <span class="kw">let</span> <span class="ident">spec</span> = <span class="kw-2">*</span><span class="ident">decoded</span>.<span class="ident">spec</span>();
 
                         <span class="comment">// Get the capacity of the decoded buffer. Note that this is capacity, not</span>
                         <span class="comment">// length! The capacity of the decoded buffer is constant for the life of the</span>
                         <span class="comment">// decoder, but the length is not.</span>
-                        <span class="kw">let</span> <span class="ident">duration</span> <span class="op">=</span> <span class="ident">decoded</span>.<span class="ident">capacity</span>() <span class="kw">as</span> <span class="ident">u64</span>;
+                        <span class="kw">let</span> <span class="ident">duration</span> = <span class="ident">decoded</span>.<span class="ident">capacity</span>() <span class="kw">as</span> <span class="ident">u64</span>;
 
                         <span class="comment">// Try to open the audio output.</span>
                         <span class="self">self</span>.<span class="ident">output</span>
                             .<span class="ident">replace</span>(<span class="ident">output::try_open</span>(<span class="ident">spec</span>, <span class="ident">duration</span>).<span class="ident">unwrap</span>());
                     }
 
-                    <span class="kw">let</span> <span class="ident">frame_count</span> <span class="op">=</span> <span class="ident">decoded</span>.<span class="ident">frames</span>();
+                    <span class="kw">let</span> <span class="ident">frame_count</span> = <span class="ident">decoded</span>.<span class="ident">frames</span>();
 
-                    <span class="kw">let</span> <span class="ident">total_samples</span> <span class="op">=</span> <span class="ident">frame_count</span>.<span class="ident">saturating_mul</span>(<span class="number">2</span>);
+                    <span class="kw">let</span> <span class="ident">total_samples</span> = <span class="ident">frame_count</span>.<span class="ident">saturating_mul</span>(<span class="number">2</span>);
 
                     <span class="comment">// Write the decoded audio samples to the audio output if the presentation timestamp</span>
                     <span class="comment">// for the packet is &gt;= the seeked position (0 if not seeking).</span>
-                    <span class="kw">let</span> <span class="ident">written</span> <span class="op">=</span> <span class="self">self</span>
+                    <span class="kw">let</span> <span class="ident">written</span> = <span class="self">self</span>
                         .<span class="ident">output</span>
                         .<span class="ident">as_mut</span>()
-                        .<span class="ident">map_or</span>(<span class="prelude-val">Ok</span>(<span class="number">0</span>), <span class="op">|</span><span class="ident">out</span><span class="op">|</span> {
+                        .<span class="ident">map_or</span>(<span class="prelude-val">Ok</span>(<span class="number">0</span>), |<span class="ident">out</span>| {
                             <span class="ident">out</span>.<span class="ident">write</span>(<span class="ident">decoded</span>, <span class="ident">total_samples</span>, <span class="self">self</span>.<span class="ident">remaining_samples</span>)
                         })
                         .<span class="ident">unwrap_or</span>(<span class="number">0</span>);
 
-                    <span class="kw">let</span> <span class="ident">timestamp</span> <span class="op">=</span> <span class="ident">packet</span>.<span class="ident">map_or_else</span>(<span class="ident">TimeStamp::default</span>, <span class="op">|</span><span class="ident">pak</span><span class="op">|</span> <span class="ident">pak</span>.<span class="ident">ts</span>());
+                    <span class="kw">let</span> <span class="ident">timestamp</span> = <span class="ident">packet</span>.<span class="ident">map_or_else</span>(<span class="ident">TimeStamp::default</span>, |<span class="ident">pak</span>| <span class="ident">pak</span>.<span class="ident">ts</span>());
 
-                    <span class="kw">if</span> <span class="ident">written</span> <span class="op">&gt;</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">&gt;</span> <span class="number">0</span> {
-                        <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">remaining_samples</span>.<span class="ident">saturating_sub</span>(<span class="ident">written</span>);
+                    <span class="kw">if</span> <span class="ident">written</span> &gt; <span class="number">0</span> &amp;&amp; <span class="self">self</span>.<span class="ident">remaining_samples</span> &gt; <span class="number">0</span> {
+                        <span class="self">self</span>.<span class="ident">remaining_samples</span> = <span class="self">self</span>.<span class="ident">remaining_samples</span>.<span class="ident">saturating_sub</span>(<span class="ident">written</span>);
                         <span class="kw">continue</span>;
-                    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">written</span> <span class="op">==</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">&gt;</span> <span class="number">0</span> {
+                    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">written</span> == <span class="number">0</span> &amp;&amp; <span class="self">self</span>.<span class="ident">remaining_samples</span> &gt; <span class="number">0</span> {
                         <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">timestamp</span>);
                     }
 
-                    <span class="kw">if</span> <span class="ident">written</span> <span class="op">&lt;</span> <span class="ident">total_samples</span> {
-                        <span class="self">self</span>.<span class="ident">remaining_samples</span> <span class="op">=</span> <span class="ident">total_samples</span>.<span class="ident">saturating_sub</span>(<span class="ident">written</span>);
+                    <span class="kw">if</span> <span class="ident">written</span> &lt; <span class="ident">total_samples</span> {
+                        <span class="self">self</span>.<span class="ident">remaining_samples</span> = <span class="ident">total_samples</span>.<span class="ident">saturating_sub</span>(<span class="ident">written</span>);
                         <span class="kw">return</span> <span class="prelude-val">Some</span>(<span class="ident">timestamp</span>);
                     }
                 }
@@ -307,16 +307,16 @@
 
     <span class="doccomment">/// # Panics</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">v</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">output</span>.<span class="ident">as_mut</span>() {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">v</span>) = <span class="self">self</span>.<span class="ident">output</span>.<span class="ident">as_mut</span>() {
             <span class="ident">v</span>.<span class="ident">flush</span>();
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">AudioPlayer</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">std::fmt::Formatter</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span>) -&gt; <span class="ident">std::fmt::Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">std::fmt::Formatter</span>&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="ident">std::fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Player&quot;</span>).<span class="ident">finish</span>()
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (29e4a9ee0 2022-08-10)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>

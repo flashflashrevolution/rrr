@@ -114,33 +114,33 @@
 };
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Fetcher</span> {
-    <span class="ident">rx</span>: <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">BytesFetch</span><span class="op">&gt;</span>,
-    <span class="ident">handle</span>: <span class="ident">thread::JoinHandle</span><span class="op">&lt;</span>()<span class="op">&gt;</span>,
+    <span class="ident">rx</span>: <span class="ident">Receiver</span>&lt;<span class="ident">BytesFetch</span>&gt;,
+    <span class="ident">handle</span>: <span class="ident">thread::JoinHandle</span>&lt;()&gt;,
 }
 
 <span class="kw">impl</span> <span class="ident">Fetcher</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">chart_id</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
-        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>): (<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">BytesFetch</span><span class="op">&gt;</span>, <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">BytesFetch</span><span class="op">&gt;</span>) <span class="op">=</span> <span class="ident">std::sync::mpsc::channel</span>();
-        <span class="kw">let</span> <span class="ident">handle</span> <span class="op">=</span> <span class="ident">thread::spawn</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> {
-            <span class="kw">let</span> <span class="ident">temp_hash</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">hash</span>) <span class="op">=</span> <span class="macro">option_env!</span>(<span class="string">&quot;TEST_PREVIEW_HASH&quot;</span>) {
+        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>): (<span class="ident">Sender</span>&lt;<span class="ident">BytesFetch</span>&gt;, <span class="ident">Receiver</span>&lt;<span class="ident">BytesFetch</span>&gt;) = <span class="ident">std::sync::mpsc::channel</span>();
+        <span class="kw">let</span> <span class="ident">handle</span> = <span class="ident">thread::spawn</span>(<span class="kw">move</span> || {
+            <span class="kw">let</span> <span class="ident">temp_hash</span> = <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">hash</span>) = <span class="macro">option_env!</span>(<span class="string">&quot;TEST_PREVIEW_HASH&quot;</span>) {
                 <span class="ident">hash</span>.<span class="ident">to_string</span>()
             } <span class="kw">else</span> {
                 <span class="string">&quot;Fill hash here for local testing.&quot;</span>.<span class="ident">to_string</span>()
             };
-            <span class="kw">let</span> <span class="ident">url</span> <span class="op">=</span> <span class="macro">format!</span>(
+            <span class="kw">let</span> <span class="ident">url</span> = <span class="macro">format!</span>(
                 <span class="string">&quot;https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&amp;mode=2&amp;type=ChartFFR_music&quot;</span>,
                 <span class="ident">temp_hash</span>
             );
             <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">url</span>);
-            <span class="kw">let</span> <span class="ident">dat</span> <span class="op">=</span> <span class="ident">fetch_data</span>(<span class="ident">url</span>);
+            <span class="kw">let</span> <span class="ident">dat</span> = <span class="ident">fetch_data</span>(<span class="ident">url</span>);
             <span class="ident">tx</span>.<span class="ident">send</span>(<span class="ident">dat</span>).<span class="ident">unwrap</span>();
         });
 
         <span class="self">Self</span> { <span class="ident">rx</span>, <span class="ident">handle</span> }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fetch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BytesFetch</span><span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">fetched_data</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">rx</span>.<span class="ident">try_recv</span>() {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">fetch</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="ident">BytesFetch</span>&gt; {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">fetched_data</span>) = <span class="self">self</span>.<span class="ident">rx</span>.<span class="ident">try_recv</span>() {
             <span class="prelude-val">Some</span>(<span class="ident">fetched_data</span>)
         } <span class="kw">else</span> {
             <span class="prelude-val">None</span>
@@ -148,11 +148,11 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">fetch</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="kw">for</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span> <span class="ident">Deserialize</span><span class="op">&lt;</span><span class="lifetime">&#39;de</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="ident">url</span>: <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">response</span> <span class="op">=</span> <span class="ident">reqwest::blocking::get</span>(<span class="ident">url</span>)<span class="question-mark">?</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">fetch</span>&lt;<span class="ident">T</span>: <span class="kw">for</span>&lt;<span class="lifetime">&#39;de</span>&gt; <span class="ident">Deserialize</span>&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(<span class="ident">url</span>: <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;<span class="ident">T</span>&gt;&gt; {
+    <span class="kw">let</span> <span class="ident">response</span> = <span class="ident">reqwest::blocking::get</span>(<span class="ident">url</span>)<span class="question-mark">?</span>;
 
     <span class="kw">match</span> <span class="ident">response</span>.<span class="ident">status</span>() {
-        <span class="ident">reqwest::StatusCode::OK</span> =&gt; <span class="kw">match</span> <span class="ident">response</span>.<span class="ident">json</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>() {
+        <span class="ident">reqwest::StatusCode::OK</span> =&gt; <span class="kw">match</span> <span class="ident">response</span>.<span class="ident">json</span>::&lt;<span class="ident">T</span>&gt;() {
             <span class="prelude-val">Ok</span>(<span class="ident">parsed</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">parsed</span>)),
             <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="ident">err</span>)),
         },
@@ -161,7 +161,7 @@
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">fetch_data</span>(<span class="ident">url</span>: <span class="ident">String</span>) -&gt; <span class="ident">BytesFetch</span> {
-    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">response</span>) <span class="op">=</span> <span class="ident">reqwest::blocking::get</span>(<span class="ident">url</span>) {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">response</span>) = <span class="ident">reqwest::blocking::get</span>(<span class="ident">url</span>) {
         <span class="kw">match</span> <span class="ident">response</span>.<span class="ident">status</span>() {
             <span class="ident">reqwest::StatusCode::OK</span> =&gt; <span class="kw">match</span> <span class="ident">response</span>.<span class="ident">bytes</span>() {
                 <span class="prelude-val">Ok</span>(<span class="ident">parsed</span>) =&gt; <span class="ident">BytesFetch::Ok</span>(<span class="ident">parsed</span>.<span class="ident">to_vec</span>()),
@@ -181,23 +181,23 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_fetch</span>() {
-        <span class="kw">let</span> <span class="ident">test_result</span> <span class="op">=</span> <span class="ident">fetch</span>::<span class="op">&lt;</span><span class="ident">PlaylistPayload</span><span class="op">&gt;</span>(
+        <span class="kw">let</span> <span class="ident">test_result</span> = <span class="ident">fetch</span>::&lt;<span class="ident">PlaylistPayload</span>&gt;(
             <span class="string">&quot;https://www.flashflashrevolution.com/game/r3/r3-playlist.v2.php&quot;</span>.<span class="ident">to_string</span>(),
         );
         <span class="macro">assert!</span>(<span class="ident">test_result</span>.<span class="ident">is_ok</span>());
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">payload</span>)) <span class="op">=</span> <span class="ident">test_result</span> {
-            <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">payload</span>.<span class="ident">songs</span>.<span class="ident">is_empty</span>());
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">song</span>) <span class="op">=</span> <span class="ident">payload</span>.<span class="ident">songs</span>.<span class="ident">get</span>(<span class="number">0</span>) {
-                <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">song</span>.<span class="ident">name</span>.<span class="ident">is_empty</span>());
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(<span class="ident">payload</span>)) = <span class="ident">test_result</span> {
+            <span class="macro">assert!</span>(!<span class="ident">payload</span>.<span class="ident">songs</span>.<span class="ident">is_empty</span>());
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">song</span>) = <span class="ident">payload</span>.<span class="ident">songs</span>.<span class="ident">get</span>(<span class="number">0</span>) {
+                <span class="macro">assert!</span>(!<span class="ident">song</span>.<span class="ident">name</span>.<span class="ident">is_empty</span>());
 
-                <span class="kw">let</span> <span class="ident">song_result</span> <span class="op">=</span> <span class="ident">fetch_data</span>(
+                <span class="kw">let</span> <span class="ident">song_result</span> = <span class="ident">fetch_data</span>(
                     <span class="macro">format!</span>(<span class="string">&quot;https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&amp;mode=2&amp;type=ChartFFR_music&quot;</span>, <span class="ident">song</span>.<span class="ident">previewhash</span>),
                 );
 
                 <span class="kw">match</span> <span class="ident">song_result</span> {
                     <span class="ident">BytesFetch::Ok</span>(<span class="ident">bytes</span>) =&gt; {
-                        <span class="macro">assert!</span>(<span class="op">!</span><span class="ident">bytes</span>.<span class="ident">is_empty</span>());
+                        <span class="macro">assert!</span>(!<span class="ident">bytes</span>.<span class="ident">is_empty</span>());
                     }
                     <span class="ident">BytesFetch::Err</span>(<span class="ident">err</span>) =&gt; {
                         <span class="macro">assert!</span>(<span class="bool-val">false</span>);
@@ -211,4 +211,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (29e4a9ee0 2022-08-10)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>

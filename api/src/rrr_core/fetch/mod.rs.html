@@ -69,34 +69,34 @@
 <span class="comment">// type BytesFetch = Result&lt;std::option::Option&lt;bytes::Bytes&gt;&gt;;</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">BytesFetch</span> {
-    <span class="prelude-val">Ok</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>),
+    <span class="prelude-val">Ok</span>(<span class="ident">Vec</span>&lt;<span class="ident">u8</span>&gt;),
     <span class="ident">Wait</span>,
     <span class="prelude-val">Err</span>(<span class="ident">String</span>),
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>))]</span>
 <span class="kw">mod</span> <span class="ident">native</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
 <span class="kw">mod</span> <span class="ident">wasm</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">worker</span>;
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>))]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>))]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">native</span>::<span class="kw-2">*</span>;
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">wasm</span>::<span class="kw-2">*</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ManifestPayload</span> {
-    <span class="kw">pub</span> <span class="ident">artists</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Artist</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">charts</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Chart</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">artists</span>: <span class="ident">Vec</span>&lt;<span class="ident">Artist</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">charts</span>: <span class="ident">Vec</span>&lt;<span class="ident">Chart</span>&gt;,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PlaylistPayload</span> {
-    <span class="kw">pub</span> <span class="ident">songs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Song</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">stats</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Stat</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">songs</span>: <span class="ident">Vec</span>&lt;<span class="ident">Song</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">stats</span>: <span class="ident">HashMap</span>&lt;<span class="ident">String</span>, <span class="ident">Stat</span>&gt;,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>)]</span>
@@ -125,4 +125,4 @@
     <span class="ident">Fetcher::new</span>(<span class="ident">chart_id</span>)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (29e4a9ee0 2022-08-10)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>

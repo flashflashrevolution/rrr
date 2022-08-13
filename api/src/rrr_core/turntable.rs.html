@@ -78,7 +78,7 @@
 <span class="kw">use</span> <span class="ident">std::ops::Bound::Included</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">TurntableState</span><span class="op">&gt;</span> {
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span>&lt;<span class="ident">S</span>: <span class="ident">TurntableState</span>&gt; {
     <span class="ident">record</span>: <span class="ident">Record</span>,
     <span class="ident">state</span>: <span class="ident">S</span>,
 }
@@ -97,9 +97,9 @@
 <span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Loaded</span> {}
 <span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Playing</span> {}
 
-<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Empty</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Empty</span>&gt; {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load</span>(<span class="ident">record</span>: <span class="ident">Record</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load</span>(<span class="ident">record</span>: <span class="ident">Record</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
         <span class="ident">Turntable</span> {
             <span class="ident">record</span>,
             <span class="ident">state</span>: <span class="ident">Loaded</span> {},
@@ -107,9 +107,9 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Playing</span>&gt; {
         <span class="ident">Turntable</span> {
             <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
             <span class="ident">state</span>: <span class="ident">Playing</span> { <span class="ident">progress</span>: <span class="number">0</span> },
@@ -117,22 +117,22 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
+<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Playing</span>&gt; {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
         <span class="ident">Turntable</span> {
             <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
             <span class="ident">state</span>: <span class="ident">Loaded</span> {},
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">delta_time</span>: <span class="ident">u64</span>) {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">+</span><span class="op">=</span> <span class="ident">delta_time</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> = <span class="ident">progress</span>;
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> &gt;= <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -140,13 +140,13 @@
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">CompiledNote</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span>&lt;<span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">CompiledNote</span>&gt; {
+        <span class="kw">let</span> <span class="ident">chart</span> = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
         <span class="ident">chart</span>.<span class="ident">range</span>((
             <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span>),
-            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">+</span> <span class="ident">range_in_milliseconds</span>),
+            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> + <span class="ident">range_in_milliseconds</span>),
         ))
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (29e4a9ee0 2022-08-10)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>

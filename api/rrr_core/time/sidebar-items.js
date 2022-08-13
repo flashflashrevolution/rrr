@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["performance",""]],"trait":[["TimeTrait",""]]};
+window.SIDEBAR_ITEMS = {"mod":[["performance",""],["time_trait",""]]};

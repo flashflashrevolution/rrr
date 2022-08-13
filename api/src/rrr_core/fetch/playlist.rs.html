@@ -86,17 +86,17 @@
     <span class="kw">pub</span> <span class="ident">author</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">stepauthor</span>: <span class="ident">String</span>,
 
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;authorURL&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> = <span class="string">&quot;authorURL&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">author_url</span>: <span class="ident">String</span>,
 
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;stepauthorURL&quot;</span>)]</span>
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> = <span class="string">&quot;stepauthorURL&quot;</span>)]</span>
     <span class="kw">pub</span> <span class="ident">stepauthor_url</span>: <span class="ident">String</span>,
     <span class="kw">pub</span> <span class="ident">min_nps</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">max_nps</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">nps_data</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">song_rating</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">credits</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">price</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">song_rating</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">credits</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">i64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">price</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">i64</span>&gt;,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
@@ -107,27 +107,27 @@
     <span class="kw">pub</span> <span class="ident">avg_nps</span>: <span class="ident">f64</span>,
     <span class="kw">pub</span> <span class="ident">first_delay</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">last_delay</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">note_delays</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">note_delays</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
     <span class="kw">pub</span> <span class="ident">hand_bias</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">jumps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">color_jumps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">framers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">density</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Density</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">jumps</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">color_jumps</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">framers</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">density</span>: <span class="ident">Vec</span>&lt;<span class="ident">Vec</span>&lt;<span class="ident">Density</span>&gt;&gt;,
     <span class="kw">pub</span> <span class="ident">camel_jacks</span>: <span class="ident">i64</span>,
     <span class="kw">pub</span> <span class="ident">color_total</span>: <span class="ident">ColorTotal</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ColorTotal</span> {
-    <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">purple</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">yellow</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">pink</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">orange</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">cyan</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
-    <span class="kw">pub</span> <span class="ident">white</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">purple</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">yellow</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">pink</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">orange</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">cyan</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+    <span class="kw">pub</span> <span class="ident">white</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
@@ -137,4 +137,4 @@
     <span class="ident">String</span>(<span class="ident">String</span>),
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (29e4a9ee0 2022-08-10)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>
