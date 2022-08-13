@@ -574,13 +574,19 @@ fn handle_keyboard_input(
     window: &winit::window::Window,
     modifiers: ModifiersState,
 ) {
-    use winit::event::VirtualKeyCode::{Down, Escape, Left, Right, Space, Up, G, H};
+    use winit::event::VirtualKeyCode::{
+        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, G, H, M,
+    };
     match key {
         Escape => *control_flow = ControlFlow::Exit,
-        Up => game.do_action(Direction::Up),
-        Down => game.do_action(Direction::Down),
         Left => game.do_action(Direction::Left),
+        Down => game.do_action(Direction::Down),
+        Up => game.do_action(Direction::Up),
         Right => game.do_action(Direction::Right),
+        M => game.do_action(Direction::Left),
+        Comma => game.do_action(Direction::Down),
+        Period => game.do_action(Direction::Up),
+        Slash => game.do_action(Direction::Right),
         G => window.set_cursor_grab(!modifiers.shift()).unwrap(),
         H => window.set_cursor_visible(modifiers.shift()),
         Space => {
