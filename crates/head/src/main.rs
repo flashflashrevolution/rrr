@@ -48,12 +48,11 @@ mod sprites;
 mod visibility;
 
 use anyhow::Error;
-use lerp::{num_traits::AsPrimitive, Lerp};
-use log::error;
+use lerp::Lerp;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     fetch,
-    note::{self, Color, Direction},
+    note::{self, Direction},
     play,
     play::Play,
     settings::{self, Settings},
@@ -74,9 +73,22 @@ use winit::{
 const WIDTH: u32 = 512;
 const HEIGHT: u32 = 720;
 
-struct Game<T: TimeTrait> {
-    noteskin: Option<noteskin::Definition>,
+struct GameRenderer {
+    noteskin: noteskin::Definition,
     pixels: Pixels,
+}
+
+impl GameRenderer {
+    fn new(pixels: Pixels) -> Self {
+        Self {
+            noteskin: noteskin::Definition::default(),
+            pixels,
+        }
+    }
+}
+
+struct Game<T: TimeTrait> {
+    renderer: Option<GameRenderer>,
     play_stage: Option<Play<play::Active>>,
     fetcher: Option<fetch::Fetcher>,
     start_instant: T,
@@ -88,14 +100,9 @@ impl<T> Game<T>
 where
     T: TimeTrait,
 {
-    fn new(
-        noteskin: Option<noteskin::Definition>,
-        pixels: Pixels,
-        play_stage: Option<Play<play::Active>>,
-    ) -> Self {
+    fn new(play_stage: Option<Play<play::Active>>) -> Self {
         Self {
-            noteskin,
-            pixels,
+            renderer: None,
             play_stage,
             fetcher: None,
             start_instant: T::now(),
@@ -104,42 +111,15 @@ where
         }
     }
 
+    pub(crate) fn with_game_renderer(&mut self, renderer: GameRenderer) {
+        self.renderer = Some(renderer);
+    }
+
     pub(crate) fn start(&mut self) {
         self.start_instant = T::now();
     }
 
     pub(crate) fn load(&mut self, chart_id: usize) {}
-
-    pub(crate) fn init(&mut self) {
-        let noteskin_bytes = get_noteskin();
-        let noteskin_image = match image::load_from_memory(noteskin_bytes) {
-            Ok(image) => image,
-            Err(err) => {
-                error!("Could not load noteskin: {}", err);
-                return;
-            }
-        };
-        self.noteskin.replace(noteskin::Definition::new(
-            64,
-            64,
-            [
-                Color::Blue,
-                Color::Orange,
-                Color::Red,
-                Color::Cyan,
-                Color::Pink,
-                Color::White,
-                Color::Green,
-                Color::Purple,
-                Color::Yellow,
-                Color::Receptor,
-            ]
-            .to_vec(),
-            [0, 90, 180, 270].to_vec(),
-            noteskin_image,
-            3,
-        ));
-    }
 
     fn update(&mut self) {
         self.current_instant = T::now();
@@ -199,40 +179,42 @@ where
     ///
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     fn draw(&mut self) {
-        let frame = self.pixels.get_frame();
-        clear(frame);
+        if let Some(renderer) = &mut self.renderer {
+            let frame = renderer.pixels.get_frame();
+            clear(frame);
 
-        let time_on_screen = 1000;
-        let field_height = HEIGHT as f64;
-        let note_height = 64.0;
-        let start_position = field_height;
-        let end_position = -note_height;
-        let offset = WIDTH as f64 / 2.0 - 32.0;
+            let time_on_screen = 1000;
+            let field_height = HEIGHT as f64;
+            let note_height = 64.0;
+            let start_position = field_height;
+            let end_position = -note_height;
+            let offset = WIDTH as f64 / 2.0 - 32.0;
 
-        if let Some(play) = &self.play_stage {
-            if let Some(noteskin) = &self.noteskin {
-                let chart_progress = play.progress();
+            if let Some(play) = &self.play_stage {
+                if let noteskin = &renderer.noteskin {
+                    let chart_progress = play.progress();
 
-                draw_receptors(
-                    play,
-                    time_on_screen,
-                    end_position,
-                    start_position,
-                    noteskin,
-                    frame,
-                    offset,
-                );
+                    draw_receptors(
+                        play,
+                        time_on_screen,
+                        end_position,
+                        start_position,
+                        noteskin,
+                        frame,
+                        offset,
+                    );
 
-                draw_notes(
-                    play,
-                    time_on_screen,
-                    chart_progress,
-                    end_position,
-                    start_position,
-                    offset,
-                    frame,
-                    noteskin,
-                );
+                    draw_notes(
+                        play,
+                        time_on_screen,
+                        chart_progress,
+                        end_position,
+                        start_position,
+                        offset,
+                        frame,
+                        noteskin,
+                    );
+                }
             }
         }
     }
@@ -328,10 +310,6 @@ cfg_if::cfg_if! {
     }
 }
 
-fn get_noteskin() -> &'static [u8] {
-    include_bytes!("../../../data/default_noteskin.png")
-}
-
 fn main() {
     init_log();
     #[cfg(target_arch = "wasm32")]
@@ -346,6 +324,7 @@ fn main() {
     #[cfg(not(target_arch = "wasm32"))]
     {
         use futures::executor;
+        use log::error;
         use std::env;
 
         match executor::block_on(run()) {
@@ -380,12 +359,10 @@ async fn run() -> Result<(), Error> {
 
     #[cfg(target_arch = "wasm32")]
     {
-        use web_sys::{Element, HtmlCanvasElement, HtmlElement, Window};
+        use web_sys::{Element, HtmlCanvasElement};
 
-        use gloo::events::EventListener;
         use std::rc::Rc;
         use wasm_bindgen::closure::Closure;
-        use wasm_bindgen::prelude::*;
         use wasm_bindgen::JsCast;
         use winit::platform::web::WindowExtWebSys;
 
@@ -486,8 +463,8 @@ async fn run_game_loop(
         Err(anyhow::anyhow!("Could not initialize Pixels renderer."))?
     };
 
-    let mut game = Game::<Time>::new(None, pixels, None);
-    game.init();
+    let mut game = Game::<Time>::new(None);
+    game.with_game_renderer(GameRenderer::new(pixels));
     game.load(3348);
     window.focus_window();
 
@@ -516,7 +493,9 @@ async fn run_game_loop(
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
                 WindowEvent::Resized(size) => {
-                    game.pixels.resize_surface(size.width, size.height);
+                    if let Some(renderer) = &mut game.renderer {
+                        renderer.pixels.resize_surface(size.width, size.height);
+                    }
                 }
                 WindowEvent::Focused(focused) => {
                     log::info!("Window {:?} focused: {:?}", &window.id(), focused);
@@ -549,22 +528,24 @@ async fn run_game_loop(
                 _ => (),
             },
             Event::MainEventsCleared => {
-                if let Err(e) = game.pixels.render() {
-                    log::error!("pixels.render() failed: {}", e);
-                    *control_flow = ControlFlow::Exit;
+                if let Some(renderer) = &game.renderer {
+                    if let Err(e) = renderer.pixels.render() {
+                        log::error!("pixels.render() failed: {}", e);
+                        *control_flow = ControlFlow::Exit;
+                    }
+
+                    game.update();
+                    game.draw();
+
+                    #[cfg(target_arch = "wasm32")]
+                    if let Some(play) = &game.play_stage {
+                        elements
+                            .update_progress
+                            .set_inner_html(&play.progress().to_string().as_str());
+                    }
+
+                    window.request_redraw();
                 }
-
-                game.update();
-                game.draw();
-
-                #[cfg(target_arch = "wasm32")]
-                if let Some(play) = &game.play_stage {
-                    elements
-                        .update_progress
-                        .set_inner_html(&play.progress().to_string().as_str());
-                }
-
-                window.request_redraw();
             }
             Event::RedrawEventsCleared => {
                 game.finish();

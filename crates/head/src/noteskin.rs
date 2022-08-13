@@ -1,17 +1,44 @@
 // Ingest a spritesheet of noteskins, with metadata describing the notes.
 
-use image::{imageops, DynamicImage, GenericImageView, Pixels, SubImage};
-use rrr_core::note::Color;
-
 use crate::sprites::Drawable;
+use image::{DynamicImage, GenericImageView, SubImage};
+use rrr_core::note::Color;
 
 pub(crate) struct Definition {
     pub note_width: usize,
     pub note_height: usize,
-    pub color_indexs: Vec<Color>,
+    pub color_indices: Vec<Color>,
     pub rotations: Vec<usize>,
     pub image: DynamicImage,
     pub rows: usize,
+}
+
+impl Default for Definition {
+    fn default() -> Self {
+        let noteskin_bytes = Self::get_embedded_noteskin();
+        let noteskin_image = image::load_from_memory(noteskin_bytes).ok().unwrap();
+
+        Self {
+            note_width: 64,
+            note_height: 64,
+            color_indices: [
+                Color::Blue,
+                Color::Orange,
+                Color::Red,
+                Color::Cyan,
+                Color::Pink,
+                Color::White,
+                Color::Green,
+                Color::Purple,
+                Color::Yellow,
+                Color::Receptor,
+            ]
+            .to_vec(),
+            rotations: [0, 90, 180, 270].to_vec(),
+            image: noteskin_image,
+            rows: 3,
+        }
+    }
 }
 
 pub(crate) struct Note<'a> {
@@ -36,10 +63,14 @@ impl<'a> Drawable<'a> for Note<'a> {
 }
 
 impl Definition {
+    fn get_embedded_noteskin() -> &'static [u8] {
+        include_bytes!("../../../data/default_noteskin.png")
+    }
+
     pub(crate) fn new(
         note_width: usize,
         note_height: usize,
-        color_indexs: Vec<Color>,
+        color_indices: Vec<Color>,
         rotations: Vec<usize>,
         image: DynamicImage,
         rows: usize,
@@ -47,7 +78,7 @@ impl Definition {
         Self {
             note_width,
             note_height,
-            color_indexs,
+            color_indices,
             rotations,
             image,
             rows,
@@ -61,7 +92,7 @@ impl Definition {
     pub(crate) fn get_note(&self, color: Color) -> Note<'_> {
         let width = self.note_width;
         let height = self.note_height;
-        let color_index = self.color_indexs.iter().position(|c| *c == color).unwrap();
+        let color_index = self.color_indices.iter().position(|c| *c == color).unwrap();
         let row_offset = (height * color_index) % (self.rows * height);
         let col_offset = (width * color_index) / (self.rows * width) * width;
         let view = self.image.view(
@@ -82,15 +113,9 @@ impl Definition {
 // rust test block for get_note
 #[cfg(test)]
 mod tests {
-    use std::env;
-
-    use image::{
-        imageops, ColorType, DynamicImage, GenericImage, GenericImageView, ImageBuffer,
-        ImageFormat, RgbImage,
-    };
-    use rrr_core::strum::{EnumIter, IntoEnumIterator};
-
     use super::*;
+    use image::ImageFormat;
+    use rrr_core::strum::IntoEnumIterator;
 
     #[test]
     fn test_get_note() {
