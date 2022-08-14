@@ -39,3 +39,16 @@
 canvas:focus {
     outline: none;
 }
+
+.benchmark {
+    background-color: dimgray;
+    border: whitesmoke;
+    border-radius: 0.5em;
+    width: fit-content;
+    padding: 4px;
+}
+
+.benchmark>p {
+    margin: 0 0 6px 0;
+    padding: 0%;
+}
