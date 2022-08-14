@@ -606,6 +606,13 @@
 <span id="606">606</span>
 <span id="607">607</span>
 <span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
 </pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
 <span class="attribute">#![<span class="ident">warn</span>(
     <span class="ident">elided_lifetimes_in_paths</span>,
@@ -771,6 +778,13 @@
                         <span class="ident">settings</span>.<span class="ident">scroll_speed</span> = <span class="number">3000</span>;
                         <span class="ident">settings</span>.<span class="ident">lane_gap</span> = <span class="number">72</span>;
                         <span class="ident">settings</span>.<span class="ident">scroll_direction</span> = <span class="ident">settings::ScrollDirection::Up</span>;
+
+                        <span class="kw">let</span> <span class="ident">settings</span> = <span class="ident">Settings</span> {
+                            <span class="ident">scroll_speed</span>: <span class="number">3000</span>,
+                            <span class="ident">lane_gap</span>: <span class="number">72</span>,
+                            <span class="ident">scroll_direction</span>: <span class="ident">settings::ScrollDirection::Up</span>,
+                            ..<span class="ident">Settings::default</span>()
+                        };
 
                         <span class="kw">let</span> <span class="ident">play</span> = <span class="ident">Play::new</span>(<span class="ident">turntable</span>).<span class="ident">with_settings</span>(<span class="ident">settings</span>);
                         <span class="kw">let</span> <span class="ident">play_started</span> = <span class="ident">play</span>.<span class="ident">start</span>();
@@ -1215,4 +1229,4 @@
     <span class="ident">frame</span>.<span class="ident">fill</span>(<span class="number">0</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (f22819bcc 2022-08-12)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
