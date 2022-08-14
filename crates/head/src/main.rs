@@ -508,6 +508,7 @@ async fn run_game_loop(
             avg_frame_time: Element,
             max_frame_time: Element,
             min_frame_time: Element,
+            skipped_frames: Element,
         }
 
         let update_progress: Option<Element> = web_sys::window()
@@ -526,11 +527,16 @@ async fn run_game_loop(
             .and_then(|win: Window| win.document())
             .and_then(|doc| doc.get_element_by_id("min_frame_time"));
 
+        let skipped_frames: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("skipped_frames"));
+
         Elements {
             update_progress: update_progress.unwrap(),
             avg_frame_time: avg_frame_time.unwrap(),
             max_frame_time: max_frame_time.unwrap(),
             min_frame_time: min_frame_time.unwrap(),
+            skipped_frames: skipped_frames.unwrap(),
         }
     };
 
@@ -599,6 +605,9 @@ async fn run_game_loop(
                         );
                         elements.min_frame_time.set_inner_html(
                             format!("{:.6?}", &game.benchmark_data.min_frame_time).as_str(),
+                        );
+                        elements.skipped_frames.set_inner_html(
+                            format!("{:?}", &game.benchmark_data.skipped_frames).as_str(),
                         );
                     }
 
