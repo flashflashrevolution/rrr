@@ -598,13 +598,16 @@ async fn run_game_loop(
                             .update_progress
                             .set_inner_html(format!("{:?}", &play.progress()).as_str());
                         elements.avg_frame_time.set_inner_html(
-                            format!("{:.6?}", &game.benchmark_data.avg_frame_time).as_str(),
+                            format!("{:02.2?}ms", &game.benchmark_data.avg_frame_time * 1000.0)
+                                .as_str(),
                         );
                         elements.max_frame_time.set_inner_html(
-                            format!("{:.6?}", &game.benchmark_data.max_frame_time).as_str(),
+                            format!("{:02.2?}ms", &game.benchmark_data.max_frame_time * 1000.0)
+                                .as_str(),
                         );
                         elements.min_frame_time.set_inner_html(
-                            format!("{:.6?}", &game.benchmark_data.min_frame_time).as_str(),
+                            format!("{:02.2?}ms", &game.benchmark_data.min_frame_time * 1000.0)
+                                .as_str(),
                         );
                         elements.skipped_frames.set_inner_html(
                             format!("{:?}", &game.benchmark_data.skipped_frames).as_str(),
