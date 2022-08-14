@@ -28,24 +28,34 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
-</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BenchmarkData</span> {
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+</pre><pre class="rust"><code><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">BenchmarkData</span> {
     <span class="kw">pub</span> <span class="ident">frame_times</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
     <span class="kw">pub</span> <span class="ident">min_frame_time</span>: <span class="ident">f64</span>,
     <span class="kw">pub</span> <span class="ident">max_frame_time</span>: <span class="ident">f64</span>,
     <span class="kw">pub</span> <span class="ident">avg_frame_time</span>: <span class="ident">f64</span>,
+    <span class="kw">pub</span> <span class="ident">skipped_frames</span>: <span class="ident">u64</span>,
 }
 
 <span class="kw">impl</span> <span class="ident">BenchmarkData</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
         <span class="ident">BenchmarkData</span> {
             <span class="ident">frame_times</span>: <span class="ident">Vec::new</span>(),
             <span class="ident">min_frame_time</span>: <span class="ident">f64::MAX</span>,
             <span class="ident">max_frame_time</span>: <span class="ident">f64::MIN</span>,
             <span class="ident">avg_frame_time</span>: <span class="number">0.0</span>,
+            <span class="ident">skipped_frames</span>: <span class="number">0</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">add_frame_time</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame_time</span>: <span class="ident">f64</span>) {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">add_frame_time</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame_time</span>: <span class="ident">f64</span>) {
         <span class="self">self</span>.<span class="ident">frame_times</span>.<span class="ident">push</span>(<span class="ident">frame_time</span>);
         <span class="self">self</span>.<span class="ident">min_frame_time</span> = <span class="self">self</span>.<span class="ident">min_frame_time</span>.<span class="ident">min</span>(<span class="ident">frame_time</span>);
         <span class="self">self</span>.<span class="ident">max_frame_time</span> = <span class="self">self</span>.<span class="ident">max_frame_time</span>.<span class="ident">max</span>(<span class="ident">frame_time</span>);
@@ -56,6 +66,12 @@
             .<span class="ident">take</span>(<span class="number">60</span>)
             .<span class="ident">fold</span>(<span class="number">0.0</span>, |<span class="ident">a</span>, <span class="ident">b</span>| <span class="ident">a</span> + <span class="ident">b</span>)
             / <span class="number">60.0</span>;
+
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">frame_times</span>.<span class="ident">len</span>() &gt; <span class="number">60</span> &amp;&amp; <span class="ident">frame_time</span> &gt; <span class="self">self</span>.<span class="ident">avg_frame_time</span> * <span class="number">1.05</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">res</span>) = <span class="self">self</span>.<span class="ident">skipped_frames</span>.<span class="ident">checked_add</span>(<span class="number">1</span>) {
+                <span class="self">self</span>.<span class="ident">skipped_frames</span> = <span class="ident">res</span>;
+            }
+        }
     }
 }
 </code></pre></div>
