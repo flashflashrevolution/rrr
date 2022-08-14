@@ -42,13 +42,14 @@
 #![feature(array_chunks)]
 #![feature(poll_ready)]
 
+mod benchmark;
 mod geo;
 mod noteskin;
 mod sprites;
 mod visibility;
 
 use anyhow::Error;
-use lerp::num_traits::Float;
+use benchmark::BenchmarkData;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     fetch,
@@ -101,6 +102,7 @@ struct Game<T: TimeTrait> {
     previous_instant: T,
     current_instant: T,
     action_queue: Vec<Action>,
+    benchmark_data: BenchmarkData,
 }
 
 impl<T> Game<T>
@@ -116,6 +118,7 @@ where
             previous_instant: T::now(),
             current_instant: T::now(),
             action_queue: Vec::new(),
+            benchmark_data: BenchmarkData::new(),
         }
     }
 
@@ -131,6 +134,8 @@ where
 
     fn update(&mut self) {
         self.current_instant = T::now();
+        let delta = self.current_instant.sub(&self.previous_instant);
+        self.benchmark_data.add_frame_time(delta);
 
         let current_progress = (self.start_instant.ms_since() * 1000.) as u64;
 
@@ -500,14 +505,32 @@ async fn run_game_loop(
 
         struct Elements {
             update_progress: Element,
+            avg_frame_time: Element,
+            max_frame_time: Element,
+            min_frame_time: Element,
         }
 
         let update_progress: Option<Element> = web_sys::window()
             .and_then(|win: Window| win.document())
             .and_then(|doc| doc.get_element_by_id("progress"));
 
+        let avg_frame_time: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("avg_frame_time"));
+
+        let max_frame_time: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("max_frame_time"));
+
+        let min_frame_time: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("min_frame_time"));
+
         Elements {
             update_progress: update_progress.unwrap(),
+            avg_frame_time: avg_frame_time.unwrap(),
+            max_frame_time: max_frame_time.unwrap(),
+            min_frame_time: min_frame_time.unwrap(),
         }
     };
 
@@ -567,7 +590,16 @@ async fn run_game_loop(
                     if let Some(play) = &game.play_stage {
                         elements
                             .update_progress
-                            .set_inner_html(&play.progress().to_string().as_str());
+                            .set_inner_html(format!("{:?}", &play.progress()).as_str());
+                        elements.avg_frame_time.set_inner_html(
+                            format!("{:.6?}", &game.benchmark_data.avg_frame_time).as_str(),
+                        );
+                        elements.max_frame_time.set_inner_html(
+                            format!("{:.6?}", &game.benchmark_data.max_frame_time).as_str(),
+                        );
+                        elements.min_frame_time.set_inner_html(
+                            format!("{:.6?}", &game.benchmark_data.min_frame_time).as_str(),
+                        );
                     }
 
                     window.request_redraw();
