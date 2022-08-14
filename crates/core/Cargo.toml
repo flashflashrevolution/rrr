@@ -23,8 +23,8 @@ crate-type = ["lib"]
 
 [features]
 default = ["develop", "serde"]
-develop = ["log/max_level_info", "log/release_max_level_info"]
-release = ["log/release_max_level_off"]
+develop = ["log/max_level_info", "log/release_max_level_info", "serde"]
+release = ["log/release_max_level_off", "serde"]
 
 [package.metadata.docs.rs]
 features = ["serde"]
@@ -55,7 +55,7 @@ cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
 gloo-worker = "0.2.0"
 js-sys = "0.3.59"
-futures = { version = "0.3.21", features = ["thread-pool"] }
+futures = { version = "0.3.23", features = ["thread-pool"] }
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-test = "0.3.32"
 wasm-bindgen-futures = "0.4.32"

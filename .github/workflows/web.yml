@@ -48,10 +48,10 @@ jobs:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
           command: build
-          args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target
+          args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features release
 
       - name: Generate the .wasm for web deploy.
-        run: wasm-bindgen --no-typescript --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
+        run: wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
 
       - name: Build Workers
         uses: actions-rs/cargo@v1.0.3

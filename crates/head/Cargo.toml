@@ -21,8 +21,15 @@ develop = [
     "simple_logger",
     "log/max_level_info",
     "log/release_max_level_info",
+    "rrr-core/develop",
 ]
-release = ["log/release_max_level_off"]
+release = [
+    "console_log",
+    "simple_logger",
+    "log/release_max_level_off",
+    "rrr-core/release",
+    "web",
+]
 
 [dependencies]
 anyhow = "1.0.61"
@@ -31,14 +38,14 @@ image = { version = "0.24.3", default-features = false, features = ["png"] }
 lerp = "0.4"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/JMS55/pixels.git", branch = "main" }
-rrr-core = { path = "../core" }
+rrr-core = { path = "../core", default-features = false }
 winit = "0.26.1"
 tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 simple_logger = { version = "2.2.0", optional = true }
-futures = "0.3.21"
+futures = "0.3.23"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.7"

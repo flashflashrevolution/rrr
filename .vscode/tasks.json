@@ -153,7 +153,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package rrr-head --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm"
+                "cargo build --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features develop && wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm"
             ],
             "problemMatcher": [
                 {
@@ -197,7 +197,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package rrr-core --features release --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
+                "cargo build --release --package rrr-core --features release --target wasm32-unknown-unknown --target-dir target --features release && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
             ],
             "problemMatcher": [
                 {
