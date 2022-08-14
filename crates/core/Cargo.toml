@@ -33,14 +33,12 @@ features = ["serde"]
 anyhow = "1.0.61"
 btreemultimap = "0.1.0"
 bytes = { version = "1.2.1", features = ["serde"] }
-futures = { version = "0.3.21", features = ["thread-pool"] }
 log = "0.4.17"
 num-traits = "0.2.15"
 rb = "0.4.0"
 reqwest = { version = "0.11.11", features = ["json", "blocking"] }
 rubato = "0.12.0"
 serde = { version = "1.0.143", optional = true, features = ["derive"] }
-serde_bytes = "0.11.7"
 strum = { version = "0.24.1", features = ["derive"] }
 swf = { package = "swf", git = "https://github.com/ruffle-rs/ruffle.git", rev = "78ebf06f55eff05db6939166973bbfa08641300b" }
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
@@ -57,6 +55,7 @@ cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
 gloo-worker = "0.2.0"
 js-sys = "0.3.59"
+futures = { version = "0.3.21", features = ["thread-pool"] }
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-test = "0.3.32"
 wasm-bindgen-futures = "0.4.32"

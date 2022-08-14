@@ -164,6 +164,13 @@ where
                         settings.lane_gap = 72;
                         settings.scroll_direction = settings::ScrollDirection::Up;
 
+                        let settings = Settings {
+                            scroll_speed: 3000,
+                            lane_gap: 72,
+                            scroll_direction: settings::ScrollDirection::Up,
+                            ..Settings::default()
+                        };
+
                         let play = Play::new(turntable).with_settings(settings);
                         let play_started = play.start();
                         self.play_stage = Some(play_started);

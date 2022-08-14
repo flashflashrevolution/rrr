@@ -2073,7 +2073,6 @@ dependencies = [
  "reqwest",
  "rubato",
  "serde",
- "serde_bytes",
  "strum",
  "swf",
  "symphonia",
@@ -2235,15 +2234,6 @@ dependencies = [
  "js-sys",
  "serde",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "serde_bytes"
-version = "0.11.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfc50e8183eeeb6178dcb167ae34a8051d63535023ae38b5d8d12beae193d37b"
-dependencies = [
- "serde",
 ]
 
 [[package]]
