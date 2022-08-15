@@ -33,40 +33,40 @@
 <span id="33">33</span>
 <span id="34">34</span>
 <span id="35">35</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">CompiledChart</span>};
-<span class="kw">use</span> <span class="ident">btreemultimap::BTreeMultiMap</span>;
+</pre><pre class="rust"><code><span class="kw">use crate</span>::{note::CompiledNote, CompiledChart};
+<span class="kw">use </span>btreemultimap::BTreeMultiMap;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Record</span> {
-    <span class="kw">pub</span> <span class="ident">optimized_chart</span>: <span class="ident">BTreeMultiMap</span>&lt;<span class="ident">i128</span>, <span class="ident">CompiledNote</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">mp3</span>: <span class="ident">Vec</span>&lt;<span class="ident">u8</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">chart</span>: <span class="ident">CompiledChart</span>,
-    <span class="kw">pub</span> <span class="ident">duration</span>: <span class="ident">i128</span>,
+<span class="attribute">#[derive(Debug, Clone)]</span>
+<span class="kw">pub struct </span>Record {
+    <span class="kw">pub </span>optimized_chart: BTreeMultiMap&lt;i128, CompiledNote&gt;,
+    <span class="kw">pub </span>mp3: Vec&lt;u8&gt;,
+    <span class="kw">pub </span>chart: CompiledChart,
+    <span class="kw">pub </span>duration: i128,
 }
 
-<span class="kw">impl</span> <span class="ident">Record</span> {
-    <span class="doccomment">/// # Errors</span>
-    <span class="doccomment">/// If duration of the chart is invalid, returns an error.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">mp3</span>: <span class="ident">Vec</span>&lt;<span class="ident">u8</span>&gt;, <span class="ident">chart</span>: <span class="ident">CompiledChart</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="ident">anyhow::Error</span>&gt; {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">duration</span>) = <span class="ident">chart</span>.<span class="ident">get_duration</span>() {
-            <span class="prelude-val">Ok</span>(<span class="self">Self</span> {
-                <span class="ident">optimized_chart</span>: <span class="ident">create_optimized_chart</span>(<span class="kw-2">&amp;</span><span class="ident">chart</span>),
-                <span class="ident">mp3</span>,
-                <span class="ident">chart</span>,
-                <span class="ident">duration</span>,
+<span class="kw">impl </span>Record {
+    <span class="doccomment">/// # Errors
+    /// If duration of the chart is invalid, returns an error.
+    </span><span class="kw">pub fn </span>new(mp3: Vec&lt;u8&gt;, chart: CompiledChart) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, anyhow::Error&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Ok</span>(duration) = chart.get_duration() {
+            <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+                optimized_chart: create_optimized_chart(<span class="kw-2">&amp;</span>chart),
+                mp3,
+                chart,
+                duration,
             })
-        } <span class="kw">else</span> {
+        } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Invalid chart of unknown length.&quot;</span>))
         }
     }
 }
 
-<span class="kw">fn</span> <span class="ident">create_optimized_chart</span>(<span class="ident">chart</span>: <span class="kw-2">&amp;</span><span class="ident">CompiledChart</span>) -&gt; <span class="ident">BTreeMultiMap</span>&lt;<span class="ident">i128</span>, <span class="ident">CompiledNote</span>&gt; {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">optimized_chart</span> = <span class="ident">BTreeMultiMap::new</span>();
-    <span class="kw">for</span> <span class="ident">note</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">chart</span>.<span class="ident">notes</span> {
-        <span class="ident">optimized_chart</span>.<span class="ident">insert</span>(<span class="ident">note</span>.<span class="ident">timestamp</span>, <span class="ident">note</span>.<span class="ident">clone</span>());
+<span class="kw">fn </span>create_optimized_chart(chart: <span class="kw-2">&amp;</span>CompiledChart) -&gt; BTreeMultiMap&lt;i128, CompiledNote&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>optimized_chart = BTreeMultiMap::new();
+    <span class="kw">for </span>note <span class="kw">in </span><span class="kw-2">&amp;</span>chart.notes {
+        optimized_chart.insert(note.timestamp, note.clone());
     }
-    <span class="ident">optimized_chart</span>
+    optimized_chart
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

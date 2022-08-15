@@ -30,37 +30,37 @@
 <span id="30">30</span>
 <span id="31">31</span>
 <span id="32">32</span>
-</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_END</span>: <span class="ident">u8</span> = <span class="number">0</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_SHOWFRAME</span>: <span class="ident">u8</span> = <span class="number">1</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_DOACTION</span>: <span class="ident">u8</span> = <span class="number">12</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_DEFINESOUND</span>: <span class="ident">u8</span> = <span class="number">14</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_STREAMHEAD</span>: <span class="ident">u8</span> = <span class="number">18</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_STREAMBLOCK</span>: <span class="ident">u8</span> = <span class="number">19</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_STREAMHEAD2</span>: <span class="ident">u8</span> = <span class="number">45</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TAG_FILEATTRIBUTES</span>: <span class="ident">u8</span> = <span class="number">69</span>;
+</pre><pre class="rust"><code><span class="kw">pub const </span>SWF_TAG_END: u8 = <span class="number">0</span>;
+<span class="kw">pub const </span>SWF_TAG_SHOWFRAME: u8 = <span class="number">1</span>;
+<span class="kw">pub const </span>SWF_TAG_DOACTION: u8 = <span class="number">12</span>;
+<span class="kw">pub const </span>SWF_TAG_DEFINESOUND: u8 = <span class="number">14</span>;
+<span class="kw">pub const </span>SWF_TAG_STREAMHEAD: u8 = <span class="number">18</span>;
+<span class="kw">pub const </span>SWF_TAG_STREAMBLOCK: u8 = <span class="number">19</span>;
+<span class="kw">pub const </span>SWF_TAG_STREAMHEAD2: u8 = <span class="number">45</span>;
+<span class="kw">pub const </span>SWF_TAG_FILEATTRIBUTES: u8 = <span class="number">69</span>;
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_END</span>: <span class="ident">u8</span> = <span class="number">0x00</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_POP</span>: <span class="ident">u8</span> = <span class="number">0x17</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_GET_VARIABLE</span>: <span class="ident">u8</span> = <span class="number">0x1C</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_SET_VARIABLE</span>: <span class="ident">u8</span> = <span class="number">0x1D</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_INIT_ARRAY</span>: <span class="ident">u8</span> = <span class="number">0x42</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_DUPLICATE</span>: <span class="ident">u8</span> = <span class="number">0x4C</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_GET_MEMBER</span>: <span class="ident">u8</span> = <span class="number">0x4E</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_SET_MEMBER</span>: <span class="ident">u8</span> = <span class="number">0x4F</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_STORE_REGISTER</span>: <span class="ident">u8</span> = <span class="number">0x87</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_CONSTANTPOOL</span>: <span class="ident">u8</span> = <span class="number">0x88</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_ACTION_PUSH</span>: <span class="ident">u8</span> = <span class="number">0x96</span>;
+<span class="kw">pub const </span>SWF_ACTION_END: u8 = <span class="number">0x00</span>;
+<span class="kw">pub const </span>SWF_ACTION_POP: u8 = <span class="number">0x17</span>;
+<span class="kw">pub const </span>SWF_ACTION_GET_VARIABLE: u8 = <span class="number">0x1C</span>;
+<span class="kw">pub const </span>SWF_ACTION_SET_VARIABLE: u8 = <span class="number">0x1D</span>;
+<span class="kw">pub const </span>SWF_ACTION_INIT_ARRAY: u8 = <span class="number">0x42</span>;
+<span class="kw">pub const </span>SWF_ACTION_DUPLICATE: u8 = <span class="number">0x4C</span>;
+<span class="kw">pub const </span>SWF_ACTION_GET_MEMBER: u8 = <span class="number">0x4E</span>;
+<span class="kw">pub const </span>SWF_ACTION_SET_MEMBER: u8 = <span class="number">0x4F</span>;
+<span class="kw">pub const </span>SWF_ACTION_STORE_REGISTER: u8 = <span class="number">0x87</span>;
+<span class="kw">pub const </span>SWF_ACTION_CONSTANTPOOL: u8 = <span class="number">0x88</span>;
+<span class="kw">pub const </span>SWF_ACTION_PUSH: u8 = <span class="number">0x96</span>;
 
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_STRING_LITERAL</span>: <span class="ident">u8</span> = <span class="number">0</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_FLOAT_LITERAL</span>: <span class="ident">u8</span> = <span class="number">1</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_NULL</span>: <span class="ident">u8</span> = <span class="number">2</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_UNDEFINED</span>: <span class="ident">u8</span> = <span class="number">3</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_REGISTER</span>: <span class="ident">u8</span> = <span class="number">4</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_BOOLEAN</span>: <span class="ident">u8</span> = <span class="number">5</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_DOUBLE</span>: <span class="ident">u8</span> = <span class="number">6</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_INTEGER</span>: <span class="ident">u8</span> = <span class="number">7</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_CONSTANT8</span>: <span class="ident">u8</span> = <span class="number">8</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_TYPE_CONSTANT16</span>: <span class="ident">u8</span> = <span class="number">9</span>;
-<span class="kw">pub</span> <span class="kw">const</span> <span class="ident">SWF_CODEC_MP3</span>: <span class="ident">u8</span> = <span class="number">2</span>;
+<span class="kw">pub const </span>SWF_TYPE_STRING_LITERAL: u8 = <span class="number">0</span>;
+<span class="kw">pub const </span>SWF_TYPE_FLOAT_LITERAL: u8 = <span class="number">1</span>;
+<span class="kw">pub const </span>SWF_TYPE_NULL: u8 = <span class="number">2</span>;
+<span class="kw">pub const </span>SWF_TYPE_UNDEFINED: u8 = <span class="number">3</span>;
+<span class="kw">pub const </span>SWF_TYPE_REGISTER: u8 = <span class="number">4</span>;
+<span class="kw">pub const </span>SWF_TYPE_BOOLEAN: u8 = <span class="number">5</span>;
+<span class="kw">pub const </span>SWF_TYPE_DOUBLE: u8 = <span class="number">6</span>;
+<span class="kw">pub const </span>SWF_TYPE_INTEGER: u8 = <span class="number">7</span>;
+<span class="kw">pub const </span>SWF_TYPE_CONSTANT8: u8 = <span class="number">8</span>;
+<span class="kw">pub const </span>SWF_TYPE_CONSTANT16: u8 = <span class="number">9</span>;
+<span class="kw">pub const </span>SWF_CODEC_MP3: u8 = <span class="number">2</span>;
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

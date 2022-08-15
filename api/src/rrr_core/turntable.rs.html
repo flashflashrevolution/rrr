@@ -73,80 +73,80 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">note::CompiledNote</span>, <span class="ident">record::Record</span>};
-<span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
-<span class="kw">use</span> <span class="ident">std::ops::Bound::Included</span>;
+</pre><pre class="rust"><code><span class="kw">use crate</span>::{note::CompiledNote, record::Record};
+<span class="kw">use </span>btreemultimap::MultiRange;
+<span class="kw">use </span>std::ops::Bound::Included;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span>&lt;<span class="ident">S</span>: <span class="ident">TurntableState</span>&gt; {
-    <span class="ident">record</span>: <span class="ident">Record</span>,
-    <span class="ident">state</span>: <span class="ident">S</span>,
+<span class="attribute">#[derive(Clone)]</span>
+<span class="kw">pub struct </span>Turntable&lt;S: TurntableState&gt; {
+    record: Record,
+    state: S,
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Empty</span> {}
+<span class="kw">pub struct </span>Empty {}
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loaded</span> {}
+<span class="kw">pub struct </span>Loaded {}
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Playing</span> {
-    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u64</span>,
+<span class="attribute">#[derive(Clone)]</span>
+<span class="kw">pub struct </span>Playing {
+    <span class="kw">pub </span>progress: u64,
 }
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TurntableState</span> {}
-<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Empty</span> {}
-<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Loaded</span> {}
-<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Playing</span> {}
+<span class="kw">pub trait </span>TurntableState {}
+<span class="kw">impl </span>TurntableState <span class="kw">for </span>Empty {}
+<span class="kw">impl </span>TurntableState <span class="kw">for </span>Loaded {}
+<span class="kw">impl </span>TurntableState <span class="kw">for </span>Playing {}
 
-<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Empty</span>&gt; {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load</span>(<span class="ident">record</span>: <span class="ident">Record</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
-        <span class="ident">Turntable</span> {
-            <span class="ident">record</span>,
-            <span class="ident">state</span>: <span class="ident">Loaded</span> {},
+<span class="kw">impl </span>Turntable&lt;Empty&gt; {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>load(record: Record) -&gt; Turntable&lt;Loaded&gt; {
+        Turntable {
+            record,
+            state: Loaded {},
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Playing</span>&gt; {
-        <span class="ident">Turntable</span> {
-            <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
-            <span class="ident">state</span>: <span class="ident">Playing</span> { <span class="ident">progress</span>: <span class="number">0</span> },
+<span class="kw">impl </span>Turntable&lt;Loaded&gt; {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>play(<span class="self">self</span>) -&gt; Turntable&lt;Playing&gt; {
+        Turntable {
+            record: <span class="self">self</span>.record,
+            state: Playing { progress: <span class="number">0 </span>},
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Turntable</span>&lt;<span class="ident">Playing</span>&gt; {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span>&lt;<span class="ident">Loaded</span>&gt; {
-        <span class="ident">Turntable</span> {
-            <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
-            <span class="ident">state</span>: <span class="ident">Loaded</span> {},
+<span class="kw">impl </span>Turntable&lt;Playing&gt; {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Turntable&lt;Loaded&gt; {
+        Turntable {
+            record: <span class="self">self</span>.record,
+            state: Loaded {},
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> = <span class="ident">progress</span>;
+    <span class="kw">pub fn </span>tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, progress: u64) {
+        <span class="self">self</span>.state.progress = progress;
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> &gt;= <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>is_finished(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.state.progress <span class="kw">as </span>i128 &gt;= <span class="self">self</span>.record.duration
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>progress(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
+        <span class="self">self</span>.state.progress
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span>&lt;<span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">CompiledNote</span>&gt; {
-        <span class="kw">let</span> <span class="ident">chart</span> = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
-        <span class="ident">chart</span>.<span class="ident">range</span>((
-            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span>),
-            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> + <span class="ident">range_in_milliseconds</span>),
+    <span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: i128) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, CompiledNote&gt; {
+        <span class="kw">let </span>chart = <span class="kw-2">&amp;</span><span class="self">self</span>.record.optimized_chart;
+        chart.range((
+            Included(<span class="self">self</span>.state.progress <span class="kw">as </span>i128),
+            Included(<span class="self">self</span>.state.progress <span class="kw">as </span>i128 + range_in_milliseconds),
         ))
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

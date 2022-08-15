@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"rrr_core":[["impl StructMergeInto&lt;<a class=\"struct\" href=\"rrr_core/settings/struct.Settings.html\" title=\"struct rrr_core::settings::Settings\">Settings</a>&gt; for <a class=\"struct\" href=\"rrr_core/query_settings/struct.SettingsMerge.html\" title=\"struct rrr_core::query_settings::SettingsMerge\">SettingsMerge</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

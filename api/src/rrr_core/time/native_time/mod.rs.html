@@ -17,24 +17,24 @@
 <span id="17">17</span>
 <span id="18">18</span>
 <span id="19">19</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::time::time_trait::TimeTrait</span>;
-<span class="kw">use</span> <span class="ident">std::time::Instant</span>;
+</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::time::time_trait::TimeTrait;
+<span class="kw">use </span>std::time::Instant;
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Time</span>(<span class="ident">Instant</span>);
+<span class="attribute">#[derive(Copy, Clone)]</span>
+<span class="kw">pub struct </span>Time(Instant);
 
-<span class="kw">impl</span> <span class="ident">TimeTrait</span> <span class="kw">for</span> <span class="ident">Time</span> {
-    <span class="kw">fn</span> <span class="ident">now</span>() -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span>(<span class="ident">Instant::now</span>())
+<span class="kw">impl </span>TimeTrait <span class="kw">for </span>Time {
+    <span class="kw">fn </span>now() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(Instant::now())
     }
 
-    <span class="kw">fn</span> <span class="ident">ms_since</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">elapsed</span>().<span class="ident">as_secs_f64</span>()
+    <span class="kw">fn </span>ms_since(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
+        <span class="self">self</span>.<span class="number">0</span>.elapsed().as_secs_f64()
     }
 
-    <span class="kw">fn</span> <span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">f64</span> {
-        <span class="self">self</span>.<span class="number">0</span>.<span class="ident">duration_since</span>(<span class="ident">other</span>.<span class="number">0</span>).<span class="ident">as_secs_f64</span>()
+    <span class="kw">fn </span>sub(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; f64 {
+        <span class="self">self</span>.<span class="number">0</span>.duration_since(other.<span class="number">0</span>).as_secs_f64()
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

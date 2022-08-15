@@ -21,28 +21,28 @@
 <span id="21">21</span>
 <span id="22">22</span>
 <span id="23">23</span>
-</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+</pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="doccomment">/// Represents a BPM change in a [chart](Chart).</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BpmChange</span> {
-    <span class="ident">bpm</span>: <span class="ident">f32</span>,
-    <span class="ident">beat</span>: <span class="ident">usize</span>,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]</span>
+<span class="doccomment">/// Represents a BPM change in a [chart](Chart).
+</span><span class="kw">pub struct </span>BpmChange {
+    bpm: f32,
+    beat: usize,
 }
 
-<span class="kw">impl</span> <span class="ident">BpmChange</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">bpm</span>: <span class="ident">f32</span>, <span class="ident">beat</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> { <span class="ident">bpm</span>, <span class="ident">beat</span> }
+<span class="kw">impl </span>BpmChange {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(bpm: f32, beat: usize) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ bpm, beat }
     }
 
-    <span class="doccomment">/// Get the bpm change&#39;s bpm.</span>
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">bpm</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f32</span> {
-        <span class="self">self</span>.<span class="ident">bpm</span>
+    <span class="doccomment">/// Get the bpm change&#39;s bpm.
+    </span><span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>bpm(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f32 {
+        <span class="self">self</span>.bpm
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

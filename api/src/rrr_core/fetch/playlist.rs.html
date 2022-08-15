@@ -67,74 +67,74 @@
 <span id="67">67</span>
 <span id="68">68</span>
 <span id="69">69</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+</pre><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Song</span> {
-    <span class="kw">pub</span> <span class="ident">genre</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">difficulty</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">style</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">time</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">level</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">order</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">arrows</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">playhash</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">previewhash</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">prerelease</span>: <span class="ident">bool</span>,
-    <span class="kw">pub</span> <span class="ident">releasedate</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">author</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">stepauthor</span>: <span class="ident">String</span>,
+<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]</span>
+<span class="kw">pub struct </span>Song {
+    <span class="kw">pub </span>genre: i64,
+    <span class="kw">pub </span>name: String,
+    <span class="kw">pub </span>difficulty: i64,
+    <span class="kw">pub </span>style: String,
+    <span class="kw">pub </span>time: String,
+    <span class="kw">pub </span>level: i64,
+    <span class="kw">pub </span>order: i64,
+    <span class="kw">pub </span>arrows: i64,
+    <span class="kw">pub </span>playhash: String,
+    <span class="kw">pub </span>previewhash: String,
+    <span class="kw">pub </span>prerelease: bool,
+    <span class="kw">pub </span>releasedate: i64,
+    <span class="kw">pub </span>author: String,
+    <span class="kw">pub </span>stepauthor: String,
 
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> = <span class="string">&quot;authorURL&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">author_url</span>: <span class="ident">String</span>,
+    <span class="attribute">#[serde(rename = <span class="string">&quot;authorURL&quot;</span>)]</span>
+    <span class="kw">pub </span>author_url: String,
 
-    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> = <span class="string">&quot;stepauthorURL&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="ident">stepauthor_url</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">min_nps</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">max_nps</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">nps_data</span>: <span class="ident">String</span>,
-    <span class="kw">pub</span> <span class="ident">song_rating</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">credits</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">i64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">price</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">i64</span>&gt;,
+    <span class="attribute">#[serde(rename = <span class="string">&quot;stepauthorURL&quot;</span>)]</span>
+    <span class="kw">pub </span>stepauthor_url: String,
+    <span class="kw">pub </span>min_nps: i64,
+    <span class="kw">pub </span>max_nps: i64,
+    <span class="kw">pub </span>nps_data: String,
+    <span class="kw">pub </span>song_rating: <span class="prelude-ty">Option</span>&lt;f64&gt;,
+    <span class="kw">pub </span>credits: <span class="prelude-ty">Option</span>&lt;i64&gt;,
+    <span class="kw">pub </span>price: <span class="prelude-ty">Option</span>&lt;i64&gt;,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Stat</span> {
-    <span class="kw">pub</span> <span class="ident">total_length</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">eff_length</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">chord_count</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">avg_nps</span>: <span class="ident">f64</span>,
-    <span class="kw">pub</span> <span class="ident">first_delay</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">last_delay</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">note_delays</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">hand_bias</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">jumps</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">color_jumps</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">framers</span>: <span class="ident">Vec</span>&lt;<span class="ident">i64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">density</span>: <span class="ident">Vec</span>&lt;<span class="ident">Vec</span>&lt;<span class="ident">Density</span>&gt;&gt;,
-    <span class="kw">pub</span> <span class="ident">camel_jacks</span>: <span class="ident">i64</span>,
-    <span class="kw">pub</span> <span class="ident">color_total</span>: <span class="ident">ColorTotal</span>,
+<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]</span>
+<span class="kw">pub struct </span>Stat {
+    <span class="kw">pub </span>total_length: i64,
+    <span class="kw">pub </span>eff_length: i64,
+    <span class="kw">pub </span>chord_count: i64,
+    <span class="kw">pub </span>avg_nps: f64,
+    <span class="kw">pub </span>first_delay: i64,
+    <span class="kw">pub </span>last_delay: i64,
+    <span class="kw">pub </span>note_delays: Vec&lt;i64&gt;,
+    <span class="kw">pub </span>hand_bias: i64,
+    <span class="kw">pub </span>jumps: Vec&lt;i64&gt;,
+    <span class="kw">pub </span>color_jumps: Vec&lt;i64&gt;,
+    <span class="kw">pub </span>framers: Vec&lt;i64&gt;,
+    <span class="kw">pub </span>density: Vec&lt;Vec&lt;Density&gt;&gt;,
+    <span class="kw">pub </span>camel_jacks: i64,
+    <span class="kw">pub </span>color_total: ColorTotal,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ColorTotal</span> {
-    <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">purple</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">yellow</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">pink</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">orange</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">cyan</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">white</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
+<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]</span>
+<span class="kw">pub struct </span>ColorTotal {
+    <span class="kw">pub </span>red: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>blue: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>purple: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>yellow: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>pink: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>orange: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>cyan: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>green: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>white: Vec&lt;f64&gt;,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">untagged</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Density</span> {
-    <span class="ident">Integer</span>(<span class="ident">i64</span>),
-    <span class="ident">String</span>(<span class="ident">String</span>),
+<span class="attribute">#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]</span>
+<span class="attribute">#[serde(untagged)]</span>
+<span class="kw">pub enum </span>Density {
+    Integer(i64),
+    String(String),
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

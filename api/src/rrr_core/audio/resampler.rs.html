@@ -72,79 +72,79 @@
 <span id="72">72</span>
 <span id="73">73</span>
 <span id="74">74</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">rubato</span>::{
-    <span class="ident">InterpolationParameters</span>, <span class="ident">InterpolationType</span>, <span class="ident">ResampleError</span>, <span class="ident">Resampler</span>,
-    <span class="ident">ResamplerConstructionError</span>, <span class="ident">SincFixedIn</span>, <span class="ident">WindowFunction</span>,
+</pre><pre class="rust"><code><span class="kw">use </span>rubato::{
+    InterpolationParameters, InterpolationType, ResampleError, Resampler,
+    ResamplerConstructionError, SincFixedIn, WindowFunction,
 };
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Copy</span>, <span class="ident">Clone</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ResamplingSpec</span> {
-    <span class="kw">pub</span> <span class="ident">input_rate</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">output_rate</span>: <span class="ident">u32</span>,
-    <span class="kw">pub</span> <span class="ident">channels</span>: <span class="ident">usize</span>,
+<span class="attribute">#[derive(Copy, Clone)]</span>
+<span class="kw">pub struct </span>ResamplingSpec {
+    <span class="kw">pub </span>input_rate: u32,
+    <span class="kw">pub </span>output_rate: u32,
+    <span class="kw">pub </span>channels: usize,
 }
 
-<span class="kw">impl</span> <span class="ident">ResamplingSpec</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">output_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">input_size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span> {
-        (<span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">output_rate</span>) / <span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">input_rate</span>) * <span class="ident">input_size</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="kw">as</span> <span class="ident">usize</span>
+<span class="kw">impl </span>ResamplingSpec {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>output_size(<span class="kw-2">&amp;</span><span class="self">self</span>, input_size: usize) -&gt; usize {
+        (f64::from(<span class="self">self</span>.output_rate) / f64::from(<span class="self">self</span>.input_rate) * input_size <span class="kw">as </span>f64) <span class="kw">as </span>usize
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">input_size</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">output_size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span> {
-        (<span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">input_rate</span>) / <span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">output_rate</span>) * <span class="ident">output_size</span> <span class="kw">as</span> <span class="ident">f64</span>) <span class="kw">as</span> <span class="ident">usize</span>
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>input_size(<span class="kw-2">&amp;</span><span class="self">self</span>, output_size: usize) -&gt; usize {
+        (f64::from(<span class="self">self</span>.input_rate) / f64::from(<span class="self">self</span>.output_rate) * output_size <span class="kw">as </span>f64) <span class="kw">as </span>usize
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ratio</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">f64</span> {
-        <span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">output_rate</span>) / <span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">input_rate</span>)
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>ratio(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; f64 {
+        f64::from(<span class="self">self</span>.output_rate) / f64::from(<span class="self">self</span>.input_rate)
     }
 }
 
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AudioResampler</span> {
-    <span class="kw">pub</span> <span class="ident">spec</span>: <span class="ident">ResamplingSpec</span>,
-    <span class="kw">pub</span> <span class="ident">resampler</span>: <span class="ident">SincFixedIn</span>&lt;<span class="ident">f32</span>&gt;,
+<span class="kw">pub struct </span>AudioResampler {
+    <span class="kw">pub </span>spec: ResamplingSpec,
+    <span class="kw">pub </span>resampler: SincFixedIn&lt;f32&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">AudioResampler</span> {
-    <span class="doccomment">/// # Errors</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">spec</span>: <span class="ident">ResamplingSpec</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="ident">ResamplerConstructionError</span>&gt; {
-        <span class="kw">let</span> <span class="ident">params</span> = <span class="ident">InterpolationParameters</span> {
-            <span class="ident">sinc_len</span>: <span class="number">256</span>,
-            <span class="ident">f_cutoff</span>: <span class="number">0.95</span>,
-            <span class="ident">interpolation</span>: <span class="ident">InterpolationType::Linear</span>,
-            <span class="ident">oversampling_factor</span>: <span class="number">256</span>,
-            <span class="ident">window</span>: <span class="ident">WindowFunction::BlackmanHarris2</span>,
+<span class="kw">impl </span>AudioResampler {
+    <span class="doccomment">/// # Errors
+    </span><span class="kw">pub fn </span>new(spec: ResamplingSpec) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ResamplerConstructionError&gt; {
+        <span class="kw">let </span>params = InterpolationParameters {
+            sinc_len: <span class="number">256</span>,
+            f_cutoff: <span class="number">0.95</span>,
+            interpolation: InterpolationType::Linear,
+            oversampling_factor: <span class="number">256</span>,
+            window: WindowFunction::BlackmanHarris2,
         };
-        <span class="kw">let</span> <span class="ident">resampler</span> = <span class="ident">SincFixedIn</span>::&lt;<span class="ident">f32</span>&gt;<span class="ident">::new</span>(<span class="number">48000_f64</span> / <span class="number">44100_f64</span>, <span class="number">2.0</span>, <span class="ident">params</span>, <span class="number">1024</span>, <span class="number">2</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>resampler = SincFixedIn::&lt;f32&gt;::new(<span class="number">48000_f64 </span>/ <span class="number">44100_f64</span>, <span class="number">2.0</span>, params, <span class="number">1024</span>, <span class="number">2</span>)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span> { <span class="ident">spec</span>, <span class="ident">resampler</span> })
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ spec, resampler })
     }
 
-    <span class="doccomment">/// # Panics</span>
-    <span class="doccomment">/// # Errors</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">process</span>(
-        <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-        <span class="ident">input</span>: <span class="kw-2">&amp;</span>[<span class="ident">Vec</span>&lt;<span class="ident">f32</span>&gt;],
-        <span class="ident">output</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">Vec</span>&lt;<span class="ident">f32</span>&gt;],
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(<span class="ident">usize</span>, <span class="ident">usize</span>), <span class="ident">ResampleError</span>&gt; {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">spec</span>.<span class="ident">input_rate</span> != <span class="self">self</span>.<span class="ident">spec</span>.<span class="ident">output_rate</span> {
-            <span class="kw">return</span> <span class="self">self</span>
-                .<span class="ident">resampler</span>
-                .<span class="ident">process_into_buffer</span>(<span class="ident">input</span>, <span class="ident">output</span>, <span class="prelude-val">None</span>)
-                .<span class="ident">map</span>(|<span class="kw">_</span>| <span class="prelude-val">Ok</span>((<span class="ident">input</span>.<span class="ident">len</span>(), <span class="ident">output</span>.<span class="ident">len</span>())))<span class="question-mark">?</span>;
+    <span class="doccomment">/// # Panics
+    /// # Errors
+    </span><span class="kw">pub fn </span>process(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        input: <span class="kw-2">&amp;</span>[Vec&lt;f32&gt;],
+        output: <span class="kw-2">&amp;mut </span>[Vec&lt;f32&gt;],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(usize, usize), ResampleError&gt; {
+        <span class="kw">if </span><span class="self">self</span>.spec.input_rate != <span class="self">self</span>.spec.output_rate {
+            <span class="kw">return </span><span class="self">self
+                </span>.resampler
+                .process_into_buffer(input, output, <span class="prelude-val">None</span>)
+                .map(|<span class="kw">_</span>| <span class="prelude-val">Ok</span>((input.len(), output.len())))<span class="question-mark">?</span>;
         }
 
-        <span class="comment">// Bypass conversion completely in case the sample rates are equal.</span>
-        <span class="kw">let</span> <span class="ident">out</span> = <span class="kw-2">&amp;mut</span> <span class="ident">output</span>.<span class="ident">get_mut</span>(..<span class="ident">input</span>.<span class="ident">len</span>()).<span class="ident">unwrap</span>();
-        <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="number">0</span>..<span class="number">1</span> {
-            <span class="kw">let</span> <span class="ident">out_i</span> = <span class="ident">out</span>.<span class="ident">get_mut</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>();
-            <span class="kw">let</span> <span class="ident">in_i</span> = <span class="ident">input</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>();
-            <span class="ident">out_i</span>.<span class="ident">resize</span>(<span class="ident">in_i</span>.<span class="ident">len</span>(), <span class="number">0.0</span>);
-            <span class="ident">out_i</span>.<span class="ident">copy_from_slice</span>(<span class="ident">in_i</span>);
+        <span class="comment">// Bypass conversion completely in case the sample rates are equal.
+        </span><span class="kw">let </span>out = <span class="kw-2">&amp;mut </span>output.get_mut(..input.len()).unwrap();
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..<span class="number">1 </span>{
+            <span class="kw">let </span>out_i = out.get_mut(i).unwrap();
+            <span class="kw">let </span>in_i = input.get(i).unwrap();
+            out_i.resize(in_i.len(), <span class="number">0.0</span>);
+            out_i.copy_from_slice(in_i);
         }
-        <span class="prelude-val">Ok</span>((<span class="ident">input</span>.<span class="ident">len</span>(), <span class="ident">output</span>.<span class="ident">len</span>()))
+        <span class="prelude-val">Ok</span>((input.len(), output.len()))
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

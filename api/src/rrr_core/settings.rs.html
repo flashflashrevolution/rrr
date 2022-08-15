@@ -60,67 +60,73 @@
 <span id="60">60</span>
 <span id="61">61</span>
 <span id="62">62</span>
-</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+</pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">use </span>serde::{Deserialize, Serialize};
+<span class="kw">use </span>strum::EnumString;
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">ScrollDirection</span> {
-    <span class="ident">Up</span>,
-    <span class="ident">Down</span>,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq, EnumString)]</span>
+<span class="kw">pub enum </span>ScrollDirection {
+    <span class="attribute">#[strum(ascii_case_insensitive)]</span>
+    Up,
+    <span class="attribute">#[strum(ascii_case_insensitive)]</span>
+    Down,
 }
 
-<span class="doccomment">/// Stores RRR settings to start charts with.</span>
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">Debug</span>, <span class="ident">PartialEq</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Settings</span> {
-    <span class="kw">pub</span> <span class="ident">scroll_speed</span>: <span class="ident">u16</span>,
-    <span class="kw">pub</span> <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>,
-    <span class="kw">pub</span> <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection</span>,
-    <span class="kw">pub</span> <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
+<span class="doccomment">/// Stores RRR settings to start charts with.
+</span><span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq)]</span>
+<span class="kw">pub struct </span>Settings {
+    <span class="kw">pub </span>scroll_speed: u16,
+    <span class="kw">pub </span>judge_zero_point: i128,
+    <span class="kw">pub </span>scroll_direction: ScrollDirection,
+    <span class="kw">pub </span>lane_gap: u8,
 }
 
-<span class="kw">impl</span> <span class="ident">Default</span> <span class="kw">for</span> <span class="ident">Settings</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default</span>() -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">scroll_speed</span>: <span class="number">3000</span>,
-            <span class="ident">judge_zero_point</span>: <span class="number">327</span>,
-            <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection::Up</span>,
-            <span class="ident">lane_gap</span>: <span class="number">72</span>,
+<span class="kw">impl </span>Default <span class="kw">for </span>Settings {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            scroll_speed: <span class="number">3000</span>,
+            judge_zero_point: <span class="number">327</span>,
+            scroll_direction: ScrollDirection::Up,
+            lane_gap: <span class="number">72</span>,
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Settings</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(
-        <span class="ident">scroll_speed</span>: <span class="ident">u16</span>,
-        <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>,
-        <span class="ident">scroll_direction</span>: <span class="ident">ScrollDirection</span>,
-        <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
-    ) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">scroll_speed</span>,
-            <span class="ident">judge_zero_point</span>,
-            <span class="ident">scroll_direction</span>,
-            <span class="ident">lane_gap</span>,
+<span class="kw">impl </span>Settings {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(
+        scroll_speed: u16,
+        judge_zero_point: i128,
+        scroll_direction: ScrollDirection,
+        lane_gap: u8,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            scroll_speed,
+            judge_zero_point,
+            scroll_direction,
+            lane_gap,
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="attribute">#[cfg(test)]</span>
+<span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">default_settings</span>() {
-        <span class="kw">let</span> <span class="ident">settings</span> = <span class="ident">Settings::default</span>();
-        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">scroll_speed</span>, <span class="number">3000</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">judge_zero_point</span>, <span class="number">327</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">scroll_direction</span>, <span class="ident">ScrollDirection::Up</span>);
-        <span class="macro">assert_eq!</span>(<span class="ident">settings</span>.<span class="ident">lane_gap</span>, <span class="number">72</span>);
+    <span class="attribute">#[test]</span>
+    <span class="kw">fn </span>default_settings() {
+        <span class="kw">let </span>settings = Settings::default();
+        <span class="macro">assert_eq!</span>(settings.scroll_speed, <span class="number">3000</span>);
+        <span class="macro">assert_eq!</span>(settings.judge_zero_point, <span class="number">327</span>);
+        <span class="macro">assert_eq!</span>(settings.scroll_direction, ScrollDirection::Up);
+        <span class="macro">assert_eq!</span>(settings.lane_gap, <span class="number">72</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

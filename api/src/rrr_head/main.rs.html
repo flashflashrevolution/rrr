@@ -657,664 +657,676 @@
 <span id="657">657</span>
 <span id="658">658</span>
 <span id="659">659</span>
-</pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
-<span class="attribute">#![<span class="ident">warn</span>(
-    <span class="ident">elided_lifetimes_in_paths</span>,
-    <span class="ident">trivial_casts</span>,
-    <span class="ident">trivial_numeric_casts</span>,
-    <span class="ident">unreachable_pub</span>,
-    <span class="ident">variant_size_differences</span>,
-    <span class="ident">clippy::all</span>,
-    <span class="ident">clippy::cargo</span>,
-    <span class="ident">clippy::pedantic</span>,
-    <span class="ident">clippy::as_conversions</span>,
-    <span class="ident">clippy::clone_on_ref_ptr</span>,
-    <span class="ident">clippy::dbg_macro</span>,
-    <span class="ident">clippy::decimal_literal_representation</span>,
-    <span class="ident">clippy::exit</span>,
-    <span class="ident">clippy::expect_used</span>,
-    <span class="ident">clippy::filetype_is_file</span>,
-    <span class="ident">clippy::float_cmp_const</span>,
-    <span class="ident">clippy::get_unwrap</span>,
-    <span class="ident">clippy::indexing_slicing</span>,
-    <span class="ident">clippy::integer_arithmetic</span>,
-    <span class="ident">clippy::integer_division</span>,
-    <span class="ident">clippy::let_underscore_must_use</span>,
-    <span class="ident">clippy::lossy_float_literal</span>,
-    <span class="ident">clippy::mem_forget</span>,
-    <span class="ident">clippy::multiple_inherent_impl</span>,
-    <span class="ident">clippy::panic</span>,
-    <span class="ident">clippy::pattern_type_mismatch</span>,
-    <span class="ident">clippy::print_stdout</span>,
-    <span class="ident">clippy::rest_pat_in_fully_bound_structs</span>,
-    <span class="ident">clippy::shadow_reuse</span>,
-    <span class="ident">clippy::todo</span>,
-    <span class="ident">clippy::unimplemented</span>,
-    <span class="ident">clippy::unneeded_field_pattern</span>,
-    <span class="ident">clippy::unreachable</span>,
-    <span class="ident">clippy::unwrap_used</span>,
-    <span class="ident">clippy::use_debug</span>,
-    <span class="ident">clippy::verbose_file_reads</span>
+<span id="660">660</span>
+<span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
+<span id="664">664</span>
+<span id="665">665</span>
+</pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
+<span class="attribute">#![warn(
+    elided_lifetimes_in_paths,
+    trivial_casts,
+    trivial_numeric_casts,
+    unreachable_pub,
+    variant_size_differences,
+    clippy::all,
+    clippy::cargo,
+    clippy::pedantic,
+    clippy::as_conversions,
+    clippy::clone_on_ref_ptr,
+    clippy::dbg_macro,
+    clippy::decimal_literal_representation,
+    clippy::exit,
+    clippy::expect_used,
+    clippy::filetype_is_file,
+    clippy::float_cmp_const,
+    clippy::get_unwrap,
+    clippy::indexing_slicing,
+    clippy::integer_arithmetic,
+    clippy::integer_division,
+    clippy::let_underscore_must_use,
+    clippy::lossy_float_literal,
+    clippy::mem_forget,
+    clippy::multiple_inherent_impl,
+    clippy::panic,
+    clippy::pattern_type_mismatch,
+    clippy::print_stdout,
+    clippy::rest_pat_in_fully_bound_structs,
+    clippy::shadow_reuse,
+    clippy::todo,
+    clippy::unimplemented,
+    clippy::unneeded_field_pattern,
+    clippy::unreachable,
+    clippy::unwrap_used,
+    clippy::use_debug,
+    clippy::verbose_file_reads
 )]</span>
-<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>, <span class="ident">clippy::multiple_crate_versions</span>)]</span>
-<span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
-<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">array_chunks</span>)]</span>
-<span class="attribute">#![<span class="ident">feature</span>(<span class="ident">poll_ready</span>)]</span>
+<span class="attribute">#![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]</span>
+<span class="attribute">#![forbid(unsafe_code)]</span>
+<span class="attribute">#![feature(array_chunks)]</span>
+<span class="attribute">#![feature(poll_ready)]</span>
 
-<span class="kw">mod</span> <span class="ident">benchmark</span>;
-<span class="kw">mod</span> <span class="ident">geo</span>;
-<span class="kw">mod</span> <span class="ident">noteskin</span>;
-<span class="kw">mod</span> <span class="ident">sprites</span>;
-<span class="kw">mod</span> <span class="ident">visibility</span>;
+<span class="kw">mod </span>benchmark;
+<span class="kw">mod </span>geo;
+<span class="kw">mod </span>noteskin;
+<span class="kw">mod </span>sprites;
+<span class="kw">mod </span>visibility;
 
-<span class="kw">use</span> <span class="ident">anyhow::Error</span>;
-<span class="kw">use</span> <span class="ident">benchmark::BenchmarkData</span>;
-<span class="kw">use</span> <span class="ident">pixels</span>::{<span class="ident">Pixels</span>, <span class="ident">PixelsBuilder</span>, <span class="ident">SurfaceTexture</span>};
-<span class="kw">use</span> <span class="ident">rrr_core</span>::{
-    <span class="ident">fetch</span>,
-    <span class="ident">lerp::Lerp</span>,
-    <span class="ident">note</span>::{<span class="self">self</span>, <span class="ident">Direction</span>},
-    <span class="ident">play</span>,
-    <span class="ident">play::Play</span>,
-    <span class="ident">settings</span>::{<span class="self">self</span>, <span class="ident">Settings</span>},
-    <span class="ident">time</span>::{<span class="ident">performance::Time</span>, <span class="ident">time_trait::TimeTrait</span>},
-    <span class="ident">SwfParser</span>, <span class="ident">Turntable</span>,
+<span class="kw">use </span>anyhow::Error;
+<span class="kw">use </span>benchmark::BenchmarkData;
+<span class="kw">use </span>inter_struct::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+<span class="kw">use </span>rrr_core::query_settings;
+<span class="kw">use </span>rrr_core::{
+    fetch,
+    lerp::Lerp,
+    note::{<span class="self">self</span>, Direction},
+    play,
+    play::Play,
+    settings::{<span class="self">self</span>, Settings},
+    time::{performance::Time, time_trait::TimeTrait},
+    SwfParser, Turntable,
 };
-<span class="kw">use</span> <span class="ident">sprites::blit</span>;
-<span class="kw">use</span> <span class="ident">std::f64</span>;
-<span class="kw">use</span> <span class="ident">winit</span>::{
-    <span class="ident">dpi::LogicalSize</span>,
-    <span class="ident">event</span>::{
-        <span class="ident">DeviceEvent</span>, <span class="ident">ElementState</span>, <span class="ident">Event</span>, <span class="ident">KeyboardInput</span>, <span class="ident">ModifiersState</span>, <span class="ident">TouchPhase</span>, <span class="ident">WindowEvent</span>,
+<span class="kw">use </span>sprites::blit;
+<span class="kw">use </span>std::f64;
+<span class="kw">use </span>winit::{
+    dpi::LogicalSize,
+    event::{
+        DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, TouchPhase, WindowEvent,
     },
-    <span class="ident">event_loop</span>::{<span class="ident">ControlFlow</span>, <span class="ident">EventLoop</span>},
-    <span class="ident">window::WindowBuilder</span>,
+    event_loop::{ControlFlow, EventLoop},
+    window::WindowBuilder,
 };
 
-<span class="kw">const</span> <span class="ident">WIDTH</span>: <span class="ident">u32</span> = <span class="number">512</span>;
-<span class="kw">const</span> <span class="ident">HEIGHT</span>: <span class="ident">u32</span> = <span class="number">720</span>;
+<span class="kw">const </span>WIDTH: u32 = <span class="number">512</span>;
+<span class="kw">const </span>HEIGHT: u32 = <span class="number">720</span>;
 
-<span class="kw">struct</span> <span class="ident">GameRenderer</span> {
-    <span class="ident">noteskin</span>: <span class="ident">noteskin::Definition</span>,
-    <span class="ident">pixels</span>: <span class="ident">Pixels</span>,
+<span class="kw">struct </span>GameRenderer {
+    noteskin: noteskin::Definition,
+    pixels: Pixels,
 }
 
-<span class="kw">impl</span> <span class="ident">GameRenderer</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">pixels</span>: <span class="ident">Pixels</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">noteskin</span>: <span class="ident">noteskin::Definition::default</span>(),
-            <span class="ident">pixels</span>,
+<span class="kw">impl </span>GameRenderer {
+    <span class="kw">fn </span>new(pixels: Pixels) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            noteskin: noteskin::Definition::default(),
+            pixels,
         }
     }
 }
 
-<span class="kw">struct</span> <span class="ident">Action</span> {
-    <span class="ident">direction</span>: <span class="ident">Direction</span>,
-    <span class="ident">ts</span>: <span class="ident">i128</span>,
+<span class="kw">struct </span>Action {
+    direction: Direction,
+    ts: i128,
 }
 
-<span class="kw">struct</span> <span class="ident">Game</span>&lt;<span class="ident">T</span>: <span class="ident">TimeTrait</span>&gt; {
-    <span class="ident">renderer</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">GameRenderer</span>&gt;,
-    <span class="ident">play_stage</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Play</span>&lt;<span class="ident">play::Active</span>&gt;&gt;,
-    <span class="ident">fetcher</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">fetch::Fetcher</span>&gt;,
-    <span class="ident">start_instant</span>: <span class="ident">T</span>,
-    <span class="ident">previous_instant</span>: <span class="ident">T</span>,
-    <span class="ident">current_instant</span>: <span class="ident">T</span>,
-    <span class="ident">action_queue</span>: <span class="ident">Vec</span>&lt;<span class="ident">Action</span>&gt;,
-    <span class="ident">benchmark_data</span>: <span class="ident">BenchmarkData</span>,
+<span class="kw">struct </span>Game&lt;T: TimeTrait&gt; {
+    renderer: <span class="prelude-ty">Option</span>&lt;GameRenderer&gt;,
+    play_stage: <span class="prelude-ty">Option</span>&lt;Play&lt;play::Active&gt;&gt;,
+    fetcher: <span class="prelude-ty">Option</span>&lt;fetch::Fetcher&gt;,
+    start_instant: T,
+    previous_instant: T,
+    current_instant: T,
+    action_queue: Vec&lt;Action&gt;,
+    benchmark_data: BenchmarkData,
+    settings: Settings,
 }
 
-<span class="kw">impl</span>&lt;<span class="ident">T</span>&gt; <span class="ident">Game</span>&lt;<span class="ident">T</span>&gt;
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">TimeTrait</span>,
+<span class="kw">impl</span>&lt;T&gt; Game&lt;T&gt;
+<span class="kw">where
+    </span>T: TimeTrait,
 {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">play_stage</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Play</span>&lt;<span class="ident">play::Active</span>&gt;&gt;) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">renderer</span>: <span class="prelude-val">None</span>,
-            <span class="ident">play_stage</span>,
-            <span class="ident">fetcher</span>: <span class="prelude-val">None</span>,
-            <span class="ident">start_instant</span>: <span class="ident">T::now</span>(),
-            <span class="ident">previous_instant</span>: <span class="ident">T::now</span>(),
-            <span class="ident">current_instant</span>: <span class="ident">T::now</span>(),
-            <span class="ident">action_queue</span>: <span class="ident">Vec::new</span>(),
-            <span class="ident">benchmark_data</span>: <span class="ident">BenchmarkData::new</span>(),
+    <span class="kw">fn </span>new(play_stage: <span class="prelude-ty">Option</span>&lt;Play&lt;play::Active&gt;&gt;) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            renderer: <span class="prelude-val">None</span>,
+            play_stage,
+            fetcher: <span class="prelude-val">None</span>,
+            start_instant: T::now(),
+            previous_instant: T::now(),
+            current_instant: T::now(),
+            action_queue: Vec::new(),
+            benchmark_data: BenchmarkData::new(),
+            settings: Settings::default(),
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">with_game_renderer</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">renderer</span>: <span class="ident">GameRenderer</span>) {
-        <span class="self">self</span>.<span class="ident">renderer</span> = <span class="prelude-val">Some</span>(<span class="ident">renderer</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>with_game_renderer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, renderer: GameRenderer) {
+        <span class="self">self</span>.renderer = <span class="prelude-val">Some</span>(renderer);
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">start</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">start_instant</span> = <span class="ident">T::now</span>();
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>start(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.start_instant = T::now();
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">load</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">chart_id</span>: <span class="ident">usize</span>) {}
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>load(<span class="kw-2">&amp;mut </span><span class="self">self</span>, chart_id: usize) {}
 
-    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">current_instant</span> = <span class="ident">T::now</span>();
-        <span class="kw">let</span> <span class="ident">delta</span> = <span class="self">self</span>.<span class="ident">current_instant</span>.<span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">previous_instant</span>);
-        <span class="self">self</span>.<span class="ident">benchmark_data</span>.<span class="ident">add_frame_time</span>(<span class="ident">delta</span>);
+    <span class="kw">fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.current_instant = T::now();
+        <span class="kw">let </span>delta = <span class="self">self</span>.current_instant.sub(<span class="kw-2">&amp;</span><span class="self">self</span>.previous_instant);
+        <span class="self">self</span>.benchmark_data.add_frame_time(delta);
 
-        <span class="kw">let</span> <span class="ident">current_progress</span> = (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() * <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="kw">let </span>current_progress = (<span class="self">self</span>.start_instant.ms_since() * <span class="number">1000.</span>) <span class="kw">as </span>u64;
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) = <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
-            <span class="ident">stage</span>.<span class="ident">tick</span>(<span class="ident">current_progress</span>);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(stage) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.play_stage {
+            stage.tick(current_progress);
 
-            <span class="kw">for</span> <span class="ident">actions</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">action_queue</span>.<span class="ident">drain</span>(..) {
-                <span class="ident">stage</span>.<span class="ident">do_action</span>(<span class="ident">actions</span>.<span class="ident">direction</span>, <span class="ident">actions</span>.<span class="ident">ts</span>);
+            <span class="kw">for </span>actions <span class="kw">in </span><span class="self">self</span>.action_queue.drain(..) {
+                stage.do_action(actions.direction, actions.ts);
             }
         }
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">fetcher</span>) = <span class="self">self</span>.<span class="ident">fetcher</span>.<span class="ident">take</span>() {
-            <span class="kw">let</span> <span class="ident">result</span> = <span class="ident">fetcher</span>.<span class="ident">fetch</span>();
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>fetcher) = <span class="self">self</span>.fetcher.take() {
+            <span class="kw">let </span>result = fetcher.fetch();
 
-            <span class="kw">match</span> <span class="ident">result</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">bytes</span>) =&gt; <span class="kw">match</span> <span class="ident">bytes</span> {
-                    <span class="ident">fetch::BytesFetch::Ok</span>(<span class="ident">chart</span>) =&gt; {
-                        <span class="kw">let</span> <span class="ident">parser_compressed</span> = <span class="ident">SwfParser::new</span>(<span class="ident">chart</span>.<span class="ident">to_vec</span>());
-                        <span class="kw">let</span> <span class="ident">record</span> = <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">ready_to_parse</span>) = <span class="ident">parser_compressed</span>.<span class="ident">decompress</span>() {
-                            <span class="kw">let</span> <span class="ident">parsing</span> = <span class="ident">ready_to_parse</span>.<span class="ident">parse</span>();
-                            <span class="kw">let</span> <span class="ident">parsed</span> = <span class="ident">parsing</span>.<span class="ident">tick</span>();
-                            <span class="prelude-val">Some</span>(<span class="ident">parsed</span>.<span class="ident">produce_tape</span>())
-                        } <span class="kw">else</span> {
-                            <span class="prelude-val">None</span>
-                        };
+            <span class="kw">match </span>result {
+                <span class="prelude-val">Some</span>(bytes) =&gt; <span class="kw">match </span>bytes {
+                    fetch::BytesFetch::Ok(chart) =&gt; {
+                        <span class="kw">let </span>parser_compressed = SwfParser::new(chart.to_vec());
+                        <span class="kw">let </span>record = <span class="kw">if let </span><span class="prelude-val">Ok</span>(ready_to_parse) = parser_compressed.decompress() {
+                            <span class="kw">let </span>parsing = ready_to_parse.parse();
+                            <span class="kw">let </span>parsed = parsing.tick();
+                            <span class="prelude-val">Some</span>(parsed.produce_tape())
+                        } <span class="kw">else </span>{
+                            <span class="prelude-val">None
+                        </span>};
 
-                        <span class="kw">let</span> <span class="ident">turntable</span> = <span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>());
+                        <span class="kw">let </span>turntable = Turntable::load(record.unwrap());
 
-                        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">settings</span> = <span class="ident">Settings::default</span>();
-                        <span class="ident">settings</span>.<span class="ident">scroll_speed</span> = <span class="number">3000</span>;
-                        <span class="ident">settings</span>.<span class="ident">lane_gap</span> = <span class="number">72</span>;
-                        <span class="ident">settings</span>.<span class="ident">scroll_direction</span> = <span class="ident">settings::ScrollDirection::Up</span>;
+                        <span class="kw">let </span>play = Play::new(turntable).with_settings(<span class="self">self</span>.settings);
+                        <span class="kw">let </span>play_started = play.start();
+                        <span class="self">self</span>.play_stage = <span class="prelude-val">Some</span>(play_started);
 
-                        <span class="kw">let</span> <span class="ident">settings</span> = <span class="ident">Settings</span> {
-                            <span class="ident">scroll_speed</span>: <span class="number">3000</span>,
-                            <span class="ident">lane_gap</span>: <span class="number">72</span>,
-                            <span class="ident">scroll_direction</span>: <span class="ident">settings::ScrollDirection::Up</span>,
-                            ..<span class="ident">Settings::default</span>()
-                        };
-
-                        <span class="kw">let</span> <span class="ident">play</span> = <span class="ident">Play::new</span>(<span class="ident">turntable</span>).<span class="ident">with_settings</span>(<span class="ident">settings</span>);
-                        <span class="kw">let</span> <span class="ident">play_started</span> = <span class="ident">play</span>.<span class="ident">start</span>();
-                        <span class="self">self</span>.<span class="ident">play_stage</span> = <span class="prelude-val">Some</span>(<span class="ident">play_started</span>);
-
-                        <span class="self">self</span>.<span class="ident">start</span>();
+                        <span class="self">self</span>.start();
                     }
-                    <span class="ident">fetch::BytesFetch::Wait</span> =&gt; <span class="macro">todo!</span>(),
-                    <span class="ident">fetch::BytesFetch::Err</span>(<span class="ident">err</span>) =&gt; <span class="macro">log::error!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">err</span>),
+                    fetch::BytesFetch::Wait =&gt; <span class="macro">todo!</span>(),
+                    fetch::BytesFetch::Err(err) =&gt; <span class="macro">log::error!</span>(<span class="string">&quot;{}&quot;</span>, err),
                 },
-                <span class="prelude-val">None</span> =&gt; {
-                    <span class="self">self</span>.<span class="ident">fetcher</span>.<span class="ident">replace</span>(<span class="ident">fetcher</span>);
+                <span class="prelude-val">None </span>=&gt; {
+                    <span class="self">self</span>.fetcher.replace(fetcher);
                 }
             }
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">Direction</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) = <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
-            <span class="self">self</span>.<span class="ident">action_queue</span>.<span class="ident">push</span>(<span class="ident">Action</span> {
-                <span class="ident">direction</span>,
-                <span class="ident">ts</span>: (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() * <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">i128</span>,
+    <span class="kw">fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: Direction) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(stage) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.play_stage {
+            <span class="self">self</span>.action_queue.push(Action {
+                direction,
+                ts: (<span class="self">self</span>.start_instant.ms_since() * <span class="number">1000.</span>) <span class="kw">as </span>i128,
             });
         }
     }
 
-    <span class="doccomment">/// Draw the `World` state to the frame buffer.</span>
-    <span class="doccomment">///</span>
-    <span class="doccomment">/// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`</span>
-    <span class="kw">fn</span> <span class="ident">draw</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">renderer</span>) = <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">renderer</span> {
-            <span class="kw">let</span> <span class="ident">frame</span> = <span class="ident">renderer</span>.<span class="ident">pixels</span>.<span class="ident">get_frame</span>();
-            <span class="ident">clear</span>(<span class="ident">frame</span>);
+    <span class="doccomment">/// Draw the `World` state to the frame buffer.
+    ///
+    /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
+    </span><span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(renderer) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.renderer {
+            <span class="kw">let </span>frame = renderer.pixels.get_frame();
+            clear(frame);
 
-            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) = <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">play_stage</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">noteskin</span> = <span class="kw-2">&amp;</span><span class="ident">renderer</span>.<span class="ident">noteskin</span> {
-                    <span class="kw">let</span> <span class="ident">time_on_screen</span> = <span class="ident">u64::from</span>(<span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">scroll_speed</span>);
-                    <span class="kw">let</span> <span class="ident">field_height</span> = <span class="ident">HEIGHT</span> <span class="kw">as</span> <span class="ident">f64</span>;
-                    <span class="kw">let</span> <span class="ident">note_height</span> = <span class="ident">noteskin</span>.<span class="ident">note_height</span> <span class="kw">as</span> <span class="ident">f64</span>;
-                    <span class="kw">let</span> <span class="ident">offset</span> = <span class="ident">WIDTH</span> <span class="kw">as</span> <span class="ident">f64</span> / <span class="number">2.0</span> - <span class="ident">noteskin</span>.<span class="ident">note_width</span> <span class="kw">as</span> <span class="ident">f64</span> * <span class="number">0.5</span>;
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(play) = <span class="kw-2">&amp;</span><span class="self">self</span>.play_stage {
+                <span class="kw">if let </span>noteskin = <span class="kw-2">&amp;</span>renderer.noteskin {
+                    <span class="kw">let </span>time_on_screen = u64::from(play.settings().scroll_speed);
+                    <span class="kw">let </span>field_height = HEIGHT <span class="kw">as </span>f64;
+                    <span class="kw">let </span>note_height = noteskin.note_height <span class="kw">as </span>f64;
+                    <span class="kw">let </span>offset = WIDTH <span class="kw">as </span>f64 / <span class="number">2.0 </span>- noteskin.note_width <span class="kw">as </span>f64 * <span class="number">0.5</span>;
 
-                    <span class="kw">let</span> <span class="ident">start_position</span> = <span class="kw">match</span> <span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">scroll_direction</span> {
-                        <span class="ident">settings::ScrollDirection::Down</span> =&gt; -<span class="ident">note_height</span>,
-                        <span class="ident">settings::ScrollDirection::Up</span> =&gt; <span class="ident">field_height</span>,
+                    <span class="kw">let </span>start_position = <span class="kw">match </span>play.settings().scroll_direction {
+                        settings::ScrollDirection::Down =&gt; -note_height,
+                        settings::ScrollDirection::Up =&gt; field_height,
                     };
-                    <span class="kw">let</span> <span class="ident">end_position</span> = <span class="kw">match</span> <span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">scroll_direction</span> {
-                        <span class="ident">settings::ScrollDirection::Down</span> =&gt; <span class="ident">field_height</span>,
-                        <span class="ident">settings::ScrollDirection::Up</span> =&gt; -<span class="ident">note_height</span>,
+                    <span class="kw">let </span>end_position = <span class="kw">match </span>play.settings().scroll_direction {
+                        settings::ScrollDirection::Down =&gt; field_height,
+                        settings::ScrollDirection::Up =&gt; -note_height,
                     };
 
-                    <span class="kw">let</span> <span class="ident">chart_progress</span> = <span class="ident">play</span>.<span class="ident">progress</span>();
+                    <span class="kw">let </span>chart_progress = play.progress();
 
-                    <span class="kw">let</span> <span class="ident">position</span> = <span class="ident">get_pos_from_ms</span>(
-                        <span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">judge_zero_point</span>,
-                        <span class="ident">start_position</span>,
-                        <span class="ident">end_position</span>,
-                        <span class="ident">time_on_screen</span>,
+                    <span class="kw">let </span>position = get_pos_from_ms(
+                        play.settings().judge_zero_point,
+                        start_position,
+                        end_position,
+                        time_on_screen,
                     );
 
-                    <span class="ident">draw_receptors</span>(<span class="ident">play</span>, <span class="ident">noteskin</span>, <span class="ident">frame</span>, <span class="ident">offset</span>, <span class="ident">position</span>);
+                    draw_receptors(play, noteskin, frame, offset, position);
 
-                    <span class="ident">draw_notes</span>(
-                        <span class="ident">play</span>,
-                        <span class="ident">time_on_screen</span>,
-                        <span class="ident">chart_progress</span>,
-                        <span class="ident">end_position</span>,
-                        <span class="ident">start_position</span>,
-                        <span class="ident">offset</span>,
-                        <span class="ident">frame</span>,
-                        <span class="ident">noteskin</span>,
+                    draw_notes(
+                        play,
+                        time_on_screen,
+                        chart_progress,
+                        end_position,
+                        start_position,
+                        offset,
+                        frame,
+                        noteskin,
                     );
                 }
             }
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">finish</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">previous_instant</span> = <span class="self">self</span>.<span class="ident">current_instant</span>;
+    <span class="kw">fn </span>finish(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.previous_instant = <span class="self">self</span>.current_instant;
+    }
+
+    <span class="kw">fn </span>with_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt;) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(settings) = settings {
+            <span class="self">self</span>.settings.merge(settings);
+        }
     }
 }
 
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::too_many_arguments</span>)]</span>
-<span class="kw">fn</span> <span class="ident">draw_notes</span>(
-    <span class="ident">play</span>: <span class="kw-2">&amp;</span><span class="ident">Play</span>&lt;<span class="ident">play::Active</span>&gt;,
-    <span class="ident">time_on_screen</span>: <span class="ident">u64</span>,
-    <span class="ident">chart_progress</span>: <span class="ident">u64</span>,
-    <span class="ident">end_position</span>: <span class="ident">f64</span>,
-    <span class="ident">start_position</span>: <span class="ident">f64</span>,
-    <span class="ident">offset</span>: <span class="ident">f64</span>,
-    <span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>],
-    <span class="ident">noteskin</span>: <span class="kw-2">&amp;</span><span class="ident">noteskin::Definition</span>,
+<span class="attribute">#[allow(clippy::too_many_arguments)]</span>
+<span class="kw">fn </span>draw_notes(
+    play: <span class="kw-2">&amp;</span>Play&lt;play::Active&gt;,
+    time_on_screen: u64,
+    chart_progress: u64,
+    end_position: f64,
+    start_position: f64,
+    offset: f64,
+    frame: <span class="kw-2">&amp;mut </span>[u8],
+    noteskin: <span class="kw-2">&amp;</span>noteskin::Definition,
 ) {
-    <span class="kw">let</span> <span class="ident">view</span> = <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">time_on_screen</span>);
-    <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">duration</span>, <span class="ident">note</span>) <span class="kw">in</span> <span class="ident">view</span>.<span class="ident">filter</span>(|(<span class="kw">_</span>, <span class="ident">note</span>)| !<span class="ident">play</span>.<span class="ident">judgements</span>().<span class="ident">contains_key</span>(<span class="ident">note</span>)) {
-        <span class="kw">let</span> <span class="ident">note_progress</span> = <span class="ident">duration</span> - <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">i128</span>;
-        <span class="kw">let</span> <span class="ident">normalized</span> = <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f64</span> / <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
-        <span class="kw">let</span> <span class="ident">position</span> = <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">start_position</span>, <span class="ident">normalized</span>);
-        <span class="kw">let</span> <span class="ident">lane_offset</span> = <span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">lane_gap</span> <span class="kw">as</span> <span class="ident">f64</span>;
+    <span class="kw">let </span>view = play.view(time_on_screen);
+    <span class="kw">for </span>(<span class="kw-2">&amp;</span>duration, note) <span class="kw">in </span>view.filter(|(<span class="kw">_</span>, note)| !play.judgements().contains_key(note)) {
+        <span class="kw">let </span>note_progress = duration - chart_progress <span class="kw">as </span>i128;
+        <span class="kw">let </span>normalized = note_progress <span class="kw">as </span>f64 / time_on_screen <span class="kw">as </span>f64;
+        <span class="kw">let </span>position = end_position.lerp(start_position, normalized);
+        <span class="kw">let </span>lane_offset = play.settings().lane_gap <span class="kw">as </span>f64;
 
-        <span class="kw">let</span> <span class="ident">lane_index</span> = <span class="kw">match</span> <span class="ident">note</span>.<span class="ident">direction</span> {
-            <span class="ident">note::Direction::Left</span> =&gt; -<span class="number">1.5</span>,
-            <span class="ident">note::Direction::Down</span> =&gt; -<span class="number">0.5</span>,
-            <span class="ident">note::Direction::Up</span> =&gt; <span class="number">0.5</span>,
-            <span class="ident">note::Direction::Right</span> =&gt; <span class="number">1.5</span>,
+        <span class="kw">let </span>lane_index = <span class="kw">match </span>note.direction {
+            note::Direction::Left =&gt; -<span class="number">1.5</span>,
+            note::Direction::Down =&gt; -<span class="number">0.5</span>,
+            note::Direction::Up =&gt; <span class="number">0.5</span>,
+            note::Direction::Right =&gt; <span class="number">1.5</span>,
         };
-        <span class="kw">let</span> <span class="ident">x</span> = <span class="ident">offset</span> + (<span class="ident">lane_offset</span> * <span class="ident">lane_index</span>);
-        <span class="kw">let</span> <span class="ident">y</span> = <span class="ident">position</span>;
-        <span class="ident">blit</span>(<span class="ident">frame</span>, <span class="ident">x</span>, <span class="ident">y</span>, <span class="kw-2">&amp;</span><span class="ident">note</span>.<span class="ident">direction</span>, <span class="kw-2">&amp;</span><span class="ident">noteskin</span>.<span class="ident">get_note</span>(<span class="ident">note</span>.<span class="ident">color</span>));
+        <span class="kw">let </span>x = offset + (lane_offset * lane_index);
+        <span class="kw">let </span>y = position;
+        blit(frame, x, y, <span class="kw-2">&amp;</span>note.direction, <span class="kw-2">&amp;</span>noteskin.get_note(note.color));
     }
 }
 
-<span class="kw">fn</span> <span class="ident">get_pos_from_ms</span>(<span class="ident">ms</span>: <span class="ident">i128</span>, <span class="ident">start_position</span>: <span class="ident">f64</span>, <span class="ident">end_position</span>: <span class="ident">f64</span>, <span class="ident">time_on_screen</span>: <span class="ident">u64</span>) -&gt; <span class="ident">f64</span> {
-    <span class="kw">let</span> <span class="ident">normalized</span> = <span class="ident">ms</span> <span class="kw">as</span> <span class="ident">f64</span> / <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
-    <span class="kw">let</span> <span class="ident">pos</span> = <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">start_position</span>, <span class="ident">normalized</span> <span class="kw">as</span> <span class="ident">f64</span>);
-    <span class="ident">pos</span>
+<span class="kw">fn </span>get_pos_from_ms(ms: i128, start_position: f64, end_position: f64, time_on_screen: u64) -&gt; f64 {
+    <span class="kw">let </span>normalized = ms <span class="kw">as </span>f64 / time_on_screen <span class="kw">as </span>f64;
+    <span class="kw">let </span>pos = end_position.lerp(start_position, normalized <span class="kw">as </span>f64);
+    pos
 }
 
-<span class="kw">fn</span> <span class="ident">draw_receptors</span>(
-    <span class="ident">play</span>: <span class="kw-2">&amp;</span><span class="ident">Play</span>&lt;<span class="ident">play::Active</span>&gt;,
-    <span class="ident">noteskin</span>: <span class="kw-2">&amp;</span><span class="ident">noteskin::Definition</span>,
-    <span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>],
-    <span class="ident">offset</span>: <span class="ident">f64</span>,
-    <span class="ident">position</span>: <span class="ident">f64</span>,
+<span class="kw">fn </span>draw_receptors(
+    play: <span class="kw-2">&amp;</span>Play&lt;play::Active&gt;,
+    noteskin: <span class="kw-2">&amp;</span>noteskin::Definition,
+    frame: <span class="kw-2">&amp;mut </span>[u8],
+    offset: f64,
+    position: f64,
 ) {
-    <span class="kw">let</span> <span class="ident">receptor_skin</span> = <span class="ident">noteskin</span>.<span class="ident">get_note</span>(<span class="ident">note::Color::Receptor</span>);
-    <span class="kw">let</span> <span class="ident">lane_offset</span> = <span class="ident">f64::from</span>(<span class="ident">play</span>.<span class="ident">settings</span>().<span class="ident">lane_gap</span>);
-    <span class="ident">blit</span>(
-        <span class="ident">frame</span>,
-        <span class="ident">offset</span> + (<span class="ident">lane_offset</span> * -<span class="number">1.5</span>),
-        <span class="ident">position</span>,
-        <span class="kw-2">&amp;</span><span class="ident">note::Direction::Left</span>,
-        <span class="kw-2">&amp;</span><span class="ident">receptor_skin</span>,
+    <span class="kw">let </span>receptor_skin = noteskin.get_note(note::Color::Receptor);
+    <span class="kw">let </span>lane_offset = f64::from(play.settings().lane_gap);
+    blit(
+        frame,
+        offset + (lane_offset * -<span class="number">1.5</span>),
+        position,
+        <span class="kw-2">&amp;</span>note::Direction::Left,
+        <span class="kw-2">&amp;</span>receptor_skin,
     );
-    <span class="ident">blit</span>(
-        <span class="ident">frame</span>,
-        <span class="ident">offset</span> + (<span class="ident">lane_offset</span> * -<span class="number">0.5</span>),
-        <span class="ident">position</span>,
-        <span class="kw-2">&amp;</span><span class="ident">note::Direction::Down</span>,
-        <span class="kw-2">&amp;</span><span class="ident">receptor_skin</span>,
+    blit(
+        frame,
+        offset + (lane_offset * -<span class="number">0.5</span>),
+        position,
+        <span class="kw-2">&amp;</span>note::Direction::Down,
+        <span class="kw-2">&amp;</span>receptor_skin,
     );
-    <span class="ident">blit</span>(
-        <span class="ident">frame</span>,
-        <span class="ident">offset</span> + (<span class="ident">lane_offset</span> * <span class="number">0.5</span>),
-        <span class="ident">position</span>,
-        <span class="kw-2">&amp;</span><span class="ident">note::Direction::Up</span>,
-        <span class="kw-2">&amp;</span><span class="ident">receptor_skin</span>,
+    blit(
+        frame,
+        offset + (lane_offset * <span class="number">0.5</span>),
+        position,
+        <span class="kw-2">&amp;</span>note::Direction::Up,
+        <span class="kw-2">&amp;</span>receptor_skin,
     );
-    <span class="ident">blit</span>(
-        <span class="ident">frame</span>,
-        <span class="ident">offset</span> + (<span class="ident">lane_offset</span> * <span class="number">1.5</span>),
-        <span class="ident">position</span>,
-        <span class="kw-2">&amp;</span><span class="ident">note::Direction::Right</span>,
-        <span class="kw-2">&amp;</span><span class="ident">receptor_skin</span>,
+    blit(
+        frame,
+        offset + (lane_offset * <span class="number">1.5</span>),
+        position,
+        <span class="kw-2">&amp;</span>note::Direction::Right,
+        <span class="kw-2">&amp;</span>receptor_skin,
     );
 }
 
 <span class="macro">cfg_if::cfg_if!</span> {
-    <span class="kw">if</span> <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">feature</span> = <span class="string">&quot;console_log&quot;</span>, <span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>))]</span> {
-        <span class="kw">fn</span> <span class="ident">init_log</span>() {
-            <span class="ident">console_log::init</span>().<span class="ident">unwrap</span>();
+    <span class="kw">if </span><span class="attribute">#[cfg(all(feature = <span class="string">&quot;console_log&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>))]</span> {
+        <span class="kw">fn </span>init_log() {
+            console_log::init().unwrap();
         }
-    } <span class="kw">else</span> {
-        <span class="kw">fn</span> <span class="ident">init_log</span>() { <span class="ident">simple_logger::init</span>().<span class="ident">unwrap</span>(); }
+    } <span class="kw">else </span>{
+        <span class="kw">fn </span>init_log() { simple_logger::init().unwrap(); }
     }
 }
 
-<span class="kw">fn</span> <span class="ident">main</span>() {
-    <span class="ident">init_log</span>();
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="kw">fn </span>main() {
+    init_log();
+    <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
     {
-        <span class="kw">use</span> <span class="ident">wasm_bindgen::UnwrapThrowExt</span>;
-        <span class="ident">std::panic::set_hook</span>(<span class="ident">Box::new</span>(<span class="ident">console_error_panic_hook::hook</span>));
-        <span class="ident">wasm_bindgen_futures::spawn_local</span>(<span class="kw">async</span> {
-            <span class="ident">run</span>().<span class="kw">await</span>.<span class="ident">unwrap_throw</span>();
+        <span class="kw">use </span>wasm_bindgen::UnwrapThrowExt;
+        std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+        wasm_bindgen_futures::spawn_local(<span class="kw">async </span>{
+            run().<span class="kw">await</span>.unwrap_throw();
         });
     }
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>))]</span>
+    <span class="attribute">#[cfg(not(target_arch = <span class="string">&quot;wasm32&quot;</span>))]</span>
     {
-        <span class="kw">use</span> <span class="ident">futures::executor</span>;
-        <span class="kw">use</span> <span class="ident">log::error</span>;
-        <span class="kw">use</span> <span class="ident">std::env</span>;
+        <span class="kw">use </span>futures::executor;
+        <span class="kw">use </span>log::error;
+        <span class="kw">use </span>std::env;
 
-        <span class="kw">match</span> <span class="ident">executor::block_on</span>(<span class="ident">run</span>()) {
+        <span class="kw">match </span>executor::block_on(run()) {
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
+            <span class="prelude-val">Err</span>(err) =&gt; {
                 <span class="macro">error!</span>(
                     <span class="string">&quot;{:?} exited with bad form: {}&quot;</span>,
-                    <span class="ident">env::current_exe</span>().<span class="ident">ok</span>(),
-                    <span class="ident">err</span>
+                    env::current_exe().ok(),
+                    err
                 );
             }
         }
     }
 }
 
-<span class="kw">fn</span> <span class="ident">build_window</span>(
-    <span class="ident">event_loop</span>: <span class="kw-2">&amp;</span><span class="ident">EventLoop</span>&lt;()&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">winit::window::Window</span>, <span class="ident">winit::error::OsError</span>&gt; {
+<span class="kw">fn </span>build_window(
+    event_loop: <span class="kw-2">&amp;</span>EventLoop&lt;()&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;winit::window::Window, winit::error::OsError&gt; {
     {
-        <span class="kw">let</span> <span class="ident">size</span> = <span class="ident">LogicalSize::new</span>(<span class="ident">WIDTH</span>, <span class="ident">HEIGHT</span>);
-        <span class="ident">WindowBuilder::new</span>()
-            .<span class="ident">with_title</span>(<span class="string">&quot;Rust Rust Revolution&quot;</span>)
-            .<span class="ident">with_inner_size</span>(<span class="ident">size</span>)
-            .<span class="ident">with_resizable</span>(<span class="bool-val">false</span>)
-            .<span class="ident">build</span>(<span class="ident">event_loop</span>)
+        <span class="kw">let </span>size = LogicalSize::new(WIDTH, HEIGHT);
+        WindowBuilder::new()
+            .with_title(<span class="string">&quot;Rust Rust Revolution&quot;</span>)
+            .with_inner_size(size)
+            .with_resizable(<span class="bool-val">false</span>)
+            .build(event_loop)
     }
 }
 
-<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run</span>() -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="ident">Error</span>&gt; {
-    <span class="kw">let</span> <span class="ident">event_loop</span> = <span class="ident">EventLoop::new</span>();
-    <span class="kw">let</span> <span class="ident">window</span> = <span class="ident">build_window</span>(<span class="kw-2">&amp;</span><span class="ident">event_loop</span>)<span class="question-mark">?</span>;
+<span class="kw">async fn </span>run() -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">let </span>event_loop = EventLoop::new();
+    <span class="kw">let </span>window = build_window(<span class="kw-2">&amp;</span>event_loop)<span class="question-mark">?</span>;
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
+    <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
     {
-        <span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="ident">Element</span>, <span class="ident">HtmlCanvasElement</span>};
+        <span class="kw">use </span>web_sys::{Element, HtmlCanvasElement};
 
-        <span class="kw">use</span> <span class="ident">std::rc::Rc</span>;
-        <span class="kw">use</span> <span class="ident">wasm_bindgen::closure::Closure</span>;
-        <span class="kw">use</span> <span class="ident">wasm_bindgen::JsCast</span>;
-        <span class="kw">use</span> <span class="ident">winit::platform::web::WindowExtWebSys</span>;
+        <span class="kw">use </span>std::rc::Rc;
+        <span class="kw">use </span>wasm_bindgen::closure::Closure;
+        <span class="kw">use </span>wasm_bindgen::JsCast;
+        <span class="kw">use </span>winit::platform::web::WindowExtWebSys;
 
-        <span class="comment">// Initialize winit window with current dimensions of browser client</span>
-        <span class="ident">window</span>.<span class="ident">set_inner_size</span>(<span class="ident">LogicalSize::new</span>(<span class="ident">WIDTH</span>, <span class="ident">HEIGHT</span>));
+        <span class="comment">// Initialize winit window with current dimensions of browser client
+        </span>window.set_inner_size(LogicalSize::new(WIDTH, HEIGHT));
 
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">client_window</span>) = <span class="ident">web_sys::window</span>() {
-            <span class="ident">visibility::register_on_visibility_change_listener</span>(<span class="kw-2">&amp;</span><span class="ident">client_window</span>);
-        } <span class="kw">else</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(
-                <span class="string">&quot;Could not get window from web_sys&quot;</span>.<span class="ident">to_string</span>()
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(client_window) = web_sys::window() {
+            visibility::register_on_visibility_change_listener(<span class="kw-2">&amp;</span>client_window);
+        } <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(
+                <span class="string">&quot;Could not get window from web_sys&quot;</span>.to_string()
             ));
         }
 
         {
-            <span class="kw">let</span> <span class="ident">onblur</span> = <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> |<span class="ident">e</span>: <span class="ident">web_sys::FocusEvent</span>| {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">target</span>) = <span class="ident">e</span>.<span class="ident">current_target</span>() {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="ident">canvas</span> =
-                        <span class="ident">Rc::new</span>(<span class="ident">target</span>.<span class="ident">dyn_ref</span>::&lt;<span class="ident">HtmlCanvasElement</span>&gt;().<span class="ident">unwrap</span>().<span class="ident">to_owned</span>())
+            <span class="kw">let </span>onblur = Closure::wrap(Box::new(<span class="kw">move </span>|e: web_sys::FocusEvent| {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(target) = e.current_target() {
+                    <span class="kw">if let </span>canvas =
+                        Rc::new(target.dyn_ref::&lt;HtmlCanvasElement&gt;().unwrap().to_owned())
                     {
-                        <span class="kw">let</span> <span class="ident">focus</span> = <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> || {
-                            <span class="ident">canvas</span>.<span class="ident">to_owned</span>().<span class="ident">focus</span>().<span class="ident">ok</span>();
-                        }) <span class="kw">as</span> <span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">Fn</span>()&gt;);
-                        <span class="ident">web_sys::window</span>().<span class="ident">and_then</span>(|<span class="ident">win</span>| {
-                            <span class="ident">win</span>.<span class="ident">set_timeout_with_callback_and_timeout_and_arguments_0</span>(
-                                <span class="ident">focus</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>(),
+                        <span class="kw">let </span>focus = Closure::wrap(Box::new(<span class="kw">move </span>|| {
+                            canvas.to_owned().focus().ok();
+                        }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn()&gt;);
+                        web_sys::window().and_then(|win| {
+                            win.set_timeout_with_callback_and_timeout_and_arguments_0(
+                                focus.as_ref().unchecked_ref(),
                                 <span class="number">0</span>,
                             );
-                            <span class="prelude-val">Some</span>(<span class="ident">win</span>)
+                            <span class="prelude-val">Some</span>(win)
                         });
-                        <span class="ident">focus</span>.<span class="ident">forget</span>();
-                    } <span class="kw">else</span> {
+                        focus.forget();
+                    } <span class="kw">else </span>{
                         <span class="macro">log::error!</span>(<span class="string">&quot;Could not get canvas from target&quot;</span>);
                     }
-                } <span class="kw">else</span> {
+                } <span class="kw">else </span>{
                     <span class="macro">log::error!</span>(<span class="string">&quot;Could not get current target&quot;</span>);
                 }
-            }) <span class="kw">as</span> <span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">FnMut</span>(<span class="ident">web_sys::FocusEvent</span>)&gt;);
+            }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>FnMut(web_sys::FocusEvent)&gt;);
 
-            <span class="comment">// Attach winit canvas to body element</span>
-            <span class="ident">web_sys::window</span>()
-                .<span class="ident">and_then</span>(|<span class="ident">win</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-                .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;canvas&quot;</span>))
-                .<span class="ident">and_then</span>(|<span class="ident">canvas_div</span>: <span class="ident">Element</span>| {
-                    <span class="kw">let</span> <span class="ident">canvas</span>: <span class="ident">HtmlCanvasElement</span> = <span class="ident">window</span>.<span class="ident">canvas</span>();
-                    <span class="ident">canvas</span>.<span class="ident">set_class_name</span>(<span class="string">&quot;game&quot;</span>);
-                    <span class="ident">canvas</span>.<span class="ident">set_id</span>(<span class="string">&quot;rrr&quot;</span>);
-                    <span class="ident">canvas</span>.<span class="ident">set_width</span>(<span class="ident">WIDTH</span>);
-                    <span class="ident">canvas</span>.<span class="ident">set_height</span>(<span class="ident">HEIGHT</span>);
-                    <span class="kw">let</span> <span class="ident">res</span> = <span class="ident">canvas_div</span>
-                        .<span class="ident">append_child</span>(<span class="kw-2">&amp;</span><span class="ident">web_sys::Element::from</span>(<span class="ident">window</span>.<span class="ident">canvas</span>()))
-                        .<span class="ident">ok</span>();
-                    <span class="ident">canvas</span>.<span class="ident">set_onblur</span>(<span class="prelude-val">Some</span>(<span class="ident">onblur</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()));
-                    <span class="ident">canvas</span>.<span class="ident">set_tab_index</span>(<span class="number">1</span>);
-                    <span class="ident">canvas</span>.<span class="ident">focus</span>().<span class="ident">ok</span>();
-                    <span class="ident">res</span>
+            <span class="comment">// Attach winit canvas to body element
+            </span>web_sys::window()
+                .and_then(|win| win.document())
+                .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;canvas&quot;</span>))
+                .and_then(|canvas_div: Element| {
+                    <span class="kw">let </span>canvas: HtmlCanvasElement = window.canvas();
+                    canvas.set_class_name(<span class="string">&quot;game&quot;</span>);
+                    canvas.set_id(<span class="string">&quot;rrr&quot;</span>);
+                    canvas.set_width(WIDTH);
+                    canvas.set_height(HEIGHT);
+                    <span class="kw">let </span>res = canvas_div
+                        .append_child(<span class="kw-2">&amp;</span>web_sys::Element::from(window.canvas()))
+                        .ok();
+                    canvas.set_onblur(<span class="prelude-val">Some</span>(onblur.as_ref().unchecked_ref()));
+                    canvas.set_tab_index(<span class="number">1</span>);
+                    canvas.focus().ok();
+                    res
                 });
 
-            <span class="ident">onblur</span>.<span class="ident">forget</span>();
+            onblur.forget();
         }
     }
 
-    <span class="ident">run_game_loop</span>(<span class="ident">window</span>, <span class="ident">event_loop</span>).<span class="kw">await</span>
-}
+    <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
+    <span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt; =
+        { <span class="prelude-val">Some</span>(query_settings::get_optional_settings()) };
+    <span class="attribute">#[cfg(not(target_arch = <span class="string">&quot;wasm32&quot;</span>))]</span>
+    <span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt; = { <span class="prelude-val">None </span>};
 
-<span class="kw">fn</span> <span class="ident">do_toggle_game_state_debug</span>(<span class="ident">game</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Game</span>&lt;<span class="ident">Time</span>&gt;) {
-    <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">play_stage</span>.<span class="ident">is_none</span>() {
-        <span class="kw">if</span> <span class="ident">game</span>.<span class="ident">fetcher</span>.<span class="ident">is_none</span>() {
-            <span class="ident">game</span>.<span class="ident">fetcher</span>.<span class="ident">replace</span>(<span class="ident">fetch::download_chart</span>(<span class="number">3348</span>));
+    run_game_loop(window, event_loop, extracted_settings).<span class="kw">await
+</span>}
+
+<span class="kw">fn </span>do_toggle_game_state_debug(game: <span class="kw-2">&amp;mut </span>Game&lt;Time&gt;) {
+    <span class="kw">if </span>game.play_stage.is_none() {
+        <span class="kw">if </span>game.fetcher.is_none() {
+            game.fetcher.replace(fetch::download_chart(<span class="number">3348</span>));
         }
-    } <span class="kw">else</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) = <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">play_stage</span> {
-            <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">play</span>.<span class="ident">judgements</span>());
+    } <span class="kw">else </span>{
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(play) = <span class="kw-2">&amp;</span>game.play_stage {
+            <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgements());
         }
-        <span class="ident">game</span>.<span class="ident">play_stage</span> = <span class="prelude-val">None</span>;
+        game.play_stage = <span class="prelude-val">None</span>;
     }
 }
 
-<span class="kw">async</span> <span class="kw">fn</span> <span class="ident">run_game_loop</span>(
-    <span class="ident">window</span>: <span class="ident">winit::window::Window</span>,
-    <span class="ident">event_loop</span>: <span class="ident">EventLoop</span>&lt;()&gt;,
-) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="ident">anyhow::Error</span>&gt; {
-    <span class="kw">let</span> <span class="ident">window_size</span> = <span class="ident">window</span>.<span class="ident">inner_size</span>();
-    <span class="kw">let</span> <span class="ident">surface_texture</span> = <span class="ident">SurfaceTexture::new</span>(<span class="ident">window_size</span>.<span class="ident">width</span>, <span class="ident">window_size</span>.<span class="ident">height</span>, <span class="kw-2">&amp;</span><span class="ident">window</span>);
+<span class="kw">async fn </span>run_game_loop(
+    window: winit::window::Window,
+    event_loop: EventLoop&lt;()&gt;,
+    settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt; {
+    <span class="kw">let </span>window_size = window.inner_size();
+    <span class="kw">let </span>surface_texture = SurfaceTexture::new(window_size.width, window_size.height, <span class="kw-2">&amp;</span>window);
 
-    <span class="kw">let</span> <span class="ident">pixels</span> = <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">pixels</span>) = <span class="ident">PixelsBuilder::new</span>(<span class="ident">WIDTH</span>, <span class="ident">HEIGHT</span>, <span class="ident">surface_texture</span>)
-        .<span class="ident">clear_color</span>(<span class="ident">pixels::wgpu::Color</span> {
-            <span class="ident">r</span>: <span class="number">0.</span>,
-            <span class="ident">g</span>: <span class="number">0.</span>,
-            <span class="ident">b</span>: <span class="number">0.</span>,
-            <span class="ident">a</span>: <span class="number">1.0</span>,
+    <span class="kw">let </span>pixels = <span class="kw">if let </span><span class="prelude-val">Ok</span>(pixels) = PixelsBuilder::new(WIDTH, HEIGHT, surface_texture)
+        .clear_color(pixels::wgpu::Color {
+            r: <span class="number">0.</span>,
+            g: <span class="number">0.</span>,
+            b: <span class="number">0.</span>,
+            a: <span class="number">1.0</span>,
         })
-        .<span class="ident">build_async</span>()
-        .<span class="kw">await</span>
-    {
-        <span class="ident">pixels</span>
-    } <span class="kw">else</span> {
-        <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Could not initialize Pixels renderer.&quot;</span>))<span class="question-mark">?</span>
-    };
+        .build_async()
+        .<span class="kw">await
+    </span>{
+        pixels
+    } <span class="kw">else </span>{
+        <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Could not initialize Pixels renderer.&quot;</span>))<span class="question-mark">?
+    </span>};
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">game</span> = <span class="ident">Game</span>::&lt;<span class="ident">Time</span>&gt;<span class="ident">::new</span>(<span class="prelude-val">None</span>);
-    <span class="ident">game</span>.<span class="ident">with_game_renderer</span>(<span class="ident">GameRenderer::new</span>(<span class="ident">pixels</span>));
-    <span class="ident">game</span>.<span class="ident">load</span>(<span class="number">3348</span>);
-    <span class="ident">window</span>.<span class="ident">focus_window</span>();
+    <span class="kw">let </span><span class="kw-2">mut </span>game = Game::&lt;Time&gt;::new(<span class="prelude-val">None</span>);
+    game.with_game_renderer(GameRenderer::new(pixels));
+    game.with_settings(settings);
+    game.load(<span class="number">3348</span>);
+    window.focus_window();
 
-    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
-    <span class="kw">let</span> <span class="ident">elements</span> = {
-        <span class="kw">use</span> <span class="ident">web_sys</span>::{<span class="ident">Element</span>, <span class="ident">Window</span>};
+    <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
+    <span class="kw">let </span>elements = {
+        <span class="kw">use </span>web_sys::{Element, Window};
 
-        <span class="kw">struct</span> <span class="ident">Elements</span> {
-            <span class="ident">update_progress</span>: <span class="ident">Element</span>,
-            <span class="ident">avg_frame_time</span>: <span class="ident">Element</span>,
-            <span class="ident">max_frame_time</span>: <span class="ident">Element</span>,
-            <span class="ident">min_frame_time</span>: <span class="ident">Element</span>,
-            <span class="ident">skipped_frames</span>: <span class="ident">Element</span>,
+        <span class="kw">struct </span>Elements {
+            update_progress: Element,
+            avg_frame_time: Element,
+            max_frame_time: Element,
+            min_frame_time: Element,
+            skipped_frames: Element,
         }
 
-        <span class="kw">let</span> <span class="ident">update_progress</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Element</span>&gt; = <span class="ident">web_sys::window</span>()
-            .<span class="ident">and_then</span>(|<span class="ident">win</span>: <span class="ident">Window</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-            .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;progress&quot;</span>));
+        <span class="kw">let </span>update_progress: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;progress&quot;</span>));
 
-        <span class="kw">let</span> <span class="ident">avg_frame_time</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Element</span>&gt; = <span class="ident">web_sys::window</span>()
-            .<span class="ident">and_then</span>(|<span class="ident">win</span>: <span class="ident">Window</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-            .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;avg_frame_time&quot;</span>));
+        <span class="kw">let </span>avg_frame_time: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;avg_frame_time&quot;</span>));
 
-        <span class="kw">let</span> <span class="ident">max_frame_time</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Element</span>&gt; = <span class="ident">web_sys::window</span>()
-            .<span class="ident">and_then</span>(|<span class="ident">win</span>: <span class="ident">Window</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-            .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;max_frame_time&quot;</span>));
+        <span class="kw">let </span>max_frame_time: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;max_frame_time&quot;</span>));
 
-        <span class="kw">let</span> <span class="ident">min_frame_time</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Element</span>&gt; = <span class="ident">web_sys::window</span>()
-            .<span class="ident">and_then</span>(|<span class="ident">win</span>: <span class="ident">Window</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-            .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;min_frame_time&quot;</span>));
+        <span class="kw">let </span>min_frame_time: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;min_frame_time&quot;</span>));
 
-        <span class="kw">let</span> <span class="ident">skipped_frames</span>: <span class="prelude-ty">Option</span>&lt;<span class="ident">Element</span>&gt; = <span class="ident">web_sys::window</span>()
-            .<span class="ident">and_then</span>(|<span class="ident">win</span>: <span class="ident">Window</span>| <span class="ident">win</span>.<span class="ident">document</span>())
-            .<span class="ident">and_then</span>(|<span class="ident">doc</span>| <span class="ident">doc</span>.<span class="ident">get_element_by_id</span>(<span class="string">&quot;skipped_frames&quot;</span>));
+        <span class="kw">let </span>skipped_frames: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;skipped_frames&quot;</span>));
 
-        <span class="ident">Elements</span> {
-            <span class="ident">update_progress</span>: <span class="ident">update_progress</span>.<span class="ident">unwrap</span>(),
-            <span class="ident">avg_frame_time</span>: <span class="ident">avg_frame_time</span>.<span class="ident">unwrap</span>(),
-            <span class="ident">max_frame_time</span>: <span class="ident">max_frame_time</span>.<span class="ident">unwrap</span>(),
-            <span class="ident">min_frame_time</span>: <span class="ident">min_frame_time</span>.<span class="ident">unwrap</span>(),
-            <span class="ident">skipped_frames</span>: <span class="ident">skipped_frames</span>.<span class="ident">unwrap</span>(),
+        Elements {
+            update_progress: update_progress.unwrap(),
+            avg_frame_time: avg_frame_time.unwrap(),
+            max_frame_time: max_frame_time.unwrap(),
+            min_frame_time: min_frame_time.unwrap(),
+            skipped_frames: skipped_frames.unwrap(),
         }
     };
 
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">modifiers</span> = <span class="ident">ModifiersState::default</span>();
-    <span class="ident">event_loop</span>.<span class="ident">run</span>(<span class="kw">move</span> |<span class="ident">in_event</span>, <span class="kw">_</span>, <span class="ident">control_flow</span>| {
-        <span class="kw-2">*</span><span class="ident">control_flow</span> = <span class="ident">ControlFlow::Poll</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>modifiers = ModifiersState::default();
+    event_loop.run(<span class="kw">move </span>|in_event, <span class="kw">_</span>, control_flow| {
+        <span class="kw-2">*</span>control_flow = ControlFlow::Poll;
 
-        <span class="kw">match</span> <span class="ident">in_event</span> {
-            <span class="ident">Event::WindowEvent</span> { <span class="ident">event</span>, .. } =&gt; <span class="kw">match</span> <span class="ident">event</span> {
-                <span class="ident">WindowEvent::CloseRequested</span> =&gt; <span class="kw-2">*</span><span class="ident">control_flow</span> = <span class="ident">ControlFlow::Exit</span>,
-                <span class="ident">WindowEvent::Resized</span>(<span class="ident">size</span>) =&gt; {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">renderer</span>) = <span class="kw-2">&amp;mut</span> <span class="ident">game</span>.<span class="ident">renderer</span> {
-                        <span class="ident">renderer</span>.<span class="ident">pixels</span>.<span class="ident">resize_surface</span>(<span class="ident">size</span>.<span class="ident">width</span>, <span class="ident">size</span>.<span class="ident">height</span>);
+        <span class="kw">match </span>in_event {
+            Event::WindowEvent { event, .. } =&gt; <span class="kw">match </span>event {
+                WindowEvent::CloseRequested =&gt; <span class="kw-2">*</span>control_flow = ControlFlow::Exit,
+                WindowEvent::Resized(size) =&gt; {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(renderer) = <span class="kw-2">&amp;mut </span>game.renderer {
+                        renderer.pixels.resize_surface(size.width, size.height);
                     }
                 }
-                <span class="ident">WindowEvent::Focused</span>(<span class="ident">focused</span>) =&gt; {
-                    <span class="macro">log::info!</span>(<span class="string">&quot;Window {:?} focused: {:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">window</span>.<span class="ident">id</span>(), <span class="ident">focused</span>);
+                WindowEvent::Focused(focused) =&gt; {
+                    <span class="macro">log::info!</span>(<span class="string">&quot;Window {:?} focused: {:?}&quot;</span>, <span class="kw-2">&amp;</span>window.id(), focused);
                 }
-                <span class="ident">WindowEvent::Touch</span>(<span class="ident">touch</span>) =&gt; {
-                    <span class="kw">if</span> <span class="ident">touch</span>.<span class="ident">phase</span> == <span class="ident">TouchPhase::Ended</span> {
-                        <span class="ident">do_toggle_game_state_debug</span>(<span class="kw-2">&amp;mut</span> <span class="ident">game</span>);
+                WindowEvent::Touch(touch) =&gt; {
+                    <span class="kw">if </span>touch.phase == TouchPhase::Ended {
+                        do_toggle_game_state_debug(<span class="kw-2">&amp;mut </span>game);
                     }
                 }
-                <span class="ident">WindowEvent::KeyboardInput</span> {
-                    <span class="ident">input</span>:
-                        <span class="ident">KeyboardInput</span> {
-                            <span class="ident">state</span>: <span class="ident">ElementState::Pressed</span>,
-                            <span class="ident">virtual_keycode</span>: <span class="prelude-val">Some</span>(<span class="ident">key</span>),
+                WindowEvent::KeyboardInput {
+                    input:
+                        KeyboardInput {
+                            state: ElementState::Pressed,
+                            virtual_keycode: <span class="prelude-val">Some</span>(key),
                             ..
                         },
                     ..
                 } =&gt; {
-                    <span class="ident">handle_keyboard_input</span>(<span class="ident">key</span>, <span class="ident">control_flow</span>, <span class="kw-2">&amp;mut</span> <span class="ident">game</span>, <span class="kw-2">&amp;</span><span class="ident">window</span>, <span class="ident">modifiers</span>);
+                    handle_keyboard_input(key, control_flow, <span class="kw-2">&amp;mut </span>game, <span class="kw-2">&amp;</span>window, modifiers);
                 }
-                <span class="ident">WindowEvent::ModifiersChanged</span>(<span class="ident">m</span>) =&gt; <span class="ident">modifiers</span> = <span class="ident">m</span>,
-                <span class="kw">_</span> =&gt; (),
+                WindowEvent::ModifiersChanged(m) =&gt; modifiers = m,
+                <span class="kw">_ </span>=&gt; (),
             },
-            <span class="ident">Event::DeviceEvent</span> { <span class="ident">event</span>, .. } =&gt; <span class="kw">match</span> <span class="ident">event</span> {
-                <span class="ident">DeviceEvent::MouseMotion</span> { <span class="ident">delta</span>: <span class="kw">_</span> } =&gt; (),
-                <span class="ident">DeviceEvent::Button</span> { <span class="ident">button</span>: <span class="kw">_</span>, <span class="ident">state</span> } =&gt; <span class="kw">match</span> <span class="ident">state</span> {
-                    <span class="ident">ElementState::Pressed</span> =&gt; (),
-                    <span class="ident">ElementState::Released</span> =&gt; (),
+            Event::DeviceEvent { event, .. } =&gt; <span class="kw">match </span>event {
+                DeviceEvent::MouseMotion { delta: <span class="kw">_ </span>} =&gt; (),
+                DeviceEvent::Button { button: <span class="kw">_</span>, state } =&gt; <span class="kw">match </span>state {
+                    ElementState::Pressed =&gt; (),
+                    ElementState::Released =&gt; (),
                 },
-                <span class="kw">_</span> =&gt; (),
+                <span class="kw">_ </span>=&gt; (),
             },
-            <span class="ident">Event::MainEventsCleared</span> =&gt; {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">renderer</span>) = <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">renderer</span> {
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>) = <span class="ident">renderer</span>.<span class="ident">pixels</span>.<span class="ident">render</span>() {
-                        <span class="macro">log::error!</span>(<span class="string">&quot;pixels.render() failed: {}&quot;</span>, <span class="ident">e</span>);
-                        <span class="kw-2">*</span><span class="ident">control_flow</span> = <span class="ident">ControlFlow::Exit</span>;
+            Event::MainEventsCleared =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(renderer) = <span class="kw-2">&amp;</span>game.renderer {
+                    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = renderer.pixels.render() {
+                        <span class="macro">log::error!</span>(<span class="string">&quot;pixels.render() failed: {}&quot;</span>, e);
+                        <span class="kw-2">*</span>control_flow = ControlFlow::Exit;
                     }
 
-                    <span class="ident">game</span>.<span class="ident">update</span>();
-                    <span class="ident">game</span>.<span class="ident">draw</span>();
+                    game.update();
+                    game.draw();
 
-                    <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
-                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) = <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">play_stage</span> {
-                        <span class="ident">elements</span>
-                            .<span class="ident">update_progress</span>
-                            .<span class="ident">set_inner_html</span>(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">play</span>.<span class="ident">progress</span>()).<span class="ident">as_str</span>());
-                        <span class="ident">elements</span>.<span class="ident">avg_frame_time</span>.<span class="ident">set_inner_html</span>(
-                            <span class="macro">format!</span>(<span class="string">&quot;{:02.2?}ms&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">benchmark_data</span>.<span class="ident">avg_frame_time</span> * <span class="number">1000.0</span>)
-                                .<span class="ident">as_str</span>(),
+                    <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(play) = <span class="kw-2">&amp;</span>game.play_stage {
+                        elements
+                            .update_progress
+                            .set_inner_html(<span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span>play.progress()).as_str());
+                        elements.avg_frame_time.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:.2?}ms&quot;</span>, <span class="kw-2">&amp;</span>game.benchmark_data.avg_frame_time * <span class="number">1000.0</span>)
+                                .as_str(),
                         );
-                        <span class="ident">elements</span>.<span class="ident">max_frame_time</span>.<span class="ident">set_inner_html</span>(
-                            <span class="macro">format!</span>(<span class="string">&quot;{:02.2?}ms&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">benchmark_data</span>.<span class="ident">max_frame_time</span> * <span class="number">1000.0</span>)
-                                .<span class="ident">as_str</span>(),
+                        elements.max_frame_time.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:.2?}ms&quot;</span>, <span class="kw-2">&amp;</span>game.benchmark_data.max_frame_time * <span class="number">1000.0</span>)
+                                .as_str(),
                         );
-                        <span class="ident">elements</span>.<span class="ident">min_frame_time</span>.<span class="ident">set_inner_html</span>(
-                            <span class="macro">format!</span>(<span class="string">&quot;{:02.2?}ms&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">benchmark_data</span>.<span class="ident">min_frame_time</span> * <span class="number">1000.0</span>)
-                                .<span class="ident">as_str</span>(),
+                        elements.min_frame_time.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:.2?}ms&quot;</span>, <span class="kw-2">&amp;</span>game.benchmark_data.min_frame_time * <span class="number">1000.0</span>)
+                                .as_str(),
                         );
-                        <span class="ident">elements</span>.<span class="ident">skipped_frames</span>.<span class="ident">set_inner_html</span>(
-                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">game</span>.<span class="ident">benchmark_data</span>.<span class="ident">skipped_frames</span>).<span class="ident">as_str</span>(),
+                        elements.skipped_frames.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span>game.benchmark_data.skipped_frames).as_str(),
                         );
                     }
 
-                    <span class="ident">window</span>.<span class="ident">request_redraw</span>();
+                    window.request_redraw();
                 }
             }
-            <span class="ident">Event::RedrawEventsCleared</span> =&gt; {
-                <span class="ident">game</span>.<span class="ident">finish</span>();
+            Event::RedrawEventsCleared =&gt; {
+                game.finish();
             }
-            <span class="kw">_</span> =&gt; (),
+            <span class="kw">_ </span>=&gt; (),
         }
     });
 }
 
-<span class="kw">fn</span> <span class="ident">handle_keyboard_input</span>(
-    <span class="ident">key</span>: <span class="ident">winit::event::VirtualKeyCode</span>,
-    <span class="ident">control_flow</span>: <span class="kw-2">&amp;mut</span> <span class="ident">ControlFlow</span>,
-    <span class="ident">game</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Game</span>&lt;<span class="ident">Time</span>&gt;,
-    <span class="ident">window</span>: <span class="kw-2">&amp;</span><span class="ident">winit::window::Window</span>,
-    <span class="ident">modifiers</span>: <span class="ident">ModifiersState</span>,
+<span class="kw">fn </span>handle_keyboard_input(
+    key: winit::event::VirtualKeyCode,
+    control_flow: <span class="kw-2">&amp;mut </span>ControlFlow,
+    game: <span class="kw-2">&amp;mut </span>Game&lt;Time&gt;,
+    window: <span class="kw-2">&amp;</span>winit::window::Window,
+    modifiers: ModifiersState,
 ) {
-    <span class="kw">use</span> <span class="ident">winit::event::VirtualKeyCode</span>::{
-        <span class="ident">Comma</span>, <span class="ident">Down</span>, <span class="ident">Escape</span>, <span class="ident">Left</span>, <span class="ident">Period</span>, <span class="ident">Right</span>, <span class="ident">Slash</span>, <span class="ident">Space</span>, <span class="ident">Up</span>, <span class="ident">G</span>, <span class="ident">H</span>, <span class="ident">M</span>,
+    <span class="kw">use </span>winit::event::VirtualKeyCode::{
+        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, G, H, M,
     };
-    <span class="kw">match</span> <span class="ident">key</span> {
-        <span class="ident">Escape</span> =&gt; <span class="kw-2">*</span><span class="ident">control_flow</span> = <span class="ident">ControlFlow::Exit</span>,
-        <span class="ident">Left</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Left</span>),
-        <span class="ident">Down</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Down</span>),
-        <span class="ident">Up</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Up</span>),
-        <span class="ident">Right</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Right</span>),
-        <span class="ident">M</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Left</span>),
-        <span class="ident">Comma</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Down</span>),
-        <span class="ident">Period</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Up</span>),
-        <span class="ident">Slash</span> =&gt; <span class="ident">game</span>.<span class="ident">do_action</span>(<span class="ident">Direction::Right</span>),
-        <span class="ident">G</span> =&gt; <span class="ident">window</span>.<span class="ident">set_cursor_grab</span>(!<span class="ident">modifiers</span>.<span class="ident">shift</span>()).<span class="ident">unwrap</span>(),
-        <span class="ident">H</span> =&gt; <span class="ident">window</span>.<span class="ident">set_cursor_visible</span>(<span class="ident">modifiers</span>.<span class="ident">shift</span>()),
-        <span class="ident">Space</span> =&gt; {
-            <span class="ident">do_toggle_game_state_debug</span>(<span class="ident">game</span>);
+    <span class="kw">match </span>key {
+        Escape =&gt; <span class="kw-2">*</span>control_flow = ControlFlow::Exit,
+        Left =&gt; game.do_action(Direction::Left),
+        Down =&gt; game.do_action(Direction::Down),
+        Up =&gt; game.do_action(Direction::Up),
+        Right =&gt; game.do_action(Direction::Right),
+        M =&gt; game.do_action(Direction::Left),
+        Comma =&gt; game.do_action(Direction::Down),
+        Period =&gt; game.do_action(Direction::Up),
+        Slash =&gt; game.do_action(Direction::Right),
+        G =&gt; window.set_cursor_grab(!modifiers.shift()).unwrap(),
+        H =&gt; window.set_cursor_visible(modifiers.shift()),
+        Space =&gt; {
+            do_toggle_game_state_debug(game);
         }
-        <span class="kw">_</span> =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Key: {:?}&quot;</span>, <span class="ident">key</span>),
+        <span class="kw">_ </span>=&gt; <span class="macro">log::info!</span>(<span class="string">&quot;Key: {:?}&quot;</span>, key),
     }
 }
 
-<span class="kw">fn</span> <span class="ident">clear</span>(<span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) {
-    <span class="ident">frame</span>.<span class="ident">fill</span>(<span class="number">0</span>);
+<span class="kw">fn </span>clear(frame: <span class="kw-2">&amp;mut </span>[u8]) {
+    frame.fill(<span class="number">0</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

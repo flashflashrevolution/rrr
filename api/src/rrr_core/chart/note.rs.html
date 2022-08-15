@@ -134,141 +134,141 @@
 <span id="134">134</span>
 <span id="135">135</span>
 <span id="136">136</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt</span>::{<span class="ident">Display</span>, <span class="ident">Formatter</span>};
-<span class="kw">use</span> <span class="ident">strum</span>::{<span class="ident">EnumCount</span>, <span class="ident">EnumIter</span>};
+</pre><pre class="rust"><code><span class="kw">use </span>std::fmt::{Display, Formatter};
+<span class="kw">use </span>strum::{EnumCount, EnumIter};
 
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="attribute">#[<span class="ident">derive</span>(
-    <span class="ident">Clone</span>,
-    <span class="ident">Copy</span>,
-    <span class="ident">Eq</span>,
-    <span class="ident">EnumCount</span>,
-    <span class="ident">EnumIter</span>,
-    <span class="ident">PartialEq</span>,
-    <span class="ident">Ord</span>,
-    <span class="ident">PartialOrd</span>,
-    <span class="ident">Hash</span>,
-    <span class="ident">Debug</span>,
-    <span class="ident">Serialize</span>,
-    <span class="ident">Deserialize</span>,
+<span class="attribute">#[derive(
+    Clone,
+    Copy,
+    Eq,
+    EnumCount,
+    EnumIter,
+    PartialEq,
+    Ord,
+    PartialOrd,
+    Hash,
+    Debug,
+    Serialize,
+    Deserialize,
 )]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Color</span> {
-    <span class="ident">Red</span>,
-    <span class="ident">Yellow</span>,
-    <span class="ident">Blue</span>,
-    <span class="ident">Orange</span>,
-    <span class="ident">Green</span>,
-    <span class="ident">Pink</span>,
-    <span class="ident">Purple</span>,
-    <span class="ident">Cyan</span>,
-    <span class="ident">White</span>,
-    <span class="ident">Receptor</span>,
+<span class="kw">pub enum </span>Color {
+    Red,
+    Yellow,
+    Blue,
+    Orange,
+    Green,
+    Pink,
+    Purple,
+    Cyan,
+    White,
+    Receptor,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="attribute">#[<span class="ident">repr</span>(<span class="ident">usize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Direction</span> {
-    <span class="ident">Left</span>,
-    <span class="ident">Down</span>,
-    <span class="ident">Up</span>,
-    <span class="ident">Right</span>,
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Serialize, Deserialize)]</span>
+<span class="attribute">#[repr(usize)]</span>
+<span class="kw">pub enum </span>Direction {
+    Left,
+    Down,
+    Up,
+    Right,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CompiledNote</span> {
-    <span class="kw">pub</span> <span class="ident">beat_position</span>: <span class="ident">i32</span>,
-    <span class="kw">pub</span> <span class="ident">color</span>: <span class="ident">Color</span>,
-    <span class="kw">pub</span> <span class="ident">direction</span>: <span class="ident">Direction</span>,
-    <span class="kw">pub</span> <span class="ident">timestamp</span>: <span class="ident">i128</span>,
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]</span>
+<span class="kw">pub struct </span>CompiledNote {
+    <span class="kw">pub </span>beat_position: i32,
+    <span class="kw">pub </span>color: Color,
+    <span class="kw">pub </span>direction: Direction,
+    <span class="kw">pub </span>timestamp: i128,
 }
 
-<span class="kw">impl</span> <span class="ident">Display</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Formatter</span>&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="ident">std::fmt::Result</span> {
+<span class="kw">impl </span>Display <span class="kw">for </span>CompiledNote {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; std::fmt::Result {
         <span class="macro">write!</span>(
-            <span class="ident">f</span>,
+            f,
             <span class="string">&quot;{:?} {:?} {}&quot;</span>,
-            <span class="self">self</span>.<span class="ident">color</span>, <span class="self">self</span>.<span class="ident">direction</span>, <span class="self">self</span>.<span class="ident">beat_position</span>
+            <span class="self">self</span>.color, <span class="self">self</span>.direction, <span class="self">self</span>.beat_position
         )
     }
 }
 
-<span class="kw">impl</span> <span class="ident">Ord</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {
-    <span class="kw">fn</span> <span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="ident">std::cmp::Ordering</span> {
-        <span class="self">self</span>.<span class="ident">beat_position</span>.<span class="ident">cmp</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">beat_position</span>)
+<span class="kw">impl </span>Ord <span class="kw">for </span>CompiledNote {
+    <span class="kw">fn </span>cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; std::cmp::Ordering {
+        <span class="self">self</span>.beat_position.cmp(<span class="kw-2">&amp;</span>other.beat_position)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">PartialOrd</span> <span class="kw">for</span> <span class="ident">CompiledNote</span> {
-    <span class="kw">fn</span> <span class="ident">partial_cmp</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="ident">std::cmp::Ordering</span>&gt; {
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">beat_position</span>.<span class="ident">partial_cmp</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">beat_position</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">core::cmp::Ordering::Equal</span>) =&gt; {}
-            <span class="ident">ord</span> =&gt; <span class="kw">return</span> <span class="ident">ord</span>,
+<span class="kw">impl </span>PartialOrd <span class="kw">for </span>CompiledNote {
+    <span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;std::cmp::Ordering&gt; {
+        <span class="kw">match </span><span class="self">self</span>.beat_position.partial_cmp(<span class="kw-2">&amp;</span>other.beat_position) {
+            <span class="prelude-val">Some</span>(core::cmp::Ordering::Equal) =&gt; {}
+            ord =&gt; <span class="kw">return </span>ord,
         }
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">color</span>.<span class="ident">partial_cmp</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">color</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">core::cmp::Ordering::Equal</span>) =&gt; {}
-            <span class="ident">ord</span> =&gt; <span class="kw">return</span> <span class="ident">ord</span>,
+        <span class="kw">match </span><span class="self">self</span>.color.partial_cmp(<span class="kw-2">&amp;</span>other.color) {
+            <span class="prelude-val">Some</span>(core::cmp::Ordering::Equal) =&gt; {}
+            ord =&gt; <span class="kw">return </span>ord,
         }
-        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">direction</span>.<span class="ident">partial_cmp</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">direction</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">core::cmp::Ordering::Equal</span>) =&gt; {}
-            <span class="ident">ord</span> =&gt; <span class="kw">return</span> <span class="ident">ord</span>,
+        <span class="kw">match </span><span class="self">self</span>.direction.partial_cmp(<span class="kw-2">&amp;</span>other.direction) {
+            <span class="prelude-val">Some</span>(core::cmp::Ordering::Equal) =&gt; {}
+            ord =&gt; <span class="kw">return </span>ord,
         }
-        <span class="self">self</span>.<span class="ident">timestamp</span>.<span class="ident">partial_cmp</span>(<span class="kw-2">&amp;</span><span class="ident">other</span>.<span class="ident">timestamp</span>)
+        <span class="self">self</span>.timestamp.partial_cmp(<span class="kw-2">&amp;</span>other.timestamp)
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="doccomment">/// Represents a single note in a [note row](NoteRow).</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Note</span> {
-    <span class="ident">lane</span>: <span class="ident">usize</span>,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]</span>
+<span class="doccomment">/// Represents a single note in a [note row](NoteRow).
+</span><span class="kw">pub struct </span>Note {
+    lane: usize,
 }
 
-<span class="kw">impl</span> <span class="ident">Note</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">lane</span>: <span class="ident">usize</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> { <span class="ident">lane</span> }
+<span class="kw">impl </span>Note {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(lane: usize) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ lane }
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="doccomment">/// Stores the [notes](Note) that belong to a single row in a [beat](Beat).</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">NoteRow</span> {
-    <span class="ident">offset</span>: <span class="ident">u32</span>,
-    <span class="comment">// TODO: This should be [Note; N] but const generics aren&#39;t stable yet.</span>
-    <span class="ident">notes</span>: <span class="ident">Vec</span>&lt;<span class="ident">Note</span>&gt;,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]</span>
+<span class="doccomment">/// Stores the [notes](Note) that belong to a single row in a [beat](Beat).
+</span><span class="kw">pub struct </span>NoteRow {
+    offset: u32,
+    <span class="comment">// TODO: This should be [Note; N] but const generics aren&#39;t stable yet.
+    </span>notes: Vec&lt;Note&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">NoteRow</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">offset</span>: <span class="ident">u32</span>, <span class="ident">notes</span>: <span class="kw-2">&amp;</span>[<span class="ident">Note</span>]) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">offset</span>,
-            <span class="ident">notes</span>: <span class="ident">notes</span>.<span class="ident">into</span>(),
+<span class="kw">impl </span>NoteRow {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(offset: u32, notes: <span class="kw-2">&amp;</span>[Note]) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            offset,
+            notes: notes.into(),
         }
     }
 }
 
-<span class="comment">// rust test</span>
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+<span class="comment">// rust test
+</span><span class="attribute">#[cfg(test)]</span>
+<span class="kw">mod </span>tests {
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">test_lane_value</span>() {
-        <span class="kw">let</span> <span class="ident">lane_descriminant</span> = <span class="ident">Direction::Left</span> <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">lane_descriminant</span>, <span class="number">0</span>);
+    <span class="attribute">#[test]</span>
+    <span class="kw">fn </span>test_lane_value() {
+        <span class="kw">let </span>lane_descriminant = Direction::Left <span class="kw">as </span>usize;
+        <span class="macro">assert_eq!</span>(lane_descriminant, <span class="number">0</span>);
 
-        <span class="kw">let</span> <span class="ident">lane_descriminant</span> = <span class="ident">Direction::Down</span> <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">lane_descriminant</span>, <span class="number">1</span>);
+        <span class="kw">let </span>lane_descriminant = Direction::Down <span class="kw">as </span>usize;
+        <span class="macro">assert_eq!</span>(lane_descriminant, <span class="number">1</span>);
 
-        <span class="kw">let</span> <span class="ident">lane_descriminant</span> = <span class="ident">Direction::Up</span> <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">lane_descriminant</span>, <span class="number">2</span>);
+        <span class="kw">let </span>lane_descriminant = Direction::Up <span class="kw">as </span>usize;
+        <span class="macro">assert_eq!</span>(lane_descriminant, <span class="number">2</span>);
 
-        <span class="kw">let</span> <span class="ident">lane_descriminant</span> = <span class="ident">Direction::Right</span> <span class="kw">as</span> <span class="ident">usize</span>;
-        <span class="macro">assert_eq!</span>(<span class="ident">lane_descriminant</span>, <span class="number">3</span>);
+        <span class="kw">let </span>lane_descriminant = Direction::Right <span class="kw">as </span>usize;
+        <span class="macro">assert_eq!</span>(lane_descriminant, <span class="number">3</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

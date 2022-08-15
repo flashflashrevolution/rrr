@@ -36,43 +36,43 @@
 <span id="36">36</span>
 <span id="37">37</span>
 <span id="38">38</span>
-</pre><pre class="rust"><code><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">BenchmarkData</span> {
-    <span class="kw">pub</span> <span class="ident">frame_times</span>: <span class="ident">Vec</span>&lt;<span class="ident">f64</span>&gt;,
-    <span class="kw">pub</span> <span class="ident">min_frame_time</span>: <span class="ident">f64</span>,
-    <span class="kw">pub</span> <span class="ident">max_frame_time</span>: <span class="ident">f64</span>,
-    <span class="kw">pub</span> <span class="ident">avg_frame_time</span>: <span class="ident">f64</span>,
-    <span class="kw">pub</span> <span class="ident">skipped_frames</span>: <span class="ident">u64</span>,
+</pre><pre class="rust"><code><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>BenchmarkData {
+    <span class="kw">pub </span>frame_times: Vec&lt;f64&gt;,
+    <span class="kw">pub </span>min_frame_time: f64,
+    <span class="kw">pub </span>max_frame_time: f64,
+    <span class="kw">pub </span>avg_frame_time: f64,
+    <span class="kw">pub </span>skipped_frames: u64,
 }
 
-<span class="kw">impl</span> <span class="ident">BenchmarkData</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
-        <span class="ident">BenchmarkData</span> {
-            <span class="ident">frame_times</span>: <span class="ident">Vec::new</span>(),
-            <span class="ident">min_frame_time</span>: <span class="ident">f64::MAX</span>,
-            <span class="ident">max_frame_time</span>: <span class="ident">f64::MIN</span>,
-            <span class="ident">avg_frame_time</span>: <span class="number">0.0</span>,
-            <span class="ident">skipped_frames</span>: <span class="number">0</span>,
+<span class="kw">impl </span>BenchmarkData {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+        BenchmarkData {
+            frame_times: Vec::new(),
+            min_frame_time: f64::MAX,
+            max_frame_time: f64::MIN,
+            avg_frame_time: <span class="number">0.0</span>,
+            skipped_frames: <span class="number">0</span>,
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">add_frame_time</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">frame_time</span>: <span class="ident">f64</span>) {
-        <span class="self">self</span>.<span class="ident">frame_times</span>.<span class="ident">push</span>(<span class="ident">frame_time</span>);
-        <span class="self">self</span>.<span class="ident">min_frame_time</span> = <span class="self">self</span>.<span class="ident">min_frame_time</span>.<span class="ident">min</span>(<span class="ident">frame_time</span>);
-        <span class="self">self</span>.<span class="ident">max_frame_time</span> = <span class="self">self</span>.<span class="ident">max_frame_time</span>.<span class="ident">max</span>(<span class="ident">frame_time</span>);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>add_frame_time(<span class="kw-2">&amp;mut </span><span class="self">self</span>, frame_time: f64) {
+        <span class="self">self</span>.frame_times.push(frame_time);
+        <span class="self">self</span>.min_frame_time = <span class="self">self</span>.min_frame_time.min(frame_time);
+        <span class="self">self</span>.max_frame_time = <span class="self">self</span>.max_frame_time.max(frame_time);
 
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">frame_times</span>.<span class="ident">len</span>() &gt; <span class="number">60</span> {
-            <span class="self">self</span>.<span class="ident">avg_frame_time</span> = <span class="self">self</span>.<span class="ident">frame_times</span>[<span class="self">self</span>.<span class="ident">frame_times</span>.<span class="ident">len</span>() - <span class="number">60</span>..]
-                .<span class="ident">iter</span>()
-                .<span class="ident">fold</span>(<span class="number">0.0</span>, |<span class="ident">a</span>, <span class="ident">b</span>| <span class="ident">a</span> + <span class="ident">b</span>)
+        <span class="kw">if </span><span class="self">self</span>.frame_times.len() &gt; <span class="number">60 </span>{
+            <span class="self">self</span>.avg_frame_time = <span class="self">self</span>.frame_times[<span class="self">self</span>.frame_times.len() - <span class="number">60</span>..]
+                .iter()
+                .fold(<span class="number">0.0</span>, |a, b| a + b)
                 / <span class="number">60.0</span>;
 
-            <span class="kw">if</span> <span class="ident">frame_time</span> &gt; <span class="self">self</span>.<span class="ident">avg_frame_time</span> * <span class="number">1.1</span> {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">res</span>) = <span class="self">self</span>.<span class="ident">skipped_frames</span>.<span class="ident">checked_add</span>(<span class="number">1</span>) {
-                    <span class="self">self</span>.<span class="ident">skipped_frames</span> = <span class="ident">res</span>;
+            <span class="kw">if </span>frame_time &gt; <span class="self">self</span>.avg_frame_time * <span class="number">1.1 </span>{
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(res) = <span class="self">self</span>.skipped_frames.checked_add(<span class="number">1</span>) {
+                    <span class="self">self</span>.skipped_frames = res;
                 }
             }
         }
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

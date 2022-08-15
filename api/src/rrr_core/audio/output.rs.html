@@ -207,214 +207,214 @@
 <span id="207">207</span>
 <span id="208">208</span>
 <span id="209">209</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">cpal::traits</span>::{<span class="ident">DeviceTrait</span>, <span class="ident">HostTrait</span>, <span class="ident">StreamTrait</span>};
-<span class="kw">use</span> <span class="ident">rb</span>::{<span class="ident">RbConsumer</span>, <span class="ident">RbProducer</span>, <span class="ident">SpscRb</span>, <span class="ident">RB</span>};
-<span class="kw">use</span> <span class="ident">symphonia::core</span>::{
-    <span class="ident">audio</span>::{<span class="ident">AudioBufferRef</span>, <span class="ident">RawSample</span>, <span class="ident">SampleBuffer</span>, <span class="ident">SignalSpec</span>},
-    <span class="ident">conv::ConvertibleSample</span>,
-    <span class="ident">units::Duration</span>,
+</pre><pre class="rust"><code><span class="kw">use </span>cpal::traits::{DeviceTrait, HostTrait, StreamTrait};
+<span class="kw">use </span>rb::{RbConsumer, RbProducer, SpscRb, RB};
+<span class="kw">use </span>symphonia::core::{
+    audio::{AudioBufferRef, RawSample, SampleBuffer, SignalSpec},
+    conv::ConvertibleSample,
+    units::Duration,
 };
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait</span> <span class="ident">AudioOutput</span> {
-    <span class="kw">fn</span> <span class="ident">write</span>(
-        <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-        <span class="ident">decoded</span>: <span class="ident">AudioBufferRef</span>&lt;<span class="lifetime">&#39;_</span>&gt;,
-        <span class="ident">total_samples</span>: <span class="ident">usize</span>,
-        <span class="ident">remaining_samples</span>: <span class="ident">usize</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">usize</span>&gt;;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">trait </span>AudioOutput {
+    <span class="kw">fn </span>write(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        decoded: AudioBufferRef&lt;<span class="lifetime">&#39;_</span>&gt;,
+        total_samples: usize,
+        remaining_samples: usize,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt;;
 
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>);
+    <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>);
 }
 
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
-<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::enum_variant_names</span>)]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum</span> <span class="ident">AudioOutputError</span> {
-    <span class="ident">OpenStreamError</span>,
-    <span class="ident">PlayStreamError</span>,
-    <span class="ident">StreamClosedError</span>,
+<span class="attribute">#[allow(dead_code)]</span>
+<span class="attribute">#[allow(clippy::enum_variant_names)]</span>
+<span class="attribute">#[derive(Debug)]</span>
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>AudioOutputError {
+    OpenStreamError,
+    PlayStreamError,
+    StreamClosedError,
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type</span> <span class="prelude-ty">Result</span>&lt;<span class="ident">T</span>&gt; = <span class="ident">std::result::Result</span>&lt;<span class="ident">T</span>, <span class="ident">AudioOutputError</span>&gt;;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span><span class="prelude-ty">Result</span>&lt;T&gt; = std::result::Result&lt;T, AudioOutputError&gt;;
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct</span> <span class="ident">CpalAudioOutput</span>;
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>CpalAudioOutput;
 
-<span class="kw">trait</span> <span class="ident">AudioOutputSample</span>: <span class="ident">cpal::Sample</span> + <span class="ident">ConvertibleSample</span> + <span class="ident">RawSample</span> + <span class="ident">Send</span> + <span class="lifetime">&#39;static</span> {}
+<span class="kw">trait </span>AudioOutputSample: cpal::Sample + ConvertibleSample + RawSample + Send + <span class="lifetime">&#39;static </span>{}
 
-<span class="kw">impl</span> <span class="ident">AudioOutputSample</span> <span class="kw">for</span> <span class="ident">f32</span> {}
-<span class="kw">impl</span> <span class="ident">AudioOutputSample</span> <span class="kw">for</span> <span class="ident">i16</span> {}
-<span class="kw">impl</span> <span class="ident">AudioOutputSample</span> <span class="kw">for</span> <span class="ident">u16</span> {}
+<span class="kw">impl </span>AudioOutputSample <span class="kw">for </span>f32 {}
+<span class="kw">impl </span>AudioOutputSample <span class="kw">for </span>i16 {}
+<span class="kw">impl </span>AudioOutputSample <span class="kw">for </span>u16 {}
 
-<span class="kw">impl</span> <span class="ident">CpalAudioOutput</span> {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_open</span>(<span class="ident">spec</span>: <span class="ident">SignalSpec</span>, <span class="ident">duration</span>: <span class="ident">Duration</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">AudioOutput</span>&gt;&gt; {
-        <span class="comment">// Get default host.</span>
-        <span class="kw">let</span> <span class="ident">host</span> = <span class="ident">cpal::default_host</span>();
+<span class="kw">impl </span>CpalAudioOutput {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_open(spec: SignalSpec, duration: Duration) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;<span class="kw">dyn </span>AudioOutput&gt;&gt; {
+        <span class="comment">// Get default host.
+        </span><span class="kw">let </span>host = cpal::default_host();
 
-        <span class="comment">// Get the default audio output device.</span>
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">devices</span>) = <span class="ident">host</span>.<span class="ident">devices</span>() {
-            <span class="kw">for</span> <span class="ident">device</span> <span class="kw">in</span> <span class="ident">devices</span> {
-                <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">device</span>.<span class="ident">name</span>());
+        <span class="comment">// Get the default audio output device.
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(devices) = host.devices() {
+            <span class="kw">for </span>device <span class="kw">in </span>devices {
+                <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, device.name());
 
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">configs</span>) = <span class="ident">device</span>.<span class="ident">supported_output_configs</span>() {
-                    <span class="kw">for</span> <span class="ident">config</span> <span class="kw">in</span> <span class="ident">configs</span>.<span class="ident">by_ref</span>() {
-                        <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="ident">config</span>);
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>configs) = device.supported_output_configs() {
+                    <span class="kw">for </span>config <span class="kw">in </span>configs.by_ref() {
+                        <span class="macro">log::info!</span>(<span class="string">&quot;{:?}&quot;</span>, config);
                     }
                 }
             }
         }
 
-        <span class="kw">let</span> <span class="ident">device</span> = <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">device</span>) = <span class="ident">host</span>.<span class="ident">default_output_device</span>() {
-            <span class="ident">device</span>
-        } <span class="kw">else</span> {
+        <span class="kw">let </span>device = <span class="kw">if let </span><span class="prelude-val">Some</span>(device) = host.default_output_device() {
+            device
+        } <span class="kw">else </span>{
             <span class="macro">log::error!</span>(<span class="string">&quot;failed to get default audio output device&quot;</span>);
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">AudioOutputError::OpenStreamError</span>);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(AudioOutputError::OpenStreamError);
         };
 
-        <span class="kw">let</span> <span class="ident">config</span> = <span class="kw">match</span> <span class="ident">device</span>.<span class="ident">default_output_config</span>() {
-            <span class="prelude-val">Ok</span>(<span class="ident">config</span>) =&gt; <span class="ident">config</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
-                <span class="macro">log::error!</span>(<span class="string">&quot;failed to get default audio output device config: {}&quot;</span>, <span class="ident">err</span>);
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">AudioOutputError::OpenStreamError</span>);
+        <span class="kw">let </span>config = <span class="kw">match </span>device.default_output_config() {
+            <span class="prelude-val">Ok</span>(config) =&gt; config,
+            <span class="prelude-val">Err</span>(err) =&gt; {
+                <span class="macro">log::error!</span>(<span class="string">&quot;failed to get default audio output device config: {}&quot;</span>, err);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(AudioOutputError::OpenStreamError);
             }
         };
 
-        <span class="comment">// Select proper playback routine based on sample format.</span>
-        <span class="kw">match</span> <span class="ident">config</span>.<span class="ident">sample_format</span>() {
-            <span class="ident">cpal::SampleFormat::F32</span> =&gt; {
-                <span class="ident">CpalAudioOutputImpl</span>::&lt;<span class="ident">f32</span>&gt;<span class="ident">::try_open</span>(<span class="ident">spec</span>, <span class="ident">duration</span>, <span class="kw-2">&amp;</span><span class="ident">device</span>)
+        <span class="comment">// Select proper playback routine based on sample format.
+        </span><span class="kw">match </span>config.sample_format() {
+            cpal::SampleFormat::F32 =&gt; {
+                CpalAudioOutputImpl::&lt;f32&gt;::try_open(spec, duration, <span class="kw-2">&amp;</span>device)
             }
-            <span class="ident">cpal::SampleFormat::I16</span> =&gt; {
-                <span class="ident">CpalAudioOutputImpl</span>::&lt;<span class="ident">i16</span>&gt;<span class="ident">::try_open</span>(<span class="ident">spec</span>, <span class="ident">duration</span>, <span class="kw-2">&amp;</span><span class="ident">device</span>)
+            cpal::SampleFormat::I16 =&gt; {
+                CpalAudioOutputImpl::&lt;i16&gt;::try_open(spec, duration, <span class="kw-2">&amp;</span>device)
             }
-            <span class="ident">cpal::SampleFormat::U16</span> =&gt; {
-                <span class="ident">CpalAudioOutputImpl</span>::&lt;<span class="ident">u16</span>&gt;<span class="ident">::try_open</span>(<span class="ident">spec</span>, <span class="ident">duration</span>, <span class="kw-2">&amp;</span><span class="ident">device</span>)
+            cpal::SampleFormat::U16 =&gt; {
+                CpalAudioOutputImpl::&lt;u16&gt;::try_open(spec, duration, <span class="kw-2">&amp;</span>device)
             }
         }
     }
 }
 
-<span class="kw">struct</span> <span class="ident">CpalAudioOutputImpl</span>&lt;<span class="ident">T</span>&gt;
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">AudioOutputSample</span>,
+<span class="kw">struct </span>CpalAudioOutputImpl&lt;T&gt;
+<span class="kw">where
+    </span>T: AudioOutputSample,
 {
-    <span class="ident">ring_buf_producer</span>: <span class="ident">rb::Producer</span>&lt;<span class="ident">T</span>&gt;,
-    <span class="ident">sample_buf</span>: <span class="ident">SampleBuffer</span>&lt;<span class="ident">T</span>&gt;,
-    <span class="ident">stream</span>: <span class="ident">cpal::Stream</span>,
+    ring_buf_producer: rb::Producer&lt;T&gt;,
+    sample_buf: SampleBuffer&lt;T&gt;,
+    stream: cpal::Stream,
 }
 
-<span class="kw">impl</span>&lt;<span class="ident">T</span>: <span class="ident">AudioOutputSample</span>&gt; <span class="ident">CpalAudioOutputImpl</span>&lt;<span class="ident">T</span>&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_open</span>(
-        <span class="ident">spec</span>: <span class="ident">SignalSpec</span>,
-        <span class="ident">duration</span>: <span class="ident">Duration</span>,
-        <span class="ident">device</span>: <span class="kw-2">&amp;</span><span class="ident">cpal::Device</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">AudioOutput</span>&gt;&gt; {
-        <span class="kw">const</span> <span class="ident">HZ_44100</span>: <span class="ident">cpal::SampleRate</span> = <span class="ident">cpal::SampleRate</span>(<span class="number">44_100</span>);
+<span class="kw">impl</span>&lt;T: AudioOutputSample&gt; CpalAudioOutputImpl&lt;T&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_open(
+        spec: SignalSpec,
+        duration: Duration,
+        device: <span class="kw-2">&amp;</span>cpal::Device,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;<span class="kw">dyn </span>AudioOutput&gt;&gt; {
+        <span class="kw">const </span>HZ_44100: cpal::SampleRate = cpal::SampleRate(<span class="number">44_100</span>);
 
-        <span class="kw">let</span> <span class="ident">num_channels</span> = <span class="ident">spec</span>.<span class="ident">channels</span>.<span class="ident">count</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">supported</span>: <span class="ident">Vec</span>&lt;<span class="kw">_</span>&gt; = <span class="ident">device</span>.<span class="ident">supported_output_configs</span>().<span class="ident">unwrap</span>().<span class="ident">collect</span>();
-        <span class="ident">supported</span>.<span class="ident">sort_by</span>(|<span class="ident">a</span>, <span class="ident">b</span>| <span class="ident">b</span>.<span class="ident">cmp_default_heuristics</span>(<span class="ident">a</span>));
+        <span class="kw">let </span>num_channels = spec.channels.count();
+        <span class="kw">let </span><span class="kw-2">mut </span>supported: Vec&lt;<span class="kw">_</span>&gt; = device.supported_output_configs().unwrap().collect();
+        supported.sort_by(|a, b| b.cmp_default_heuristics(a));
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">formats</span> = <span class="ident">supported</span>.<span class="ident">into_iter</span>().<span class="ident">flat_map</span>(|<span class="ident">sf</span>| {
-            <span class="kw">let</span> <span class="ident">max_rate</span> = <span class="ident">sf</span>.<span class="ident">max_sample_rate</span>();
-            <span class="kw">let</span> <span class="ident">min_rate</span> = <span class="ident">sf</span>.<span class="ident">min_sample_rate</span>();
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">formats</span> = <span class="macro">vec!</span>[<span class="ident">sf</span>.<span class="ident">clone</span>().<span class="ident">with_max_sample_rate</span>()];
-            <span class="kw">if</span> <span class="ident">HZ_44100</span> &lt; <span class="ident">max_rate</span> &amp;&amp; <span class="ident">HZ_44100</span> &gt; <span class="ident">min_rate</span> {
-                <span class="ident">formats</span>.<span class="ident">push</span>(<span class="ident">sf</span>.<span class="ident">clone</span>().<span class="ident">with_sample_rate</span>(<span class="ident">HZ_44100</span>));
+        <span class="kw">let </span><span class="kw-2">mut </span>formats = supported.into_iter().flat_map(|sf| {
+            <span class="kw">let </span>max_rate = sf.max_sample_rate();
+            <span class="kw">let </span>min_rate = sf.min_sample_rate();
+            <span class="kw">let </span><span class="kw-2">mut </span>formats = <span class="macro">vec!</span>[sf.clone().with_max_sample_rate()];
+            <span class="kw">if </span>HZ_44100 &lt; max_rate &amp;&amp; HZ_44100 &gt; min_rate {
+                formats.push(sf.clone().with_sample_rate(HZ_44100));
             }
-            <span class="ident">formats</span>.<span class="ident">push</span>(<span class="ident">sf</span>.<span class="ident">with_sample_rate</span>(<span class="ident">min_rate</span>));
-            <span class="ident">formats</span>
+            formats.push(sf.with_sample_rate(min_rate));
+            formats
         });
 
-        <span class="kw">let</span> <span class="ident">config</span> = <span class="ident">formats</span>
-            .<span class="ident">find</span>(|<span class="ident">sf</span>| <span class="ident">sf</span>.<span class="ident">channels</span>() == <span class="number">2</span> &amp;&amp; <span class="ident">sf</span>.<span class="ident">sample_rate</span>() == <span class="ident">cpal::SampleRate</span>(<span class="ident">spec</span>.<span class="ident">rate</span>))
-            .<span class="ident">ok_or</span>(<span class="ident">AudioOutputError::OpenStreamError</span>)<span class="question-mark">?</span>;
+        <span class="kw">let </span>config = formats
+            .find(|sf| sf.channels() == <span class="number">2 </span>&amp;&amp; sf.sample_rate() == cpal::SampleRate(spec.rate))
+            .ok_or(AudioOutputError::OpenStreamError)<span class="question-mark">?</span>;
 
-        <span class="macro">log::info!</span>(<span class="string">&quot;Supported config: {:?}&quot;</span>, <span class="ident">config</span>);
+        <span class="macro">log::info!</span>(<span class="string">&quot;Supported config: {:?}&quot;</span>, config);
 
-        <span class="kw">let</span> <span class="ident">sample_rate</span> =
-            <span class="ident">usize::try_from</span>(<span class="ident">spec</span>.<span class="ident">rate</span>).<span class="ident">map_err</span>(|<span class="kw">_</span>| <span class="ident">AudioOutputError::OpenStreamError</span>)<span class="question-mark">?</span>;
-        <span class="comment">// Create a ring buffer with a capacity for up-to 200ms of audio.</span>
-        <span class="kw">let</span> <span class="ident">ring_len</span> =
-            ((<span class="number">400_usize</span>.<span class="ident">saturating_mul</span>(<span class="ident">sample_rate</span>)).<span class="ident">div_euclid</span>(<span class="number">1000</span>)).<span class="ident">saturating_mul</span>(<span class="ident">num_channels</span>);
+        <span class="kw">let </span>sample_rate =
+            usize::try_from(spec.rate).map_err(|<span class="kw">_</span>| AudioOutputError::OpenStreamError)<span class="question-mark">?</span>;
+        <span class="comment">// Create a ring buffer with a capacity for up-to 200ms of audio.
+        </span><span class="kw">let </span>ring_len =
+            ((<span class="number">400_usize</span>.saturating_mul(sample_rate)).div_euclid(<span class="number">1000</span>)).saturating_mul(num_channels);
 
-        <span class="kw">let</span> <span class="ident">ring_buf</span> = <span class="ident">SpscRb::new</span>(<span class="ident">ring_len</span>);
-        <span class="kw">let</span> (<span class="ident">ring_buf_producer</span>, <span class="ident">ring_buf_consumer</span>) = (<span class="ident">ring_buf</span>.<span class="ident">producer</span>(), <span class="ident">ring_buf</span>.<span class="ident">consumer</span>());
+        <span class="kw">let </span>ring_buf = SpscRb::new(ring_len);
+        <span class="kw">let </span>(ring_buf_producer, ring_buf_consumer) = (ring_buf.producer(), ring_buf.consumer());
 
-        <span class="kw">let</span> <span class="ident">stream_result</span> = <span class="ident">device</span>.<span class="ident">build_output_stream</span>(
-            <span class="kw-2">&amp;</span><span class="ident">config</span>.<span class="ident">config</span>(),
-            <span class="kw">move</span> |<span class="ident">data</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">T</span>], <span class="kw">_</span>: <span class="kw-2">&amp;</span><span class="ident">cpal::OutputCallbackInfo</span>| {
-                <span class="comment">// Write out as many samples as possible from the ring buffer to the audio output.</span>
-                <span class="kw">let</span> <span class="ident">written</span> = <span class="kw">match</span> <span class="ident">ring_buf_consumer</span>.<span class="ident">read</span>(<span class="ident">data</span>) {
-                    <span class="prelude-val">Ok</span>(<span class="ident">written</span>) =&gt; <span class="ident">written</span>,
-                    <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; {
-                        <span class="macro">log::error!</span>(<span class="string">&quot;failed to read from ring buffer: {}&quot;</span>, <span class="ident">err</span>);
-                        <span class="number">0</span>
-                    }
+        <span class="kw">let </span>stream_result = device.build_output_stream(
+            <span class="kw-2">&amp;</span>config.config(),
+            <span class="kw">move </span>|data: <span class="kw-2">&amp;mut </span>[T], <span class="kw">_</span>: <span class="kw-2">&amp;</span>cpal::OutputCallbackInfo| {
+                <span class="comment">// Write out as many samples as possible from the ring buffer to the audio output.
+                </span><span class="kw">let </span>written = <span class="kw">match </span>ring_buf_consumer.read(data) {
+                    <span class="prelude-val">Ok</span>(written) =&gt; written,
+                    <span class="prelude-val">Err</span>(err) =&gt; {
+                        <span class="macro">log::error!</span>(<span class="string">&quot;failed to read from ring buffer: {}&quot;</span>, err);
+                        <span class="number">0
+                    </span>}
                 };
 
-                <span class="comment">// Mute any remaining samples.</span>
-                <span class="ident">data</span>.<span class="ident">get_mut</span>(<span class="ident">written</span>..)
-                    .<span class="ident">unwrap_or_default</span>()
-                    .<span class="ident">iter_mut</span>()
-                    .<span class="ident">for_each</span>(|<span class="ident">s</span>| <span class="kw-2">*</span><span class="ident">s</span> = <span class="ident">T::MID</span>);
+                <span class="comment">// Mute any remaining samples.
+                </span>data.get_mut(written..)
+                    .unwrap_or_default()
+                    .iter_mut()
+                    .for_each(|s| <span class="kw-2">*</span>s = T::MID);
             },
-            |<span class="ident">err</span>| <span class="macro">log::error!</span>(<span class="string">&quot;audio output error: {}&quot;</span>, <span class="ident">err</span>),
+            |err| <span class="macro">log::error!</span>(<span class="string">&quot;audio output error: {}&quot;</span>, err),
         );
 
-        <span class="kw">let</span> <span class="ident">stream</span> = <span class="ident">stream_result</span>.<span class="ident">map_err</span>(|<span class="ident">err</span>| {
-            <span class="macro">log::error!</span>(<span class="string">&quot;audio output stream open error: {}&quot;</span>, <span class="ident">err</span>);
-            <span class="ident">AudioOutputError::OpenStreamError</span>
+        <span class="kw">let </span>stream = stream_result.map_err(|err| {
+            <span class="macro">log::error!</span>(<span class="string">&quot;audio output stream open error: {}&quot;</span>, err);
+            AudioOutputError::OpenStreamError
         })<span class="question-mark">?</span>;
 
-        <span class="comment">// Start the output stream.</span>
-        <span class="ident">stream</span>.<span class="ident">play</span>().<span class="ident">map_err</span>(|<span class="ident">err</span>| {
-            <span class="macro">log::error!</span>(<span class="string">&quot;audio output stream play error: {}&quot;</span>, <span class="ident">err</span>);
-            <span class="ident">AudioOutputError::PlayStreamError</span>
+        <span class="comment">// Start the output stream.
+        </span>stream.play().map_err(|err| {
+            <span class="macro">log::error!</span>(<span class="string">&quot;audio output stream play error: {}&quot;</span>, err);
+            AudioOutputError::PlayStreamError
         })<span class="question-mark">?</span>;
 
-        <span class="kw">let</span> <span class="ident">sample_buf</span> = <span class="ident">SampleBuffer</span>::&lt;<span class="ident">T</span>&gt;<span class="ident">::new</span>(<span class="ident">duration</span>, <span class="ident">spec</span>);
+        <span class="kw">let </span>sample_buf = SampleBuffer::&lt;T&gt;::new(duration, spec);
 
-        <span class="prelude-val">Ok</span>(<span class="ident">Box::new</span>(<span class="ident">CpalAudioOutputImpl</span> {
-            <span class="ident">ring_buf_producer</span>,
-            <span class="ident">sample_buf</span>,
-            <span class="ident">stream</span>,
+        <span class="prelude-val">Ok</span>(Box::new(CpalAudioOutputImpl {
+            ring_buf_producer,
+            sample_buf,
+            stream,
         }))
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="ident">T</span>: <span class="ident">AudioOutputSample</span>&gt; <span class="ident">AudioOutput</span> <span class="kw">for</span> <span class="ident">CpalAudioOutputImpl</span>&lt;<span class="ident">T</span>&gt; {
-    <span class="kw">fn</span> <span class="ident">write</span>(
-        <span class="kw-2">&amp;mut</span> <span class="self">self</span>,
-        <span class="ident">decoded</span>: <span class="ident">AudioBufferRef</span>&lt;<span class="lifetime">&#39;_</span>&gt;,
-        <span class="ident">total_samples</span>: <span class="ident">usize</span>,
-        <span class="ident">remaining_samples</span>: <span class="ident">usize</span>,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">usize</span>&gt; {
-        <span class="comment">// Audio samples must be interleaved for cpal. Interleave the samples in the audio</span>
-        <span class="comment">// buffer into the sample buffer.</span>
-        <span class="self">self</span>.<span class="ident">sample_buf</span>.<span class="ident">copy_interleaved_ref</span>(<span class="ident">decoded</span>);
+<span class="kw">impl</span>&lt;T: AudioOutputSample&gt; AudioOutput <span class="kw">for </span>CpalAudioOutputImpl&lt;T&gt; {
+    <span class="kw">fn </span>write(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        decoded: AudioBufferRef&lt;<span class="lifetime">&#39;_</span>&gt;,
+        total_samples: usize,
+        remaining_samples: usize,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;usize&gt; {
+        <span class="comment">// Audio samples must be interleaved for cpal. Interleave the samples in the audio
+        // buffer into the sample buffer.
+        </span><span class="self">self</span>.sample_buf.copy_interleaved_ref(decoded);
 
-        <span class="comment">// Write all the interleaved samples to the ring buffer.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">samples</span> = <span class="self">self</span>.<span class="ident">sample_buf</span>.<span class="ident">samples</span>();
+        <span class="comment">// Write all the interleaved samples to the ring buffer.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>samples = <span class="self">self</span>.sample_buf.samples();
 
-        <span class="kw">if</span> <span class="ident">remaining_samples</span> &gt; <span class="number">0</span> {
-            <span class="ident">samples</span> = <span class="ident">samples</span>
-                .<span class="ident">get</span>(<span class="ident">total_samples</span>.<span class="ident">saturating_sub</span>(<span class="ident">remaining_samples</span>)..)
-                .<span class="ident">ok_or</span>(<span class="ident">AudioOutputError::PlayStreamError</span>)<span class="question-mark">?</span>;
+        <span class="kw">if </span>remaining_samples &gt; <span class="number">0 </span>{
+            samples = samples
+                .get(total_samples.saturating_sub(remaining_samples)..)
+                .ok_or(AudioOutputError::PlayStreamError)<span class="question-mark">?</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">written</span> = <span class="self">self</span>.<span class="ident">ring_buf_producer</span>.<span class="ident">write</span>(<span class="ident">samples</span>).<span class="ident">unwrap_or</span>(<span class="number">0</span>);
+        <span class="kw">let </span>written = <span class="self">self</span>.ring_buf_producer.write(samples).unwrap_or(<span class="number">0</span>);
 
-        <span class="prelude-val">Ok</span>(<span class="ident">written</span>)
+        <span class="prelude-val">Ok</span>(written)
     }
 
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="comment">// Flush is best-effort, ignore the returned result.</span>
-        <span class="kw">let</span> <span class="ident">_res</span> = <span class="self">self</span>.<span class="ident">stream</span>.<span class="ident">pause</span>();
+    <span class="kw">fn </span>flush(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// Flush is best-effort, ignore the returned result.
+        </span><span class="kw">let </span>_res = <span class="self">self</span>.stream.pause();
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">try_open</span>(<span class="ident">spec</span>: <span class="ident">SignalSpec</span>, <span class="ident">duration</span>: <span class="ident">Duration</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">AudioOutput</span>&gt;&gt; {
-    <span class="ident">CpalAudioOutput::try_open</span>(<span class="ident">spec</span>, <span class="ident">duration</span>)
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_open(spec: SignalSpec, duration: Duration) -&gt; <span class="prelude-ty">Result</span>&lt;Box&lt;<span class="kw">dyn </span>AudioOutput&gt;&gt; {
+    CpalAudioOutput::try_open(spec, duration)
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

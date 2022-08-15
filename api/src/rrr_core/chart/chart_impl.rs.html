@@ -120,127 +120,127 @@
 <span id="120">120</span>
 <span id="121">121</span>
 <span id="122">122</span>
-</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>)]</span>
-<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
+</pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">note</span>::{<span class="ident">Color</span>, <span class="ident">CompiledNote</span>, <span class="ident">Direction</span>, <span class="ident">NoteRow</span>},
-    <span class="ident">BpmChange</span>,
+<span class="kw">use crate</span>::{
+    note::{Color, CompiledNote, Direction, NoteRow},
+    BpmChange,
 };
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>)]</span>
-<span class="doccomment">/// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CompiledChart</span> {
-    <span class="kw">pub</span> <span class="ident">notes</span>: <span class="ident">Vec</span>&lt;<span class="ident">CompiledNote</span>&gt;,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]</span>
+<span class="doccomment">/// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
+</span><span class="kw">pub struct </span>CompiledChart {
+    <span class="kw">pub </span>notes: Vec&lt;CompiledNote&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">CompiledChart</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">notes</span>: <span class="kw-2">&amp;</span>[<span class="ident">CompiledNote</span>]) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">notes</span>: <span class="ident">notes</span>.<span class="ident">to_vec</span>(),
+<span class="kw">impl </span>CompiledChart {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(notes: <span class="kw-2">&amp;</span>[CompiledNote]) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            notes: notes.to_vec(),
         }
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_duration</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="ident">i128</span>, <span class="ident">anyhow::Error</span>&gt; {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">last_note</span>) = <span class="self">self</span>.<span class="ident">notes</span>.<span class="ident">first</span>() {
-            <span class="prelude-val">Ok</span>(<span class="ident">last_note</span>.<span class="ident">timestamp</span>)
-        } <span class="kw">else</span> {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>get_duration(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i128, anyhow::Error&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(last_note) = <span class="self">self</span>.notes.first() {
+            <span class="prelude-val">Ok</span>(last_note.timestamp)
+        } <span class="kw">else </span>{
             <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;No notes in chart&quot;</span>))
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="doccomment">/// A space/memory efficient representation of a chart.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).</span>
-<span class="doccomment">/// These are not used by [RRR](crate::RRR) directly.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Chart</span> {
-    <span class="ident">beats</span>: <span class="ident">Vec</span>&lt;<span class="ident">Beat</span>&gt;,
-    <span class="ident">bpm_changes</span>: <span class="ident">Vec</span>&lt;<span class="ident">BpmChange</span>&gt;,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]</span>
+<span class="doccomment">/// A space/memory efficient representation of a chart.
+///
+/// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
+/// These are not used by [RRR](crate::RRR) directly.
+</span><span class="kw">pub struct </span>Chart {
+    beats: Vec&lt;Beat&gt;,
+    bpm_changes: Vec&lt;BpmChange&gt;,
 }
 
-<span class="kw">impl</span> <span class="ident">Chart</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">beats</span>: <span class="kw-2">&amp;</span>[<span class="ident">Beat</span>], <span class="ident">bpm_changes</span>: <span class="kw-2">&amp;</span>[<span class="ident">BpmChange</span>]) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">beats</span>: <span class="ident">beats</span>.<span class="ident">into</span>(),
-            <span class="ident">bpm_changes</span>: <span class="ident">bpm_changes</span>.<span class="ident">into</span>(),
+<span class="kw">impl </span>Chart {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(beats: <span class="kw-2">&amp;</span>[Beat], bpm_changes: <span class="kw-2">&amp;</span>[BpmChange]) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            beats: beats.into(),
+            bpm_changes: bpm_changes.into(),
         }
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unused_self</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compile</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">CompiledChart</span> {
-        <span class="ident">CompiledChart</span> {
-            <span class="ident">notes</span>: <span class="macro">vec!</span>[
-                <span class="ident">CompiledNote</span> {
-                    <span class="ident">beat_position</span>: <span class="number">100</span>,
-                    <span class="ident">color</span>: <span class="ident">Color::Red</span>,
-                    <span class="ident">direction</span>: <span class="ident">Direction::Up</span>,
-                    <span class="ident">timestamp</span>: <span class="number">0i128</span>
-                };
-                <span class="number">100</span>
-            ],
+    <span class="attribute">#[must_use]</span>
+    <span class="attribute">#[allow(clippy::unused_self)]</span>
+    <span class="kw">pub fn </span>compile(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CompiledChart {
+        CompiledChart {
+            notes: <span class="macro">vec!</span>[
+                CompiledNote {
+                    beat_position: <span class="number">100</span>,
+                    color: Color::Red,
+                    direction: Direction::Up,
+                    timestamp: <span class="number">0i128
+                </span>};
+                <span class="number">100
+            </span>],
         }
     }
 
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_first_bpm</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="ident">f32</span>&gt; {
-        <span class="self">self</span>.<span class="ident">bpm_changes</span>.<span class="ident">first</span>().<span class="ident">map</span>(|<span class="ident">first_bpm</span>| <span class="ident">first_bpm</span>.<span class="ident">bpm</span>())
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>get_first_bpm(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;f32&gt; {
+        <span class="self">self</span>.bpm_changes.first().map(|first_bpm| first_bpm.bpm())
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> = <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
-<span class="doccomment">/// Stores all of the [note rows](NoteRow) that represent a beat.</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Beat</span> {
-    <span class="ident">note_rows</span>: <span class="ident">Vec</span>&lt;<span class="ident">NoteRow</span>&gt;,
-    <span class="ident">subdivisions</span>: <span class="ident">u32</span>,
+<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
+<span class="attribute">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]</span>
+<span class="doccomment">/// Stores all of the [note rows](NoteRow) that represent a beat.
+</span><span class="kw">pub struct </span>Beat {
+    note_rows: Vec&lt;NoteRow&gt;,
+    subdivisions: u32,
 }
 
-<span class="kw">impl</span> <span class="ident">Beat</span> {
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">note_rows</span>: <span class="kw-2">&amp;</span>[<span class="ident">NoteRow</span>], <span class="ident">subdivisions</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
-        <span class="self">Self</span> {
-            <span class="ident">note_rows</span>: <span class="ident">note_rows</span>.<span class="ident">into</span>(),
-            <span class="ident">subdivisions</span>,
+<span class="kw">impl </span>Beat {
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>new(note_rows: <span class="kw-2">&amp;</span>[NoteRow], subdivisions: u32) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            note_rows: note_rows.into(),
+            subdivisions,
         }
     }
 }
 
-<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
-<span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::note</span>::{<span class="ident">Note</span>, <span class="ident">NoteRow</span>};
+<span class="attribute">#[cfg(test)]</span>
+<span class="kw">mod </span>tests {
+    <span class="kw">use </span><span class="kw">crate</span>::note::{Note, NoteRow};
 
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">create_chart</span>() {
-        <span class="kw">const</span> <span class="ident">FIRST_BPM</span>: <span class="ident">f32</span> = <span class="number">120.</span>;
-        <span class="kw">let</span> <span class="ident">chart</span>: <span class="ident">Chart</span> = <span class="ident">Chart::new</span>(
+    <span class="attribute">#[test]</span>
+    <span class="kw">fn </span>create_chart() {
+        <span class="kw">const </span>FIRST_BPM: f32 = <span class="number">120.</span>;
+        <span class="kw">let </span>chart: Chart = Chart::new(
             <span class="kw-2">&amp;</span>[{
-                <span class="kw">let</span> <span class="ident">note_rows</span>: <span class="kw-2">&amp;</span>[<span class="ident">NoteRow</span>] = <span class="kw-2">&amp;</span>[<span class="ident">NoteRow::new</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span>[<span class="ident">Note::new</span>(<span class="number">0</span>)])];
-                <span class="ident">Beat</span> {
-                    <span class="ident">note_rows</span>: <span class="ident">note_rows</span>.<span class="ident">into</span>(),
-                    <span class="ident">subdivisions</span>: <span class="number">4</span>,
+                <span class="kw">let </span>note_rows: <span class="kw-2">&amp;</span>[NoteRow] = <span class="kw-2">&amp;</span>[NoteRow::new(<span class="number">0</span>, <span class="kw-2">&amp;</span>[Note::new(<span class="number">0</span>)])];
+                Beat {
+                    note_rows: note_rows.into(),
+                    subdivisions: <span class="number">4</span>,
                 }
             }],
-            <span class="kw-2">&amp;</span>[<span class="ident">BpmChange::new</span>(<span class="ident">FIRST_BPM</span>, <span class="number">0</span>)],
+            <span class="kw-2">&amp;</span>[BpmChange::new(FIRST_BPM, <span class="number">0</span>)],
         );
 
-        <span class="macro">assert_eq!</span>(<span class="ident">chart</span>.<span class="ident">get_first_bpm</span>(), <span class="prelude-val">Some</span>(<span class="ident">FIRST_BPM</span>));
+        <span class="macro">assert_eq!</span>(chart.get_first_bpm(), <span class="prelude-val">Some</span>(FIRST_BPM));
     }
 
-    <span class="attribute">#[<span class="ident">test</span>]</span>
-    <span class="kw">fn</span> <span class="ident">compile_chart</span>() {
-        <span class="kw">let</span> <span class="ident">chart</span> = <span class="ident">Chart::default</span>();
-        <span class="kw">let</span> <span class="ident">_compiled_chart</span>: <span class="ident">CompiledChart</span> = <span class="ident">chart</span>.<span class="ident">compile</span>();
+    <span class="attribute">#[test]</span>
+    <span class="kw">fn </span>compile_chart() {
+        <span class="kw">let </span>chart = Chart::default();
+        <span class="kw">let </span>_compiled_chart: CompiledChart = chart.compile();
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

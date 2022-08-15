@@ -17,24 +17,24 @@
 <span id="17">17</span>
 <span id="18">18</span>
 <span id="19">19</span>
-</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">target_arch</span> = <span class="string">&quot;wasm32&quot;</span>)]</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register_on_visibility_change_listener</span>(<span class="ident">window</span>: <span class="kw-2">&amp;</span><span class="ident">web_sys::Window</span>) {
-    <span class="kw">use</span> <span class="ident">wasm_bindgen</span>::{<span class="ident">prelude::Closure</span>, <span class="ident">JsCast</span>};
+</pre><pre class="rust"><code><span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]</span>
+<span class="kw">pub fn </span>register_on_visibility_change_listener(window: <span class="kw-2">&amp;</span>web_sys::Window) {
+    <span class="kw">use </span>wasm_bindgen::{prelude::Closure, JsCast};
 
-    <span class="kw">let</span> <span class="ident">closure</span> = <span class="ident">Closure::wrap</span>(<span class="ident">Box::new</span>(<span class="kw">move</span> || {
-        <span class="kw">let</span> <span class="ident">window</span> = <span class="ident">web_sys::window</span>().<span class="ident">unwrap</span>();
-        <span class="kw">let</span> <span class="ident">document</span> = <span class="ident">window</span>.<span class="ident">document</span>().<span class="ident">unwrap</span>();
-        <span class="kw">if</span> <span class="ident">document</span>.<span class="ident">hidden</span>() {
+    <span class="kw">let </span>closure = Closure::wrap(Box::new(<span class="kw">move </span>|| {
+        <span class="kw">let </span>window = web_sys::window().unwrap();
+        <span class="kw">let </span>document = window.document().unwrap();
+        <span class="kw">if </span>document.hidden() {
             <span class="macro">log::info!</span>(<span class="string">&quot;document hidden&quot;</span>);
-        } <span class="kw">else</span> {
+        } <span class="kw">else </span>{
             <span class="macro">log::info!</span>(<span class="string">&quot;document visible&quot;</span>);
         }
-    }) <span class="kw">as</span> <span class="ident">Box</span>&lt;<span class="kw">dyn</span> <span class="ident">Fn</span>()&gt;);
+    }) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>Fn()&gt;);
 
-    <span class="kw">let</span> <span class="ident">document</span> = <span class="ident">window</span>.<span class="ident">document</span>().<span class="ident">unwrap</span>();
-    <span class="ident">document</span>.<span class="ident">set_onvisibilitychange</span>(<span class="prelude-val">Some</span>(<span class="ident">closure</span>.<span class="ident">as_ref</span>().<span class="ident">unchecked_ref</span>()));
+    <span class="kw">let </span>document = window.document().unwrap();
+    document.set_onvisibilitychange(<span class="prelude-val">Some</span>(closure.as_ref().unchecked_ref()));
 
-    <span class="ident">closure</span>.<span class="ident">forget</span>();
+    closure.forget();
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>

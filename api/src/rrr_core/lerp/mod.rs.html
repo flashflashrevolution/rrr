@@ -20,27 +20,27 @@
 <span id="20">20</span>
 <span id="21">21</span>
 <span id="22">22</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">num_traits::Float</span>;
-<span class="kw">use</span> <span class="ident">std::ops</span>::{<span class="ident">Add</span>, <span class="ident">Mul</span>, <span class="ident">Sub</span>};
+</pre><pre class="rust"><code><span class="kw">use </span>num_traits::Float;
+<span class="kw">use </span>std::ops::{Add, Mul, Sub};
 
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Lerp</span>&lt;<span class="ident">F</span>&gt; {
-    <span class="kw">fn</span> <span class="ident">lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>, <span class="ident">t</span>: <span class="ident">F</span>) -&gt; <span class="self">Self</span>;
-    <span class="kw">fn</span> <span class="ident">inv_lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="self">Self</span>, <span class="ident">v</span>: <span class="self">Self</span>) -&gt; <span class="ident">F</span>;
+<span class="kw">pub trait </span>Lerp&lt;F&gt; {
+    <span class="kw">fn </span>lerp(<span class="self">self</span>, other: <span class="self">Self</span>, t: F) -&gt; <span class="self">Self</span>;
+    <span class="kw">fn </span>inv_lerp(<span class="self">self</span>, other: <span class="self">Self</span>, v: <span class="self">Self</span>) -&gt; F;
 }
 
-<span class="kw">impl</span>&lt;<span class="ident">T</span>, <span class="ident">F</span>&gt; <span class="ident">Lerp</span>&lt;<span class="ident">F</span>&gt; <span class="kw">for</span> <span class="ident">T</span>
-<span class="kw">where</span>
-    <span class="ident">T</span>: <span class="ident">Add</span>&lt;<span class="ident">Output</span> = <span class="ident">T</span>&gt; + <span class="ident">Mul</span>&lt;<span class="ident">F</span>, <span class="ident">Output</span> = <span class="ident">T</span>&gt; + <span class="ident">Sub</span>&lt;<span class="ident">Output</span> = <span class="ident">F</span>&gt;,
-    <span class="ident">F</span>: <span class="ident">Float</span>,
-    <span class="self">Self</span>: <span class="ident">Copy</span>,
+<span class="kw">impl</span>&lt;T, F&gt; Lerp&lt;F&gt; <span class="kw">for </span>T
+<span class="kw">where
+    </span>T: Add&lt;Output = T&gt; + Mul&lt;F, Output = T&gt; + Sub&lt;Output = F&gt;,
+    F: Float,
+    <span class="self">Self</span>: Copy,
 {
-    <span class="kw">fn</span> <span class="ident">lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">T</span>, <span class="ident">t</span>: <span class="ident">F</span>) -&gt; <span class="ident">T</span> {
-        <span class="self">self</span> * (<span class="ident">F::one</span>() - <span class="ident">t</span>) + <span class="ident">other</span> * <span class="ident">t</span>
+    <span class="kw">fn </span>lerp(<span class="self">self</span>, other: T, t: F) -&gt; T {
+        <span class="self">self </span>* (F::one() - t) + other * t
     }
 
-    <span class="kw">fn</span> <span class="ident">inv_lerp</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">T</span>, <span class="ident">v</span>: <span class="ident">T</span>) -&gt; <span class="ident">F</span> {
-        (<span class="ident">v</span> - <span class="self">self</span>) / (<span class="ident">other</span> - <span class="self">self</span>)
+    <span class="kw">fn </span>inv_lerp(<span class="self">self</span>, other: T, v: T) -&gt; F {
+        (v - <span class="self">self</span>) / (other - <span class="self">self</span>)
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (75b7e52e9 2022-08-13)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (801821d15 2022-08-14)" ></div></body></html>
