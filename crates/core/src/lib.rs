@@ -46,13 +46,11 @@ pub mod fetch;
 pub mod lerp;
 pub mod loaders;
 pub mod play;
+pub mod query_settings;
 pub mod record;
 pub mod settings;
 pub mod time;
 pub mod turntable;
-
-#[cfg(target_arch = "wasm32")]
-pub mod query_settings;
 
 pub use audio::*;
 pub use chart::*;

@@ -1,9 +1,7 @@
-use std::{ops::Deref, str::FromStr};
-
 use crate::{settings::Settings, ScrollDirection};
 use inter_struct::prelude::*;
 use reqwest::Url;
-use web_sys::{Element, HtmlCanvasElement};
+use std::{ops::Deref, str::FromStr};
 
 #[derive(StructMerge, Debug, Clone, Copy, PartialEq)]
 #[struct_merge("crate::settings::Settings")]
@@ -29,8 +27,11 @@ impl Default for SettingsMerge {
 /// # Panics
 ///
 /// If the `ScrollDirection` doesn't match the enum.
+#[cfg(target_arch = "wasm32")]
 #[must_use]
 pub fn get_optional_settings() -> SettingsMerge {
+    use web_sys::{Element, HtmlCanvasElement};
+
     let url = web_sys::window()
         .and_then(|win| win.document())
         .and_then(|doc| doc.url().ok());

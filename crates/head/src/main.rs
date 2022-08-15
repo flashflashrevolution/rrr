@@ -52,13 +52,13 @@ use anyhow::Error;
 use benchmark::BenchmarkData;
 use inter_struct::prelude::*;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+use rrr_core::query_settings;
 use rrr_core::{
     fetch,
     lerp::Lerp,
     note::{self, Direction},
     play,
     play::Play,
-    query_settings,
     settings::{self, Settings},
     time::{performance::Time, time_trait::TimeTrait},
     SwfParser, Turntable,
@@ -458,9 +458,7 @@ async fn run() -> Result<(), Error> {
     let extracted_settings: Option<query_settings::SettingsMerge> =
         { Some(query_settings::get_optional_settings()) };
     #[cfg(not(target_arch = "wasm32"))]
-    {
-        None
-    };
+    let extracted_settings: Option<query_settings::SettingsMerge> = { None };
 
     run_game_loop(window, event_loop, extracted_settings).await
 }
