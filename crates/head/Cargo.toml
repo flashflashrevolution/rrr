@@ -40,7 +40,7 @@ lerp = "0.4"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/JMS55/pixels.git", branch = "main" }
 rrr-core = { path = "../core", default-features = false }
-winit = "0.26.1"
+winit = "0.27.2"
 tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
 
 
