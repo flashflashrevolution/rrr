@@ -33,6 +33,7 @@ features = ["serde"]
 anyhow = "1.0.61"
 btreemultimap = "0.1.0"
 bytes = { version = "1.2.1", features = ["serde"] }
+inter-struct = "0.2.0"
 log = "0.4.17"
 num-traits = "0.2.15"
 rb = "0.4.0"

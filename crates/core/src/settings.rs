@@ -1,10 +1,13 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use strum::EnumString;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, EnumString)]
 pub enum ScrollDirection {
+    #[strum(ascii_case_insensitive)]
     Up,
+    #[strum(ascii_case_insensitive)]
     Down,
 }
 

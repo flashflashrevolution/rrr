@@ -1190,6 +1190,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "inter-struct"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "322eece48523a09060b7572296a3423bb6fc963462cfc8bf5fc6117510e131cf"
+dependencies = [
+ "inter-struct-codegen",
+]
+
+[[package]]
+name = "inter-struct-codegen"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58ce21bc89c44afac3bdf0cb5c363b4b91cef34e14aa612f7a17bc55f42f1ab7"
+dependencies = [
+ "proc-macro-error",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "ipnet"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1916,6 +1937,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro-error"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da25490ff9892aab3fcf7c36f08cfb902dd3e71ca0f9f9517bea02a73a5ce38c"
+dependencies = [
+ "proc-macro-error-attr",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "version_check",
+]
+
+[[package]]
+name = "proc-macro-error-attr"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1be40180e52ecc98ad80b184934baf3d0d29f979574e439af5a55274b35f869"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "version_check",
+]
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.43"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2066,6 +2111,7 @@ dependencies = [
  "futures",
  "gloo-net 0.1.0",
  "gloo-worker",
+ "inter-struct",
  "js-sys",
  "log",
  "num-traits",
@@ -2095,6 +2141,7 @@ dependencies = [
  "futures",
  "gloo",
  "image",
+ "inter-struct",
  "lerp",
  "log",
  "pixels",

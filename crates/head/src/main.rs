@@ -50,6 +50,7 @@ mod visibility;
 
 use anyhow::Error;
 use benchmark::BenchmarkData;
+use inter_struct::prelude::*;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     fetch,
@@ -57,6 +58,7 @@ use rrr_core::{
     note::{self, Direction},
     play,
     play::Play,
+    query_settings,
     settings::{self, Settings},
     time::{performance::Time, time_trait::TimeTrait},
     SwfParser, Turntable,
@@ -103,6 +105,7 @@ struct Game<T: TimeTrait> {
     current_instant: T,
     action_queue: Vec<Action>,
     benchmark_data: BenchmarkData,
+    settings: Settings,
 }
 
 impl<T> Game<T>
@@ -119,6 +122,7 @@ where
             current_instant: T::now(),
             action_queue: Vec::new(),
             benchmark_data: BenchmarkData::new(),
+            settings: Settings::default(),
         }
     }
 
@@ -164,19 +168,7 @@ where
 
                         let turntable = Turntable::load(record.unwrap());
 
-                        let mut settings = Settings::default();
-                        settings.scroll_speed = 3000;
-                        settings.lane_gap = 72;
-                        settings.scroll_direction = settings::ScrollDirection::Up;
-
-                        let settings = Settings {
-                            scroll_speed: 3000,
-                            lane_gap: 72,
-                            scroll_direction: settings::ScrollDirection::Up,
-                            ..Settings::default()
-                        };
-
-                        let play = Play::new(turntable).with_settings(settings);
+                        let play = Play::new(turntable).with_settings(self.settings);
                         let play_started = play.start();
                         self.play_stage = Some(play_started);
 
@@ -253,6 +245,12 @@ where
 
     fn finish(&mut self) {
         self.previous_instant = self.current_instant;
+    }
+
+    fn with_settings(&mut self, settings: Option<query_settings::SettingsMerge>) {
+        if let Some(settings) = settings {
+            self.settings.merge(settings);
+        }
     }
 }
 
@@ -456,7 +454,15 @@ async fn run() -> Result<(), Error> {
         }
     }
 
-    run_game_loop(window, event_loop).await
+    #[cfg(target_arch = "wasm32")]
+    let extracted_settings: Option<query_settings::SettingsMerge> =
+        { Some(query_settings::get_optional_settings()) };
+    #[cfg(not(target_arch = "wasm32"))]
+    {
+        None
+    };
+
+    run_game_loop(window, event_loop, extracted_settings).await
 }
 
 fn do_toggle_game_state_debug(game: &mut Game<Time>) {
@@ -475,6 +481,7 @@ fn do_toggle_game_state_debug(game: &mut Game<Time>) {
 async fn run_game_loop(
     window: winit::window::Window,
     event_loop: EventLoop<()>,
+    settings: Option<query_settings::SettingsMerge>,
 ) -> Result<(), anyhow::Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
@@ -496,6 +503,7 @@ async fn run_game_loop(
 
     let mut game = Game::<Time>::new(None);
     game.with_game_renderer(GameRenderer::new(pixels));
+    game.with_settings(settings);
     game.load(3348);
     window.focus_window();
 
@@ -598,15 +606,15 @@ async fn run_game_loop(
                             .update_progress
                             .set_inner_html(format!("{:?}", &play.progress()).as_str());
                         elements.avg_frame_time.set_inner_html(
-                            format!("{:02.2?}ms", &game.benchmark_data.avg_frame_time * 1000.0)
+                            format!("{:.2?}ms", &game.benchmark_data.avg_frame_time * 1000.0)
                                 .as_str(),
                         );
                         elements.max_frame_time.set_inner_html(
-                            format!("{:02.2?}ms", &game.benchmark_data.max_frame_time * 1000.0)
+                            format!("{:.2?}ms", &game.benchmark_data.max_frame_time * 1000.0)
                                 .as_str(),
                         );
                         elements.min_frame_time.set_inner_html(
-                            format!("{:02.2?}ms", &game.benchmark_data.min_frame_time * 1000.0)
+                            format!("{:.2?}ms", &game.benchmark_data.min_frame_time * 1000.0)
                                 .as_str(),
                         );
                         elements.skipped_frames.set_inner_html(
