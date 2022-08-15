@@ -661,8 +661,6 @@
 <span id="661">661</span>
 <span id="662">662</span>
 <span id="663">663</span>
-<span id="664">664</span>
-<span id="665">665</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
 <span class="attribute">#![warn(
     elided_lifetimes_in_paths,
@@ -1316,8 +1314,6 @@
         Comma =&gt; game.do_action(Direction::Down),
         Period =&gt; game.do_action(Direction::Up),
         Slash =&gt; game.do_action(Direction::Right),
-        G =&gt; window.set_cursor_grab(!modifiers.shift()).unwrap(),
-        H =&gt; window.set_cursor_visible(modifiers.shift()),
         Space =&gt; {
             do_toggle_game_state_debug(game);
         }
