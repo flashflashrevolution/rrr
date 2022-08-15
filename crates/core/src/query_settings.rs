@@ -1,26 +1,15 @@
-use crate::{settings::Settings, ScrollDirection};
+use crate::ScrollDirection;
 use inter_struct::prelude::*;
 use reqwest::Url;
-use std::{ops::Deref, str::FromStr};
+use std::str::FromStr;
 
-#[derive(StructMerge, Debug, Clone, Copy, PartialEq)]
+#[derive(StructMerge, Debug, Clone, Copy, PartialEq, Default)]
 #[struct_merge("crate::settings::Settings")]
 pub struct SettingsMerge {
     pub scroll_speed: Option<u16>,
     pub judge_zero_point: Option<i128>,
     pub scroll_direction: Option<ScrollDirection>,
     pub lane_gap: Option<u8>,
-}
-
-impl Default for SettingsMerge {
-    fn default() -> Self {
-        Self {
-            scroll_speed: None,
-            judge_zero_point: None,
-            scroll_direction: None,
-            lane_gap: None,
-        }
-    }
 }
 
 /// Attempts to get the settings from the URL.
@@ -30,8 +19,6 @@ impl Default for SettingsMerge {
 #[cfg(target_arch = "wasm32")]
 #[must_use]
 pub fn get_optional_settings() -> SettingsMerge {
-    use web_sys::{Element, HtmlCanvasElement};
-
     let url = web_sys::window()
         .and_then(|win| win.document())
         .and_then(|doc| doc.url().ok());
