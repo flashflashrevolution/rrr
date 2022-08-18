@@ -198,7 +198,7 @@ where
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     fn draw(&mut self) {
         if let Some(renderer) = &mut self.renderer {
-            let frame = renderer.pixels.get_frame();
+            let frame = renderer.pixels.get_frame_mut();
             clear(frame);
 
             if let Some(play) = &self.play_stage {
