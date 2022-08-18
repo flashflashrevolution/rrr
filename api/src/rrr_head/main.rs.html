@@ -861,7 +861,7 @@
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     </span><span class="kw">fn </span>draw(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(renderer) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.renderer {
-            <span class="kw">let </span>frame = renderer.pixels.get_frame();
+            <span class="kw">let </span>frame = renderer.pixels.get_frame_mut();
             clear(frame);
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(play) = <span class="kw-2">&amp;</span><span class="self">self</span>.play_stage {
@@ -1325,4 +1325,4 @@
     frame.fill(<span class="number">0</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (40336865f 2022-08-15)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (9c20b2a8c 2022-08-17)" ></div></body></html>
