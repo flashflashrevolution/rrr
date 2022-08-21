@@ -68,7 +68,7 @@
 <span class="kw">use </span>strum::EnumString;
 
 <span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
-<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq, EnumString)]</span>
+<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumString)]</span>
 <span class="kw">pub enum </span>ScrollDirection {
     <span class="attribute">#[strum(ascii_case_insensitive)]</span>
     Up,
@@ -78,10 +78,10 @@
 
 <span class="doccomment">/// Stores RRR settings to start charts with.
 </span><span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]</span>
-<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq)]</span>
+<span class="attribute">#[derive(Clone, Copy, Debug, PartialEq, Eq)]</span>
 <span class="kw">pub struct </span>Settings {
     <span class="kw">pub </span>scroll_speed: u16,
-    <span class="kw">pub </span>judge_zero_point: i128,
+    <span class="kw">pub </span>judge_position: i128,
     <span class="kw">pub </span>scroll_direction: ScrollDirection,
     <span class="kw">pub </span>lane_gap: u8,
 }
@@ -91,7 +91,7 @@
     <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             scroll_speed: <span class="number">3000</span>,
-            judge_zero_point: <span class="number">327</span>,
+            judge_position: <span class="number">92</span>,
             scroll_direction: ScrollDirection::Up,
             lane_gap: <span class="number">72</span>,
         }
@@ -108,7 +108,7 @@
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             scroll_speed,
-            judge_zero_point,
+            judge_position: judge_zero_point,
             scroll_direction,
             lane_gap,
         }
@@ -123,7 +123,7 @@
     <span class="kw">fn </span>default_settings() {
         <span class="kw">let </span>settings = Settings::default();
         <span class="macro">assert_eq!</span>(settings.scroll_speed, <span class="number">3000</span>);
-        <span class="macro">assert_eq!</span>(settings.judge_zero_point, <span class="number">327</span>);
+        <span class="macro">assert_eq!</span>(settings.judge_position, <span class="number">92</span>);
         <span class="macro">assert_eq!</span>(settings.scroll_direction, ScrollDirection::Up);
         <span class="macro">assert_eq!</span>(settings.lane_gap, <span class="number">72</span>);
     }

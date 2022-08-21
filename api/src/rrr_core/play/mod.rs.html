@@ -253,11 +253,40 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
+<span class="kw">pub mod </span>field;
 <span class="kw">pub mod </span>judge;
 
 <span class="kw">use </span><span class="self">self</span>::{
     actions::NoteAction,
+    field::Field,
     judge::{Judge, Judgement},
 };
 <span class="kw">use crate</span>::{
@@ -269,6 +298,7 @@
 <span class="kw">use </span>std::collections::HashSet;
 
 <span class="kw">pub struct </span>Play&lt;S: PlayState&gt; {
+    field: Field,
     state: S,
     settings: Settings,
 }
@@ -302,28 +332,40 @@
 
 <span class="kw">impl </span>Play&lt;Ready&gt; {
     <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>new(turntable: Turntable&lt;turntable::Loaded&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(turntable: Turntable&lt;turntable::Loaded&gt;, field: Field) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             state: Ready { turntable },
             settings: Settings::default(),
+            field,
         }
     }
 
     <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>with_settings(<span class="self">self</span>, settings: Settings) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
+            field: <span class="self">self</span>.field,
             state: <span class="self">self</span>.state,
             settings,
         }
     }
 
     <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>start(<span class="self">self</span>) -&gt; Play&lt;Active&gt; {
+    <span class="kw">pub fn </span>with_field(<span class="self">self</span>, field: Field) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            field,
+            state: <span class="self">self</span>.state,
+            settings: <span class="self">self</span>.settings,
+        }
+    }
+
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>start(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
         Play {
+            field: <span class="self">self</span>.field,
             state: Active {
                 turntable: <span class="self">self</span>.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
-                judge: Judge::new(<span class="self">self</span>.settings.judge_zero_point.try_into().unwrap()),
+                judge: Judge::new(judge_zero_point.try_into().unwrap()),
             },
             settings: <span class="self">self</span>.settings,
         }
@@ -334,6 +376,7 @@
     <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
         Play {
+            field: <span class="self">self</span>.field,
             state: Ready {
                 turntable: <span class="self">self</span>.state.turntable.stop(),
             },
@@ -390,6 +433,16 @@
     }
 
     <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>field(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Field {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.field
+    }
+
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>judge_zero_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
+        <span class="self">self</span>.state.judge.judge_zero_point
+    }
+
+    <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>judgements(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Judgement {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.judgements
     }
@@ -410,12 +463,12 @@
         <span class="kw">let </span>is_same_direction = <span class="kw-2">*</span>direction == note.direction;
         <span class="kw">let </span>is_within_judge_range = note
             .timestamp
-            .abs_dif(<span class="kw-2">&amp;</span>(ts + <span class="self">self</span>.settings.judge_zero_point))
+            .abs_dif(<span class="kw-2">&amp;</span>(ts + i128::from(<span class="self">self</span>.state.judge.judge_zero_point)))
             &lt;= <span class="number">118</span>;
-        <span class="macro">log::info!</span>(
+        <span class="macro">log::debug!</span>(
             <span class="string">&quot;note: {:?} || judge: {:?}&quot;</span>,
             note.timestamp
-                .abs_dif(<span class="kw-2">&amp;</span>(ts + <span class="self">self</span>.settings.judge_zero_point)),
+                .abs_dif(<span class="kw-2">&amp;</span>(ts + i128::from(<span class="self">self</span>.state.judge.judge_zero_point))),
             <span class="number">118
         </span>);
         !is_judged &amp;&amp; is_same_direction &amp;&amp; is_within_judge_range
@@ -431,6 +484,7 @@
     <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>finalize(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
         Play {
+            field: <span class="self">self</span>.field,
             state: Ready {
                 turntable: <span class="self">self</span>.state.tape_deck,
             },

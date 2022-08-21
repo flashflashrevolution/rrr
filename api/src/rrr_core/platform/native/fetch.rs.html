@@ -123,7 +123,7 @@
             <span class="kw">let </span>temp_hash = <span class="kw">if let </span><span class="prelude-val">Some</span>(hash) = <span class="macro">option_env!</span>(<span class="string">&quot;TEST_PREVIEW_HASH&quot;</span>) {
                 hash.to_string()
             } <span class="kw">else </span>{
-                <span class="string">&quot;56347c11537f4cd01e1576551db30d57&quot;</span>.to_string()
+                <span class="string">&quot;&quot;</span>.to_string()
             };
             <span class="kw">let </span>url = <span class="macro">format!</span>(
                 <span class="string">&quot;https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&amp;mode=2&amp;type=ChartFFR_music&quot;</span>,

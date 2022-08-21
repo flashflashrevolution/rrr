@@ -131,7 +131,7 @@
     <span class="kw">pub </span>judgements: Judgement,
     <span class="kw">pub </span>misses: HashSet&lt;CompiledNote&gt;,
     <span class="kw">pub </span>boos: Boo,
-    <span class="kw">pub </span>judgement_zero_point: u32,
+    <span class="kw">pub </span>judge_zero_point: u32,
 }
 
 <span class="kw">impl </span>Judge {
@@ -142,7 +142,7 @@
             judgements: HashMap::default(),
             misses: HashSet::default(),
             boos: HashSet::default(),
-            judgement_zero_point,
+            judge_zero_point: judgement_zero_point,
         }
     }
 
@@ -150,7 +150,7 @@
         <span class="kw">if </span>!<span class="self">self</span>.misses.contains(closest_note) &amp;&amp; !<span class="self">self</span>.judgements.contains_key(closest_note) {
             <span class="kw">let </span>diff = closest_note
                 .timestamp
-                .diff(<span class="kw-2">&amp;</span>(current_timestamp + i128::from(<span class="self">self</span>.judgement_zero_point)));
+                .diff(<span class="kw-2">&amp;</span>(current_timestamp + i128::from(<span class="self">self</span>.judge_zero_point)));
 
             <span class="kw">let </span>judge = {
                 <span class="kw">let </span><span class="kw-2">mut </span>last_judge = <span class="prelude-val">None</span>;
@@ -164,7 +164,7 @@
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(some_judge) = judge {
                 <span class="kw">let </span>local_note = closest_note.clone();
-                <span class="macro">log::info!</span>(
+                <span class="macro">log::debug!</span>(
                     <span class="string">&quot;Judgement: {:?} on note: {:?} at &quot;</span>,
                     some_judge,
                     local_note.timestamp,
@@ -172,10 +172,10 @@
                 <span class="self">self</span>.judgements.insert(local_note, some_judge);
             } <span class="kw">else </span>{
                 <span class="self">self</span>.boos.insert(current_timestamp);
-                <span class="macro">log::info!</span>(<span class="string">&quot;Boo at: {:?}&quot;</span>, current_timestamp);
+                <span class="macro">log::debug!</span>(<span class="string">&quot;Boo at: {:?}&quot;</span>, current_timestamp);
             }
         } <span class="kw">else </span>{
-            <span class="macro">log::info!</span>(<span class="string">&quot;Already judged: {:?}&quot;</span>, closest_note);
+            <span class="macro">log::error!</span>(<span class="string">&quot;Already judged: {:?}&quot;</span>, closest_note);
         }
     }
 }
