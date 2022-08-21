@@ -38,8 +38,15 @@ impl Judge {
             judge_zero_point: judgement_zero_point,
         }
     }
-
-    pub fn judge(&mut self, current_timestamp: i128, closest_note: &CompiledNote) {
+    /// Try to calculate a judge window for a note.
+    ///
+    /// # Errors
+    /// Returns [`Err(None)`] if the note was already judged.
+    pub fn judge(
+        &mut self,
+        current_timestamp: i128,
+        closest_note: &CompiledNote,
+    ) -> anyhow::Result<Option<JudgeWindow>> {
         if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
             let diff = closest_note
                 .timestamp
@@ -67,25 +74,12 @@ impl Judge {
                 self.boos.insert(current_timestamp);
                 log::debug!("Boo at: {:?}", current_timestamp);
             }
+
+            Ok(judge)
         } else {
             log::error!("Already judged: {:?}", closest_note);
+            Err(anyhow::anyhow!("Already judged"))
         }
-    }
-}
-
-pub struct JudgementReport {
-    pub amazings: u32,
-    pub perfects: u32,
-    pub goods: u32,
-    pub averages: u32,
-    pub misses: u32,
-    pub boos: u32,
-}
-
-impl JudgementReport {
-    #[must_use]
-    pub fn new(judge: Judge) -> Self {
-        todo!();
     }
 }
 

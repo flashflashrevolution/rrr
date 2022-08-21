@@ -5,7 +5,7 @@ pub mod judge;
 use self::{
     actions::NoteAction,
     field::Field,
-    judge::{Judge, Judgement},
+    judge::{Judge, JudgeWindow, Judgement},
 };
 use crate::{
     note::{CompiledNote, Direction},
@@ -14,6 +14,16 @@ use crate::{
 };
 use btreemultimap::{BTreeMultiMap, MultiRange};
 use std::collections::HashSet;
+
+#[derive(Debug, Default, Clone)]
+pub struct JudgementReport {
+    pub amazings: u32,
+    pub perfects: u32,
+    pub goods: u32,
+    pub averages: u32,
+    pub misses: u32,
+    pub boos: u32,
+}
 
 pub struct Play<S: PlayState> {
     field: Field,
@@ -36,11 +46,13 @@ pub struct Active {
     turntable: Turntable<turntable::Playing>,
     actions: BTreeMultiMap<CompiledNote, NoteAction>,
     judge: Judge,
+    judgement_report: JudgementReport,
 }
 
 pub struct Concluded {
-    tape_deck: Turntable<turntable::Loaded>,
-    actions: Vec<NoteAction>,
+    turntable: Turntable<turntable::Loaded>,
+    actions: BTreeMultiMap<CompiledNote, NoteAction>,
+    judgement_report: JudgementReport,
 }
 
 pub trait PlayState {}
@@ -84,6 +96,7 @@ impl Play<Ready> {
                 turntable: self.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
                 judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judgement_report: JudgementReport::default(),
             },
             settings: self.settings,
         }
@@ -97,6 +110,19 @@ impl Play<Active> {
             field: self.field,
             state: Ready {
                 turntable: self.state.turntable.stop(),
+            },
+            settings: self.settings,
+        }
+    }
+
+    #[must_use]
+    pub fn finish(self) -> Play<Concluded> {
+        Play {
+            field: self.field,
+            state: Concluded {
+                turntable: self.state.turntable.stop(),
+                actions: self.state.actions,
+                judgement_report: self.state.judgement_report,
             },
             settings: self.settings,
         }
@@ -144,10 +170,10 @@ impl Play<Active> {
             .filter(|(&ts, note)| song_progress >= ts + 118 && !state.judge.misses.contains(note))
             .map(|(_, note)| note.clone());
 
-        self.state
-            .judge
-            .misses
-            .extend(mapped_notes.collect::<HashSet<CompiledNote>>());
+        let misses = mapped_notes.collect::<HashSet<CompiledNote>>();
+        self.state.judgement_report.misses += misses.len() as u32;
+
+        self.state.judge.misses.extend(misses);
     }
 
     #[must_use]
@@ -158,6 +184,11 @@ impl Play<Active> {
     #[must_use]
     pub fn judge_zero_point(&self) -> u32 {
         self.state.judge.judge_zero_point
+    }
+
+    #[must_use]
+    pub fn judgement_results(&self) -> &JudgementReport {
+        &self.state.judgement_report
     }
 
     #[must_use]
@@ -172,7 +203,20 @@ impl Play<Active> {
             .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
             .next()
         {
-            self.state.judge.judge(ts, closest_note);
+            if let Ok(judgement_result) = self.state.judge.judge(ts, closest_note) {
+                if let Some(judgement) = judgement_result {
+                    log::info!("Judgement: {:?}", judgement);
+                    self.append_to_judgement_report(judgement);
+                } else {
+                    log::info!("No judgement, boo.");
+                    self.state.judgement_report.boos += 1;
+                }
+            } else {
+                log::error!("Already judged, undefined behaviour.");
+            }
+        } else {
+            log::info!("No judgement, boo.");
+            self.state.judgement_report.boos += 1;
         }
     }
 
@@ -191,11 +235,24 @@ impl Play<Active> {
         );
         !is_judged && is_same_direction && is_within_judge_range
     }
+
+    fn append_to_judgement_report(&mut self, judgement: JudgeWindow) {
+        match judgement {
+            JudgeWindow(-118) => self.state.judgement_report.averages += 1,
+            JudgeWindow(-85) => self.state.judgement_report.goods += 1,
+            JudgeWindow(-51) => self.state.judgement_report.perfects += 1,
+            JudgeWindow(-18) => self.state.judgement_report.amazings += 1,
+            JudgeWindow(17) => self.state.judgement_report.perfects += 1,
+            JudgeWindow(50 | 84) => self.state.judgement_report.goods += 1,
+            JudgeWindow(117) => self.state.judgement_report.averages += 1,
+            _ => (),
+        }
+    }
 }
 
 impl Play<Concluded> {
     #[must_use]
-    pub fn actions(&self) -> &Vec<NoteAction> {
+    pub fn actions(&self) -> &BTreeMultiMap<CompiledNote, NoteAction> {
         &self.state.actions
     }
 
@@ -204,7 +261,7 @@ impl Play<Concluded> {
         Play {
             field: self.field,
             state: Ready {
-                turntable: self.state.tape_deck,
+                turntable: self.state.turntable,
             },
             settings: self.settings,
         }

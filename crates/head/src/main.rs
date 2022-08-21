@@ -253,13 +253,6 @@ where
                     let position =
                         get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
 
-                    // let position = match self.settings.scroll_direction {
-                    //     settings::ScrollDirection::Down => {
-                    //         HEIGHT as f64 - pre_position - noteskin.note_height as f64
-                    //     }
-                    //     settings::ScrollDirection::Up => pre_position,
-                    // };
-
                     draw_receptors(play, noteskin, frame, offset, position);
 
                     draw_notes(
@@ -549,6 +542,12 @@ async fn run_game_loop(
             max_frame_time: Element,
             min_frame_time: Element,
             skipped_frames: Element,
+            amazings: Element,
+            perfects: Element,
+            goods: Element,
+            averages: Element,
+            misses: Element,
+            boos: Element,
         }
 
         let update_progress: Option<Element> = web_sys::window()
@@ -571,12 +570,37 @@ async fn run_game_loop(
             .and_then(|win: Window| win.document())
             .and_then(|doc| doc.get_element_by_id("skipped_frames"));
 
+        let amazings: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("amazing"));
+        let perfects: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("perfect"));
+        let goods: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("good"));
+        let averages: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("average"));
+        let misses: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("miss"));
+        let boos: Option<Element> = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id("boo"));
+
         Elements {
             update_progress: update_progress.unwrap(),
             avg_frame_time: avg_frame_time.unwrap(),
             max_frame_time: max_frame_time.unwrap(),
             min_frame_time: min_frame_time.unwrap(),
             skipped_frames: skipped_frames.unwrap(),
+            amazings: amazings.unwrap(),
+            perfects: perfects.unwrap(),
+            goods: goods.unwrap(),
+            averages: averages.unwrap(),
+            misses: misses.unwrap(),
+            boos: boos.unwrap(),
         }
     };
 
@@ -651,6 +675,24 @@ async fn run_game_loop(
                         );
                         elements.skipped_frames.set_inner_html(
                             format!("{:?}", &game.benchmark_data.skipped_frames).as_str(),
+                        );
+                        elements.amazings.set_inner_html(
+                            format!("{:?}", play.judgement_results().amazings).as_str(),
+                        );
+                        elements.perfects.set_inner_html(
+                            format!("{:?}", play.judgement_results().perfects).as_str(),
+                        );
+                        elements.goods.set_inner_html(
+                            format!("{:?}", play.judgement_results().goods).as_str(),
+                        );
+                        elements.averages.set_inner_html(
+                            format!("{:?}", play.judgement_results().averages).as_str(),
+                        );
+                        elements.misses.set_inner_html(
+                            format!("{:?}", play.judgement_results().misses).as_str(),
+                        );
+                        elements.boos.set_inner_html(
+                            format!("{:?}", play.judgement_results().boos).as_str(),
                         );
                     }
 
