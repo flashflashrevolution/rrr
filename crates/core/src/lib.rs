@@ -43,8 +43,9 @@
 pub mod audio;
 pub mod chart;
 pub mod fetch;
-pub mod lerp;
 pub mod loaders;
+pub mod math;
+pub mod platform;
 pub mod play;
 pub mod query_settings;
 pub mod record;
@@ -53,6 +54,7 @@ pub mod time;
 pub mod turntable;
 
 pub use audio::*;
+use chart::chart_impl::CompiledChart;
 pub use chart::*;
 pub use record::*;
 pub use settings::*;
@@ -83,6 +85,8 @@ impl RRR {
 
 #[cfg(test)]
 mod tests {
+    use crate::chart_impl::Chart;
+
     use super::*;
 
     #[test]

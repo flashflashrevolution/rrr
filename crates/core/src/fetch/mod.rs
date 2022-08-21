@@ -1,4 +1,7 @@
-use self::playlist::{Song, Stat};
+use self::{
+    platform::Fetcher,
+    playlist::{Song, Stat},
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 pub mod playlist;
@@ -11,18 +14,7 @@ pub enum BytesFetch {
     Err(String),
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-mod native;
-#[cfg(target_arch = "wasm32")]
-mod wasm;
-
-#[cfg(target_arch = "wasm32")]
-pub mod worker;
-
-#[cfg(not(target_arch = "wasm32"))]
-pub use native::*;
-#[cfg(target_arch = "wasm32")]
-pub use wasm::*;
+pub use crate::platform::platform;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct ManifestPayload {

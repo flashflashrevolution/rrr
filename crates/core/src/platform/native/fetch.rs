@@ -1,6 +1,5 @@
-use super::BytesFetch;
+use crate::fetch::BytesFetch;
 use anyhow::{anyhow, Result};
-use bytes::Bytes;
 use serde::Deserialize;
 use std::{
     sync::mpsc::{Receiver, Sender},
@@ -19,7 +18,7 @@ impl Fetcher {
             let temp_hash = if let Some(hash) = option_env!("TEST_PREVIEW_HASH") {
                 hash.to_string()
             } else {
-                "Fill hash here for local testing.".to_string()
+                "".to_string()
             };
             let url = format!(
                 "https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music",

@@ -1,7 +1,7 @@
 #[cfg(target_arch = "wasm32")]
 use gloo_worker::Registrable;
 #[cfg(target_arch = "wasm32")]
-use rrr_core::fetch::worker::FetchWorker;
+use rrr_core::platform::platform::FetchWorker;
 
 #[cfg(target_arch = "wasm32")]
 fn main() {

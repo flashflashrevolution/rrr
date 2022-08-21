@@ -6,7 +6,6 @@ use self::{
     judge::{Judge, Judgement},
 };
 use crate::{
-    lerp::Lerp,
     note::{CompiledNote, Direction},
     settings::Settings,
     turntable, Turntable,
@@ -210,7 +209,7 @@ impl Difference for i128 {
 // tests
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::math::lerp::Lerp;
 
     fn screen_pos_to_lerp_time() -> f64 {
         (-64.).inv_lerp(720., 64.)

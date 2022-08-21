@@ -52,16 +52,17 @@ use anyhow::Error;
 use benchmark::BenchmarkData;
 use inter_struct::prelude::*;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
-use rrr_core::query_settings;
 use rrr_core::{
     fetch,
-    lerp::Lerp,
+    math::lerp::Lerp,
     note::{self, Direction},
-    play,
-    play::Play,
+    parser::swf,
+    platform::platform,
+    play::{self, Play},
+    query_settings,
     settings::{self, Settings},
     time::{performance::Time, time_trait::TimeTrait},
-    SwfParser, Turntable,
+    Turntable,
 };
 use sprites::blit;
 use std::f64;
@@ -99,7 +100,7 @@ struct Action {
 struct Game<T: TimeTrait> {
     renderer: Option<GameRenderer>,
     play_stage: Option<Play<play::Active>>,
-    fetcher: Option<fetch::Fetcher>,
+    fetcher: Option<platform::Fetcher>,
     start_instant: T,
     previous_instant: T,
     current_instant: T,
@@ -157,7 +158,7 @@ where
             match result {
                 Some(bytes) => match bytes {
                     fetch::BytesFetch::Ok(chart) => {
-                        let parser_compressed = SwfParser::new(chart.to_vec());
+                        let parser_compressed = swf::SwfParser::new(chart.to_vec());
                         let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
                             let parsing = ready_to_parse.parse();
                             let parsed = parsing.tick();

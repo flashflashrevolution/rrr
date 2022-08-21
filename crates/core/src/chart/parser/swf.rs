@@ -1,6 +1,7 @@
 use crate::{
+    chart::chart_impl::CompiledChart,
     note::{Color, CompiledNote, Direction},
-    CompiledChart, Record,
+    Record,
 };
 use anyhow::bail;
 use std::ops::ControlFlow;

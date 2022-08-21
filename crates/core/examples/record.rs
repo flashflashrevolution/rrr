@@ -1,4 +1,7 @@
-use rrr_core::{Chart, CompiledChart, Record, Turntable};
+use rrr_core::{
+    chart::chart_impl::{Chart, CompiledChart},
+    Record, Turntable,
+};
 
 fn main() {
     let chart = Chart::default();

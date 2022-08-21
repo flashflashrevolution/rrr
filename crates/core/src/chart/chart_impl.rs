@@ -2,8 +2,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    bpm::BpmChange,
     note::{Color, CompiledNote, Direction, NoteRow},
-    BpmChange,
 };
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

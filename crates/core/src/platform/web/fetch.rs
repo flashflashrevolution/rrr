@@ -1,13 +1,59 @@
 use std::cell::RefCell;
 
-use super::{worker::FetchWorker, BytesFetch};
+use crate::fetch::BytesFetch;
 use anyhow::Result;
 use futures::channel::{oneshot, oneshot::Receiver};
-use gloo_net::http::{Request, Response};
+use gloo_net::http::Request;
 use gloo_worker::{Spawnable, WorkerBridge};
 use serde::Deserialize;
-use wasm_bindgen::{prelude::*, JsCast};
-use wasm_bindgen_futures::JsFuture;
+use wasm_bindgen::prelude::*;
+
+use gloo_worker::{HandlerId, Worker, WorkerScope};
+use wasm_bindgen_futures::spawn_local;
+
+#[derive(Debug)]
+pub enum Msg<T> {
+    Respond { output: T, id: HandlerId },
+}
+
+pub struct FetchWorker {}
+
+impl Worker for FetchWorker {
+    // The Markdown Markup to Render.
+    type Input = String;
+
+    type Message = Msg<BytesFetch>;
+
+    // The Rendered Html Output.
+    type Output = BytesFetch;
+
+    fn create(_scope: &WorkerScope<Self>) -> Self {
+        Self {}
+    }
+
+    fn update(&mut self, scope: &WorkerScope<Self>, msg: Self::Message) {
+        let Msg::Respond { output, id } = msg;
+        scope.respond(id, output);
+    }
+
+    fn received(&mut self, scope: &WorkerScope<Self>, url: Self::Input, who: HandlerId) {
+        let move_scope = scope.clone();
+        spawn_local(async move {
+            let data = fetch_data(url).await;
+
+            let res = if let Ok(Some(data)) = data {
+                BytesFetch::Ok(data)
+            } else {
+                BytesFetch::Err(data.unwrap_err().as_string().unwrap())
+            };
+
+            move_scope.send_message(Msg::Respond {
+                output: res,
+                id: who,
+            });
+        });
+    }
+}
 
 pub struct Fetcher {
     bridge: WorkerBridge<FetchWorker>,
@@ -29,7 +75,7 @@ impl Fetcher {
         let temp_hash = if let Some(hash) = option_env!("TEST_PREVIEW_HASH") {
             hash.to_string()
         } else {
-            "Fill hash here for local testing.".to_string()
+            "".to_string()
         };
         bridge.send(format!("https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music", temp_hash));
         Self { bridge, rx }
