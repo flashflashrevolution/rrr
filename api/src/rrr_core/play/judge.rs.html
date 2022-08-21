@@ -99,12 +99,6 @@
 <span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
-<span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
-<span id="106">106</span>
-<span id="107">107</span>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::note::CompiledNote;
 <span class="kw">use </span>std::collections::{HashMap, HashSet};
 
@@ -145,8 +139,15 @@
             judge_zero_point: judgement_zero_point,
         }
     }
-
-    <span class="kw">pub fn </span>judge(<span class="kw-2">&amp;mut </span><span class="self">self</span>, current_timestamp: i128, closest_note: <span class="kw-2">&amp;</span>CompiledNote) {
+    <span class="doccomment">/// Try to calculate a judge window for a note.
+    ///
+    /// # Errors
+    /// Returns [`Err(None)`] if the note was already judged.
+    </span><span class="kw">pub fn </span>judge(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        current_timestamp: i128,
+        closest_note: <span class="kw-2">&amp;</span>CompiledNote,
+    ) -&gt; anyhow::Result&lt;<span class="prelude-ty">Option</span>&lt;JudgeWindow&gt;&gt; {
         <span class="kw">if </span>!<span class="self">self</span>.misses.contains(closest_note) &amp;&amp; !<span class="self">self</span>.judgements.contains_key(closest_note) {
             <span class="kw">let </span>diff = closest_note
                 .timestamp
@@ -174,25 +175,12 @@
                 <span class="self">self</span>.boos.insert(current_timestamp);
                 <span class="macro">log::debug!</span>(<span class="string">&quot;Boo at: {:?}&quot;</span>, current_timestamp);
             }
+
+            <span class="prelude-val">Ok</span>(judge)
         } <span class="kw">else </span>{
             <span class="macro">log::error!</span>(<span class="string">&quot;Already judged: {:?}&quot;</span>, closest_note);
+            <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Already judged&quot;</span>))
         }
-    }
-}
-
-<span class="kw">pub struct </span>JudgementReport {
-    <span class="kw">pub </span>amazings: u32,
-    <span class="kw">pub </span>perfects: u32,
-    <span class="kw">pub </span>goods: u32,
-    <span class="kw">pub </span>averages: u32,
-    <span class="kw">pub </span>misses: u32,
-    <span class="kw">pub </span>boos: u32,
-}
-
-<span class="kw">impl </span>JudgementReport {
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>new(judge: Judge) -&gt; <span class="self">Self </span>{
-        <span class="macro">todo!</span>();
     }
 }
 

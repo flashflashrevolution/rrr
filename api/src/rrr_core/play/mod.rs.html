@@ -280,6 +280,63 @@
 <span id="280">280</span>
 <span id="281">281</span>
 <span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
 <span class="kw">pub mod </span>field;
 <span class="kw">pub mod </span>judge;
@@ -287,7 +344,7 @@
 <span class="kw">use </span><span class="self">self</span>::{
     actions::NoteAction,
     field::Field,
-    judge::{Judge, Judgement},
+    judge::{Judge, JudgeWindow, Judgement},
 };
 <span class="kw">use crate</span>::{
     note::{CompiledNote, Direction},
@@ -296,6 +353,16 @@
 };
 <span class="kw">use </span>btreemultimap::{BTreeMultiMap, MultiRange};
 <span class="kw">use </span>std::collections::HashSet;
+
+<span class="attribute">#[derive(Debug, Default, Clone)]</span>
+<span class="kw">pub struct </span>JudgementReport {
+    <span class="kw">pub </span>amazings: u32,
+    <span class="kw">pub </span>perfects: u32,
+    <span class="kw">pub </span>goods: u32,
+    <span class="kw">pub </span>averages: u32,
+    <span class="kw">pub </span>misses: u32,
+    <span class="kw">pub </span>boos: u32,
+}
 
 <span class="kw">pub struct </span>Play&lt;S: PlayState&gt; {
     field: Field,
@@ -318,11 +385,13 @@
     turntable: Turntable&lt;turntable::Playing&gt;,
     actions: BTreeMultiMap&lt;CompiledNote, NoteAction&gt;,
     judge: Judge,
+    judgement_report: JudgementReport,
 }
 
 <span class="kw">pub struct </span>Concluded {
-    tape_deck: Turntable&lt;turntable::Loaded&gt;,
-    actions: Vec&lt;NoteAction&gt;,
+    turntable: Turntable&lt;turntable::Loaded&gt;,
+    actions: BTreeMultiMap&lt;CompiledNote, NoteAction&gt;,
+    judgement_report: JudgementReport,
 }
 
 <span class="kw">pub trait </span>PlayState {}
@@ -366,6 +435,7 @@
                 turntable: <span class="self">self</span>.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
                 judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judgement_report: JudgementReport::default(),
             },
             settings: <span class="self">self</span>.settings,
         }
@@ -379,6 +449,19 @@
             field: <span class="self">self</span>.field,
             state: Ready {
                 turntable: <span class="self">self</span>.state.turntable.stop(),
+            },
+            settings: <span class="self">self</span>.settings,
+        }
+    }
+
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; Play&lt;Concluded&gt; {
+        Play {
+            field: <span class="self">self</span>.field,
+            state: Concluded {
+                turntable: <span class="self">self</span>.state.turntable.stop(),
+                actions: <span class="self">self</span>.state.actions,
+                judgement_report: <span class="self">self</span>.state.judgement_report,
             },
             settings: <span class="self">self</span>.settings,
         }
@@ -426,10 +509,10 @@
             .filter(|(<span class="kw-2">&amp;</span>ts, note)| song_progress &gt;= ts + <span class="number">118 </span>&amp;&amp; !state.judge.misses.contains(note))
             .map(|(<span class="kw">_</span>, note)| note.clone());
 
-        <span class="self">self</span>.state
-            .judge
-            .misses
-            .extend(mapped_notes.collect::&lt;HashSet&lt;CompiledNote&gt;&gt;());
+        <span class="kw">let </span>misses = mapped_notes.collect::&lt;HashSet&lt;CompiledNote&gt;&gt;();
+        <span class="self">self</span>.state.judgement_report.misses += misses.len() <span class="kw">as </span>u32;
+
+        <span class="self">self</span>.state.judge.misses.extend(misses);
     }
 
     <span class="attribute">#[must_use]</span>
@@ -440,6 +523,11 @@
     <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>judge_zero_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="self">self</span>.state.judge.judge_zero_point
+    }
+
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>judgement_results(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>JudgementReport {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.state.judgement_report
     }
 
     <span class="attribute">#[must_use]</span>
@@ -454,7 +542,20 @@
             .filter(|(<span class="kw">_</span>, note)| <span class="self">self</span>.determine_judgable(note, <span class="kw-2">&amp;</span>direction, ts))
             .next()
         {
-            <span class="self">self</span>.state.judge.judge(ts, closest_note);
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(judgement_result) = <span class="self">self</span>.state.judge.judge(ts, closest_note) {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(judgement) = judgement_result {
+                    <span class="macro">log::info!</span>(<span class="string">&quot;Judgement: {:?}&quot;</span>, judgement);
+                    <span class="self">self</span>.append_to_judgement_report(judgement);
+                } <span class="kw">else </span>{
+                    <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
+                    <span class="self">self</span>.state.judgement_report.boos += <span class="number">1</span>;
+                }
+            } <span class="kw">else </span>{
+                <span class="macro">log::error!</span>(<span class="string">&quot;Already judged, undefined behaviour.&quot;</span>);
+            }
+        } <span class="kw">else </span>{
+            <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
+            <span class="self">self</span>.state.judgement_report.boos += <span class="number">1</span>;
         }
     }
 
@@ -473,11 +574,24 @@
         </span>);
         !is_judged &amp;&amp; is_same_direction &amp;&amp; is_within_judge_range
     }
+
+    <span class="kw">fn </span>append_to_judgement_report(<span class="kw-2">&amp;mut </span><span class="self">self</span>, judgement: JudgeWindow) {
+        <span class="kw">match </span>judgement {
+            JudgeWindow(-<span class="number">118</span>) =&gt; <span class="self">self</span>.state.judgement_report.averages += <span class="number">1</span>,
+            JudgeWindow(-<span class="number">85</span>) =&gt; <span class="self">self</span>.state.judgement_report.goods += <span class="number">1</span>,
+            JudgeWindow(-<span class="number">51</span>) =&gt; <span class="self">self</span>.state.judgement_report.perfects += <span class="number">1</span>,
+            JudgeWindow(-<span class="number">18</span>) =&gt; <span class="self">self</span>.state.judgement_report.amazings += <span class="number">1</span>,
+            JudgeWindow(<span class="number">17</span>) =&gt; <span class="self">self</span>.state.judgement_report.perfects += <span class="number">1</span>,
+            JudgeWindow(<span class="number">50 </span>| <span class="number">84</span>) =&gt; <span class="self">self</span>.state.judgement_report.goods += <span class="number">1</span>,
+            JudgeWindow(<span class="number">117</span>) =&gt; <span class="self">self</span>.state.judgement_report.averages += <span class="number">1</span>,
+            <span class="kw">_ </span>=&gt; (),
+        }
+    }
 }
 
 <span class="kw">impl </span>Play&lt;Concluded&gt; {
     <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Vec&lt;NoteAction&gt; {
+    <span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
     }
 
@@ -486,7 +600,7 @@
         Play {
             field: <span class="self">self</span>.field,
             state: Ready {
-                turntable: <span class="self">self</span>.state.tape_deck,
+                turntable: <span class="self">self</span>.state.turntable,
             },
             settings: <span class="self">self</span>.settings,
         }

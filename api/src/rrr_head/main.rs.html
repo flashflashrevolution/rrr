@@ -695,6 +695,48 @@
 <span id="695">695</span>
 <span id="696">696</span>
 <span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
+<span id="709">709</span>
+<span id="710">710</span>
+<span id="711">711</span>
+<span id="712">712</span>
+<span id="713">713</span>
+<span id="714">714</span>
+<span id="715">715</span>
+<span id="716">716</span>
+<span id="717">717</span>
+<span id="718">718</span>
+<span id="719">719</span>
+<span id="720">720</span>
+<span id="721">721</span>
+<span id="722">722</span>
+<span id="723">723</span>
+<span id="724">724</span>
+<span id="725">725</span>
+<span id="726">726</span>
+<span id="727">727</span>
+<span id="728">728</span>
+<span id="729">729</span>
+<span id="730">730</span>
+<span id="731">731</span>
+<span id="732">732</span>
+<span id="733">733</span>
+<span id="734">734</span>
+<span id="735">735</span>
+<span id="736">736</span>
+<span id="737">737</span>
+<span id="738">738</span>
+<span id="739">739</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
 <span class="attribute">#![warn(
     elided_lifetimes_in_paths,
@@ -950,14 +992,7 @@
                     <span class="kw">let </span>position =
                         get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
 
-                    <span class="comment">// let position = match self.settings.scroll_direction {
-                    //     settings::ScrollDirection::Down =&gt; {
-                    //         HEIGHT as f64 - pre_position - noteskin.note_height as f64
-                    //     }
-                    //     settings::ScrollDirection::Up =&gt; pre_position,
-                    // };
-
-                    </span>draw_receptors(play, noteskin, frame, offset, position);
+                    draw_receptors(play, noteskin, frame, offset, position);
 
                     draw_notes(
                         play,
@@ -1246,6 +1281,12 @@
             max_frame_time: Element,
             min_frame_time: Element,
             skipped_frames: Element,
+            amazings: Element,
+            perfects: Element,
+            goods: Element,
+            averages: Element,
+            misses: Element,
+            boos: Element,
         }
 
         <span class="kw">let </span>update_progress: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
@@ -1268,12 +1309,37 @@
             .and_then(|win: Window| win.document())
             .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;skipped_frames&quot;</span>));
 
+        <span class="kw">let </span>amazings: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;amazing&quot;</span>));
+        <span class="kw">let </span>perfects: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;perfect&quot;</span>));
+        <span class="kw">let </span>goods: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;good&quot;</span>));
+        <span class="kw">let </span>averages: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;average&quot;</span>));
+        <span class="kw">let </span>misses: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;miss&quot;</span>));
+        <span class="kw">let </span>boos: <span class="prelude-ty">Option</span>&lt;Element&gt; = web_sys::window()
+            .and_then(|win: Window| win.document())
+            .and_then(|doc| doc.get_element_by_id(<span class="string">&quot;boo&quot;</span>));
+
         Elements {
             update_progress: update_progress.unwrap(),
             avg_frame_time: avg_frame_time.unwrap(),
             max_frame_time: max_frame_time.unwrap(),
             min_frame_time: min_frame_time.unwrap(),
             skipped_frames: skipped_frames.unwrap(),
+            amazings: amazings.unwrap(),
+            perfects: perfects.unwrap(),
+            goods: goods.unwrap(),
+            averages: averages.unwrap(),
+            misses: misses.unwrap(),
+            boos: boos.unwrap(),
         }
     };
 
@@ -1348,6 +1414,24 @@
                         );
                         elements.skipped_frames.set_inner_html(
                             <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, <span class="kw-2">&amp;</span>game.benchmark_data.skipped_frames).as_str(),
+                        );
+                        elements.amazings.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().amazings).as_str(),
+                        );
+                        elements.perfects.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().perfects).as_str(),
+                        );
+                        elements.goods.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().goods).as_str(),
+                        );
+                        elements.averages.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().averages).as_str(),
+                        );
+                        elements.misses.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().misses).as_str(),
+                        );
+                        elements.boos.set_inner_html(
+                            <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, play.judgement_results().boos).as_str(),
                         );
                     }
 
