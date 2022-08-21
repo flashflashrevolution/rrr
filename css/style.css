@@ -11,6 +11,25 @@
     pointer-events: all;
 }
 
+.judgement {
+    position: relative;
+    left: 25%;
+    transform: translate(0, 30%);
+    pointer-events: none;
+    color: #fff;
+    z-index: 1000;
+    background-color: darkolivegreen;
+    border: whitesmoke;
+    border-radius: 0.5em;
+    width: fit-content;
+    padding: 4px;
+}
+
+.judgement p {
+    margin: 0 0 6px 0;
+    padding: 0%;
+}
+
 /* soon class with drop shadow */
 .progress {
     position: absolute;
