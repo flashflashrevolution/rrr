@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["Beat","Stores all of the note rows that represent a beat."],["Chart","A space/memory efficient representation of a chart."],["CompiledChart","A runtime efficient representation of a chart used by an RRR instance."]]};

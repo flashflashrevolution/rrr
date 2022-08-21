@@ -253,7 +253,6 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
-<span id="256">256</span>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
 <span class="kw">pub mod </span>judge;
 
@@ -262,7 +261,6 @@
     judge::{Judge, Judgement},
 };
 <span class="kw">use crate</span>::{
-    lerp::Lerp,
     note::{CompiledNote, Direction},
     settings::Settings,
     turntable, Turntable,
@@ -466,7 +464,7 @@
 <span class="comment">// tests
 </span><span class="attribute">#[cfg(test)]</span>
 <span class="kw">mod </span>tests {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::math::lerp::Lerp;
 
     <span class="kw">fn </span>screen_pos_to_lerp_time() -&gt; f64 {
         (-<span class="number">64.</span>).inv_lerp(<span class="number">720.</span>, <span class="number">64.</span>)
@@ -511,4 +509,4 @@
 // So if a note has a ms timestamp of 2000, and the zero point is at 2000,
 // how many milliseconds is the is the receptor before that. Ex. (2000 - 120)
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (e1b28cd2f 2022-08-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (878aef79d 2022-08-20)" ></div></body></html>

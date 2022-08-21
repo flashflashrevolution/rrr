@@ -99,6 +99,10 @@
 <span id="99">99</span>
 <span id="100">100</span>
 <span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
 <span class="attribute">#![warn(
     elided_lifetimes_in_paths,
@@ -144,17 +148,19 @@
 <span class="kw">pub mod </span>audio;
 <span class="kw">pub mod </span>chart;
 <span class="kw">pub mod </span>fetch;
-<span class="kw">pub mod </span>lerp;
 <span class="kw">pub mod </span>loaders;
+<span class="kw">pub mod </span>math;
+<span class="kw">pub mod </span>platform;
 <span class="kw">pub mod </span>play;
 <span class="kw">pub mod </span>query_settings;
 <span class="kw">pub mod </span>record;
 <span class="kw">pub mod </span>settings;
-<span class="kw">pub mod </span>time;
 <span class="kw">pub mod </span>turntable;
 
 <span class="kw">pub use </span>audio::<span class="kw-2">*</span>;
+<span class="kw">use </span>chart::chart_impl::CompiledChart;
 <span class="kw">pub use </span>chart::<span class="kw-2">*</span>;
+<span class="kw">pub use </span>platform::platform::time;
 <span class="kw">pub use </span>record::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>settings::<span class="kw-2">*</span>;
 <span class="kw">pub use </span>strum;
@@ -184,6 +190,8 @@
 
 <span class="attribute">#[cfg(test)]</span>
 <span class="kw">mod </span>tests {
+    <span class="kw">use </span><span class="kw">crate</span>::chart_impl::Chart;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
     <span class="attribute">#[test]</span>
@@ -201,4 +209,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (e1b28cd2f 2022-08-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (878aef79d 2022-08-20)" ></div></body></html>

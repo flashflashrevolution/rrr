@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":[["BpmChange","Represents a BPM change in a chart."]]};

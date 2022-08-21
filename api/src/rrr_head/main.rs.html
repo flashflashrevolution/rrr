@@ -661,6 +661,7 @@
 <span id="661">661</span>
 <span id="662">662</span>
 <span id="663">663</span>
+<span id="664">664</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
 <span class="attribute">#![warn(
     elided_lifetimes_in_paths,
@@ -715,16 +716,17 @@
 <span class="kw">use </span>benchmark::BenchmarkData;
 <span class="kw">use </span>inter_struct::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>pixels::{Pixels, PixelsBuilder, SurfaceTexture};
-<span class="kw">use </span>rrr_core::query_settings;
 <span class="kw">use </span>rrr_core::{
     fetch,
-    lerp::Lerp,
+    math::lerp::Lerp,
     note::{<span class="self">self</span>, Direction},
-    play,
-    play::Play,
+    parser::swf,
+    platform::{platform, TimeTrait},
+    play::{<span class="self">self</span>, Play},
+    query_settings,
     settings::{<span class="self">self</span>, Settings},
-    time::{performance::Time, time_trait::TimeTrait},
-    SwfParser, Turntable,
+    time::Time,
+    Turntable,
 };
 <span class="kw">use </span>sprites::blit;
 <span class="kw">use </span>std::f64;
@@ -762,7 +764,7 @@
 <span class="kw">struct </span>Game&lt;T: TimeTrait&gt; {
     renderer: <span class="prelude-ty">Option</span>&lt;GameRenderer&gt;,
     play_stage: <span class="prelude-ty">Option</span>&lt;Play&lt;play::Active&gt;&gt;,
-    fetcher: <span class="prelude-ty">Option</span>&lt;fetch::Fetcher&gt;,
+    fetcher: <span class="prelude-ty">Option</span>&lt;platform::Fetcher&gt;,
     start_instant: T,
     previous_instant: T,
     current_instant: T,
@@ -820,7 +822,7 @@
             <span class="kw">match </span>result {
                 <span class="prelude-val">Some</span>(bytes) =&gt; <span class="kw">match </span>bytes {
                     fetch::BytesFetch::Ok(chart) =&gt; {
-                        <span class="kw">let </span>parser_compressed = SwfParser::new(chart.to_vec());
+                        <span class="kw">let </span>parser_compressed = swf::SwfParser::new(chart.to_vec());
                         <span class="kw">let </span>record = <span class="kw">if let </span><span class="prelude-val">Ok</span>(ready_to_parse) = parser_compressed.decompress() {
                             <span class="kw">let </span>parsing = ready_to_parse.parse();
                             <span class="kw">let </span>parsed = parsing.tick();
@@ -1325,4 +1327,4 @@
     frame.fill(<span class="number">0</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (e1b28cd2f 2022-08-19)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (878aef79d 2022-08-20)" ></div></body></html>
