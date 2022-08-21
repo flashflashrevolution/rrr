@@ -24,7 +24,7 @@ pub struct Judge {
     pub judgements: Judgement,
     pub misses: HashSet<CompiledNote>,
     pub boos: Boo,
-    pub judgement_zero_point: u32,
+    pub judge_zero_point: u32,
 }
 
 impl Judge {
@@ -35,7 +35,7 @@ impl Judge {
             judgements: HashMap::default(),
             misses: HashSet::default(),
             boos: HashSet::default(),
-            judgement_zero_point,
+            judge_zero_point: judgement_zero_point,
         }
     }
 
@@ -43,7 +43,7 @@ impl Judge {
         if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
             let diff = closest_note
                 .timestamp
-                .diff(&(current_timestamp + i128::from(self.judgement_zero_point)));
+                .diff(&(current_timestamp + i128::from(self.judge_zero_point)));
 
             let judge = {
                 let mut last_judge = None;
@@ -57,7 +57,7 @@ impl Judge {
 
             if let Some(some_judge) = judge {
                 let local_note = closest_note.clone();
-                log::info!(
+                log::debug!(
                     "Judgement: {:?} on note: {:?} at ",
                     some_judge,
                     local_note.timestamp,
@@ -65,10 +65,10 @@ impl Judge {
                 self.judgements.insert(local_note, some_judge);
             } else {
                 self.boos.insert(current_timestamp);
-                log::info!("Boo at: {:?}", current_timestamp);
+                log::debug!("Boo at: {:?}", current_timestamp);
             }
         } else {
-            log::info!("Already judged: {:?}", closest_note);
+            log::error!("Already judged: {:?}", closest_note);
         }
     }
 }

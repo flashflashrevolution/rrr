@@ -58,7 +58,7 @@ use rrr_core::{
     note::{self, Direction},
     parser::swf,
     platform::{platform, TimeTrait},
-    play::{self, Play},
+    play::{self, field::Field, Play},
     query_settings,
     settings::{self, Settings},
     time::Time,
@@ -99,6 +99,8 @@ struct Action {
 
 struct Game<T: TimeTrait> {
     renderer: Option<GameRenderer>,
+    note_height: usize,
+    note_width: usize,
     play_stage: Option<Play<play::Active>>,
     fetcher: Option<platform::Fetcher>,
     start_instant: T,
@@ -124,10 +126,14 @@ where
             action_queue: Vec::new(),
             benchmark_data: BenchmarkData::new(),
             settings: Settings::default(),
+            note_height: 1,
+            note_width: 1,
         }
     }
 
     pub(crate) fn with_game_renderer(&mut self, renderer: GameRenderer) {
+        self.note_height = renderer.noteskin.note_height;
+        self.note_width = renderer.noteskin.note_width;
         self.renderer = Some(renderer);
     }
 
@@ -169,8 +175,42 @@ where
 
                         let turntable = Turntable::load(record.unwrap());
 
-                        let play = Play::new(turntable).with_settings(self.settings);
-                        let play_started = play.start();
+                        // Calculate start and end points.
+                        let field_height = HEIGHT as f64;
+                        let note_height = self.note_height as f64;
+
+                        let start_position = match self.settings.scroll_direction {
+                            settings::ScrollDirection::Down => -note_height,
+                            settings::ScrollDirection::Up => field_height,
+                        };
+                        let end_position = match self.settings.scroll_direction {
+                            settings::ScrollDirection::Down => field_height,
+                            settings::ScrollDirection::Up => -note_height,
+                        };
+                        let judge_position = match self.settings.scroll_direction {
+                            settings::ScrollDirection::Down => {
+                                HEIGHT as f64
+                                    - self.settings.judge_position as f64
+                                    - note_height as f64
+                            }
+                            settings::ScrollDirection::Up => self.settings.judge_position as f64,
+                        };
+                        let play = Play::new(
+                            turntable,
+                            Field {
+                                start_position,
+                                end_position,
+                            },
+                        )
+                        .with_settings(self.settings);
+
+                        // Calculate judge zero position.
+                        let normalized_note_progress =
+                            end_position.inv_lerp(start_position, judge_position as f64);
+                        let ms = (normalized_note_progress * f64::from(self.settings.scroll_speed))
+                            .round() as i128;
+
+                        let play_started = play.start(ms);
                         self.play_stage = Some(play_started);
 
                         self.start();
@@ -205,27 +245,20 @@ where
             if let Some(play) = &self.play_stage {
                 if let noteskin = &renderer.noteskin {
                     let time_on_screen = u64::from(play.settings().scroll_speed);
-                    let field_height = HEIGHT as f64;
-                    let note_height = noteskin.note_height as f64;
                     let offset = WIDTH as f64 / 2.0 - noteskin.note_width as f64 * 0.5;
-
-                    let start_position = match play.settings().scroll_direction {
-                        settings::ScrollDirection::Down => -note_height,
-                        settings::ScrollDirection::Up => field_height,
-                    };
-                    let end_position = match play.settings().scroll_direction {
-                        settings::ScrollDirection::Down => field_height,
-                        settings::ScrollDirection::Up => -note_height,
-                    };
-
                     let chart_progress = play.progress();
 
-                    let position = get_pos_from_ms(
-                        play.settings().judge_zero_point,
-                        start_position,
-                        end_position,
-                        time_on_screen,
-                    );
+                    let field = &play.field();
+
+                    let position =
+                        get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
+
+                    // let position = match self.settings.scroll_direction {
+                    //     settings::ScrollDirection::Down => {
+                    //         HEIGHT as f64 - pre_position - noteskin.note_height as f64
+                    //     }
+                    //     settings::ScrollDirection::Up => pre_position,
+                    // };
 
                     draw_receptors(play, noteskin, frame, offset, position);
 
@@ -233,8 +266,7 @@ where
                         play,
                         time_on_screen,
                         chart_progress,
-                        end_position,
-                        start_position,
+                        field,
                         offset,
                         frame,
                         noteskin,
@@ -260,8 +292,7 @@ fn draw_notes(
     play: &Play<play::Active>,
     time_on_screen: u64,
     chart_progress: u64,
-    end_position: f64,
-    start_position: f64,
+    field: &Field,
     offset: f64,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
@@ -270,7 +301,7 @@ fn draw_notes(
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
         let note_progress = duration - chart_progress as i128;
         let normalized = note_progress as f64 / time_on_screen as f64;
-        let position = end_position.lerp(start_position, normalized);
+        let position = field.end_position.lerp(field.start_position, normalized);
         let lane_offset = play.settings().lane_gap as f64;
 
         let lane_index = match note.direction {
@@ -285,9 +316,11 @@ fn draw_notes(
     }
 }
 
-fn get_pos_from_ms(ms: i128, start_position: f64, end_position: f64, time_on_screen: u64) -> f64 {
+fn get_pos_from_ms(ms: i128, field: &Field, time_on_screen: u64) -> f64 {
     let normalized = ms as f64 / time_on_screen as f64;
-    let pos = end_position.lerp(start_position, normalized as f64);
+    let pos = field
+        .end_position
+        .lerp(field.start_position, normalized as f64);
     pos
 }
 

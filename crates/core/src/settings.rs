@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use strum::EnumString;
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Copy, Debug, PartialEq, EnumString)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, EnumString)]
 pub enum ScrollDirection {
     #[strum(ascii_case_insensitive)]
     Up,
@@ -13,10 +13,10 @@ pub enum ScrollDirection {
 
 /// Stores RRR settings to start charts with.
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Settings {
     pub scroll_speed: u16,
-    pub judge_zero_point: i128,
+    pub judge_position: i128,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
 }
@@ -26,7 +26,7 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             scroll_speed: 3000,
-            judge_zero_point: 327,
+            judge_position: 92,
             scroll_direction: ScrollDirection::Up,
             lane_gap: 72,
         }
@@ -43,7 +43,7 @@ impl Settings {
     ) -> Self {
         Self {
             scroll_speed,
-            judge_zero_point,
+            judge_position: judge_zero_point,
             scroll_direction,
             lane_gap,
         }
@@ -58,7 +58,7 @@ mod tests {
     fn default_settings() {
         let settings = Settings::default();
         assert_eq!(settings.scroll_speed, 3000);
-        assert_eq!(settings.judge_zero_point, 327);
+        assert_eq!(settings.judge_position, 92);
         assert_eq!(settings.scroll_direction, ScrollDirection::Up);
         assert_eq!(settings.lane_gap, 72);
     }

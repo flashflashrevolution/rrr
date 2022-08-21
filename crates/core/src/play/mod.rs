@@ -1,8 +1,10 @@
 pub mod actions;
+pub mod field;
 pub mod judge;
 
 use self::{
     actions::NoteAction,
+    field::Field,
     judge::{Judge, Judgement},
 };
 use crate::{
@@ -14,6 +16,7 @@ use btreemultimap::{BTreeMultiMap, MultiRange};
 use std::collections::HashSet;
 
 pub struct Play<S: PlayState> {
+    field: Field,
     state: S,
     settings: Settings,
 }
@@ -47,28 +50,40 @@ impl PlayState for Concluded {}
 
 impl Play<Ready> {
     #[must_use]
-    pub fn new(turntable: Turntable<turntable::Loaded>) -> Self {
+    pub fn new(turntable: Turntable<turntable::Loaded>, field: Field) -> Self {
         Self {
             state: Ready { turntable },
             settings: Settings::default(),
+            field,
         }
     }
 
     #[must_use]
     pub fn with_settings(self, settings: Settings) -> Self {
         Self {
+            field: self.field,
             state: self.state,
             settings,
         }
     }
 
     #[must_use]
-    pub fn start(self) -> Play<Active> {
+    pub fn with_field(self, field: Field) -> Self {
+        Self {
+            field,
+            state: self.state,
+            settings: self.settings,
+        }
+    }
+
+    #[must_use]
+    pub fn start(self, judge_zero_point: i128) -> Play<Active> {
         Play {
+            field: self.field,
             state: Active {
                 turntable: self.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
-                judge: Judge::new(self.settings.judge_zero_point.try_into().unwrap()),
+                judge: Judge::new(judge_zero_point.try_into().unwrap()),
             },
             settings: self.settings,
         }
@@ -79,6 +94,7 @@ impl Play<Active> {
     #[must_use]
     pub fn stop(self) -> Play<Ready> {
         Play {
+            field: self.field,
             state: Ready {
                 turntable: self.state.turntable.stop(),
             },
@@ -135,6 +151,16 @@ impl Play<Active> {
     }
 
     #[must_use]
+    pub fn field(&self) -> &Field {
+        &self.field
+    }
+
+    #[must_use]
+    pub fn judge_zero_point(&self) -> u32 {
+        self.state.judge.judge_zero_point
+    }
+
+    #[must_use]
     pub fn judgements(&self) -> &Judgement {
         &self.state.judge.judgements
     }
@@ -155,12 +181,12 @@ impl Play<Active> {
         let is_same_direction = *direction == note.direction;
         let is_within_judge_range = note
             .timestamp
-            .abs_dif(&(ts + self.settings.judge_zero_point))
+            .abs_dif(&(ts + i128::from(self.state.judge.judge_zero_point)))
             <= 118;
-        log::info!(
+        log::debug!(
             "note: {:?} || judge: {:?}",
             note.timestamp
-                .abs_dif(&(ts + self.settings.judge_zero_point)),
+                .abs_dif(&(ts + i128::from(self.state.judge.judge_zero_point))),
             118
         );
         !is_judged && is_same_direction && is_within_judge_range
@@ -176,6 +202,7 @@ impl Play<Concluded> {
     #[must_use]
     pub fn finalize(self) -> Play<Ready> {
         Play {
+            field: self.field,
             state: Ready {
                 turntable: self.state.tape_deck,
             },

@@ -7,7 +7,7 @@ use std::str::FromStr;
 #[struct_merge("crate::settings::Settings")]
 pub struct SettingsMerge {
     pub scroll_speed: Option<u16>,
-    pub judge_zero_point: Option<i128>,
+    pub judge_position: Option<i128>,
     pub scroll_direction: Option<ScrollDirection>,
     pub lane_gap: Option<u8>,
 }
@@ -40,6 +40,10 @@ pub fn get_optional_settings() -> SettingsMerge {
                             Err(err) => panic!("{}", err),
                         };
                         settings.scroll_direction.replace(direction);
+                    }
+                    "judge_position" => {
+                        let judge_position = value.parse::<i128>().unwrap();
+                        settings.judge_position.replace(judge_position);
                     }
 
                     &_ => (),
