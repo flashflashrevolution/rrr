@@ -39,7 +39,7 @@ num-traits = "0.2.15"
 rb = "0.4.0"
 reqwest = { version = "0.11.11", features = ["json", "blocking"] }
 rubato = "0.12.0"
-serde = { version = "1.0.143", optional = true, features = ["derive"] }
+serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
@@ -54,7 +54,7 @@ cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
-gloo-worker = "0.2.0"
+gloo-worker = "0.2.1"
 js-sys = "0.3.59"
 futures = { version = "0.3.23", features = ["thread-pool"] }
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
