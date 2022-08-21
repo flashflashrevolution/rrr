@@ -57,11 +57,11 @@ use rrr_core::{
     math::lerp::Lerp,
     note::{self, Direction},
     parser::swf,
-    platform::platform,
+    platform::{platform, TimeTrait},
     play::{self, Play},
     query_settings,
     settings::{self, Settings},
-    time::{performance::Time, time_trait::TimeTrait},
+    time::Time,
     Turntable,
 };
 use sprites::blit;

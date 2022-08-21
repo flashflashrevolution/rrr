@@ -50,12 +50,12 @@ pub mod play;
 pub mod query_settings;
 pub mod record;
 pub mod settings;
-pub mod time;
 pub mod turntable;
 
 pub use audio::*;
 use chart::chart_impl::CompiledChart;
 pub use chart::*;
+pub use platform::platform::time;
 pub use record::*;
 pub use settings::*;
 pub use strum;
