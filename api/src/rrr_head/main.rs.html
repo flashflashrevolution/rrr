@@ -737,6 +737,10 @@
 <span id="737">737</span>
 <span id="738">738</span>
 <span id="739">739</span>
+<span id="740">740</span>
+<span id="741">741</span>
+<span id="742">742</span>
+<span id="743">743</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]</span>
 <span class="attribute">#![warn(
     elided_lifetimes_in_paths,
@@ -949,7 +953,11 @@
                         <span class="kw">let </span>ms = (normalized_note_progress * f64::from(<span class="self">self</span>.settings.scroll_speed))
                             .round() <span class="kw">as </span>i128;
 
-                        <span class="kw">let </span>play_started = play.start(ms);
+                        <span class="kw">let </span>play_started = <span class="kw">if </span><span class="self">self</span>.settings.muted {
+                            play.start(ms)
+                        } <span class="kw">else </span>{
+                            play.start_with_audio(ms)
+                        };
                         <span class="self">self</span>.play_stage = <span class="prelude-val">Some</span>(play_started);
 
                         <span class="self">self</span>.start();

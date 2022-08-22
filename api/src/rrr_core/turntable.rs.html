@@ -73,9 +73,41 @@
 <span id="73">73</span>
 <span id="74">74</span>
 <span id="75">75</span>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{note::CompiledNote, record::Record};
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+</pre><pre class="rust"><code><span class="kw">use crate</span>::{note::CompiledNote, record::Record, AudioPlayer};
 <span class="kw">use </span>btreemultimap::MultiRange;
-<span class="kw">use </span>std::ops::Bound::Included;
+<span class="kw">use </span>std::{borrow::BorrowMut, ops::Bound::Included};
 
 <span class="attribute">#[derive(Clone)]</span>
 <span class="kw">pub struct </span>Turntable&lt;S: TurntableState&gt; {
@@ -87,9 +119,9 @@
 
 <span class="kw">pub struct </span>Loaded {}
 
-<span class="attribute">#[derive(Clone)]</span>
 <span class="kw">pub struct </span>Playing {
     <span class="kw">pub </span>progress: u64,
+    audio_player: <span class="prelude-ty">Option</span>&lt;AudioPlayer&gt;,
 }
 
 <span class="kw">pub trait </span>TurntableState {}
@@ -108,18 +140,47 @@
 }
 
 <span class="kw">impl </span>Turntable&lt;Loaded&gt; {
-    <span class="attribute">#[must_use]</span>
+    <span class="doccomment">/// Start playing the record on the turntable.
+    </span><span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>play(<span class="self">self</span>) -&gt; Turntable&lt;Playing&gt; {
         Turntable {
             record: <span class="self">self</span>.record,
-            state: Playing { progress: <span class="number">0 </span>},
+            state: Playing {
+                progress: <span class="number">0</span>,
+                audio_player: <span class="prelude-val">None</span>,
+            },
         }
+    }
+
+    <span class="doccomment">/// Start playing the record on the turntable.
+    ///
+    /// # Panics
+    ///
+    /// If the mp3 data is malformed.
+    </span><span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>play_with_audio(<span class="self">self</span>) -&gt; Turntable&lt;Playing&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>turntable = Turntable {
+            record: <span class="self">self</span>.record,
+            state: Playing {
+                progress: <span class="number">0</span>,
+                audio_player: <span class="prelude-val">None</span>,
+            },
+        };
+
+        turntable.state.audio_player =
+            <span class="prelude-val">Some</span>(AudioPlayer::try_new(turntable.record.mp3.as_slice()).unwrap());
+
+        turntable
     }
 }
 
 <span class="kw">impl </span>Turntable&lt;Playing&gt; {
     <span class="attribute">#[must_use]</span>
     <span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Turntable&lt;Loaded&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>player) = <span class="self">self</span>.state.audio_player {
+            player.stop();
+        }
+
         Turntable {
             record: <span class="self">self</span>.record,
             state: Loaded {},
@@ -128,6 +189,9 @@
 
     <span class="kw">pub fn </span>tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, progress: u64) {
         <span class="self">self</span>.state.progress = progress;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(player) = <span class="self">self</span>.state.audio_player.borrow_mut() {
+            player.tick();
+        }
     }
 
     <span class="attribute">#[must_use]</span>

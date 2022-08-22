@@ -63,6 +63,10 @@
 <span id="63">63</span>
 <span id="64">64</span>
 <span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
 </pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]</span>
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 <span class="kw">use </span>strum::EnumString;
@@ -84,6 +88,7 @@
     <span class="kw">pub </span>judge_position: i128,
     <span class="kw">pub </span>scroll_direction: ScrollDirection,
     <span class="kw">pub </span>lane_gap: u8,
+    <span class="kw">pub </span>muted: bool,
 }
 
 <span class="kw">impl </span>Default <span class="kw">for </span>Settings {
@@ -94,6 +99,7 @@
             judge_position: <span class="number">92</span>,
             scroll_direction: ScrollDirection::Up,
             lane_gap: <span class="number">72</span>,
+            muted: <span class="bool-val">true</span>,
         }
     }
 }
@@ -105,12 +111,14 @@
         judge_zero_point: i128,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
+        muted: bool,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             scroll_speed,
             judge_position: judge_zero_point,
             scroll_direction,
             lane_gap,
+            muted,
         }
     }
 }

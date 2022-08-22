@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["AudioPlayer",""],["AudioResampler",""],["ResamplingSpec",""]]};
+window.SIDEBAR_ITEMS = {"struct":[["AudioPlayer",""]]};

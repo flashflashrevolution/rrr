@@ -337,6 +337,20 @@
 <span id="337">337</span>
 <span id="338">338</span>
 <span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
 <span class="kw">pub mod </span>field;
 <span class="kw">pub mod </span>judge;
@@ -380,7 +394,6 @@
     turntable: Turntable&lt;turntable::Loaded&gt;,
 }
 
-<span class="attribute">#[derive(Clone)]</span>
 <span class="kw">pub struct </span>Active {
     turntable: Turntable&lt;turntable::Playing&gt;,
     actions: BTreeMultiMap&lt;CompiledNote, NoteAction&gt;,
@@ -423,6 +436,20 @@
         <span class="self">Self </span>{
             field,
             state: <span class="self">self</span>.state,
+            settings: <span class="self">self</span>.settings,
+        }
+    }
+
+    <span class="attribute">#[must_use]</span>
+    <span class="kw">pub fn </span>start_with_audio(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
+        Play {
+            field: <span class="self">self</span>.field,
+            state: Active {
+                turntable: <span class="self">self</span>.state.turntable.play_with_audio(),
+                actions: BTreeMultiMap::default(),
+                judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judgement_report: JudgementReport::default(),
+            },
             settings: <span class="self">self</span>.settings,
         }
     }
@@ -502,11 +529,13 @@
     <span class="kw">fn </span>check_miss(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>song_progress = <span class="self">self</span>.progress() <span class="kw">as </span>i128;
 
-        <span class="kw">let </span>state = <span class="self">self</span>.state.clone();
-        <span class="kw">let </span>mapped_notes = state
+        <span class="kw">let </span>mapped_notes = <span class="self">self
+            </span>.state
             .turntable
             .view(<span class="number">120</span>)
-            .filter(|(<span class="kw-2">&amp;</span>ts, note)| song_progress &gt;= ts + <span class="number">118 </span>&amp;&amp; !state.judge.misses.contains(note))
+            .filter(|(<span class="kw-2">&amp;</span>ts, note)| {
+                song_progress &gt;= ts + <span class="number">118 </span>&amp;&amp; !<span class="self">self</span>.state.judge.misses.contains(note)
+            })
             .map(|(<span class="kw">_</span>, note)| note.clone());
 
         <span class="kw">let </span>misses = mapped_notes.collect::&lt;HashSet&lt;CompiledNote&gt;&gt;();
@@ -536,8 +565,7 @@
     }
 
     <span class="kw">pub fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: Direction, ts: i128) {
-        <span class="kw">let </span>play = <span class="self">self</span>.state.clone();
-        <span class="kw">let </span>view_result = play.turntable.view(<span class="number">500</span>);
+        <span class="kw">let </span>view_result = <span class="self">self</span>.state.turntable.view(<span class="number">500</span>);
         <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, closest_note)) = view_result
             .filter(|(<span class="kw">_</span>, note)| <span class="self">self</span>.determine_judgable(note, <span class="kw-2">&amp;</span>direction, ts))
             .next()
