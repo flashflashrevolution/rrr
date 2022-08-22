@@ -45,7 +45,7 @@ tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-simple_logger = { version = "2.2.0", optional = true }
+simple_logger = { version = "2.3.0", optional = true }
 futures = "0.3.23"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]

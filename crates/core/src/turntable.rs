@@ -1,6 +1,6 @@
-use crate::{note::CompiledNote, record::Record};
+use crate::{note::CompiledNote, record::Record, AudioPlayer};
 use btreemultimap::MultiRange;
-use std::ops::Bound::Included;
+use std::{borrow::BorrowMut, ops::Bound::Included};
 
 #[derive(Clone)]
 pub struct Turntable<S: TurntableState> {
@@ -12,9 +12,9 @@ pub struct Empty {}
 
 pub struct Loaded {}
 
-#[derive(Clone)]
 pub struct Playing {
     pub progress: u64,
+    audio_player: Option<AudioPlayer>,
 }
 
 pub trait TurntableState {}
@@ -33,18 +33,47 @@ impl Turntable<Empty> {
 }
 
 impl Turntable<Loaded> {
+    /// Start playing the record on the turntable.
     #[must_use]
     pub fn play(self) -> Turntable<Playing> {
         Turntable {
             record: self.record,
-            state: Playing { progress: 0 },
+            state: Playing {
+                progress: 0,
+                audio_player: None,
+            },
         }
+    }
+
+    /// Start playing the record on the turntable.
+    ///
+    /// # Panics
+    ///
+    /// If the mp3 data is malformed.
+    #[must_use]
+    pub fn play_with_audio(self) -> Turntable<Playing> {
+        let mut turntable = Turntable {
+            record: self.record,
+            state: Playing {
+                progress: 0,
+                audio_player: None,
+            },
+        };
+
+        turntable.state.audio_player =
+            Some(AudioPlayer::try_new(turntable.record.mp3.as_slice()).unwrap());
+
+        turntable
     }
 }
 
 impl Turntable<Playing> {
     #[must_use]
     pub fn stop(self) -> Turntable<Loaded> {
+        if let Some(mut player) = self.state.audio_player {
+            player.stop();
+        }
+
         Turntable {
             record: self.record,
             state: Loaded {},
@@ -53,6 +82,9 @@ impl Turntable<Playing> {
 
     pub fn tick(&mut self, progress: u64) {
         self.state.progress = progress;
+        if let Some(player) = self.state.audio_player.borrow_mut() {
+            player.tick();
+        }
     }
 
     #[must_use]

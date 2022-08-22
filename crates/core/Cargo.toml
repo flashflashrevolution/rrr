@@ -33,12 +33,16 @@ features = ["serde"]
 anyhow = "1.0.62"
 btreemultimap = "0.1.0"
 bytes = { version = "1.2.1", features = ["serde"] }
+dasp = { git = "https://github.com/RustAudio/dasp", rev = "6b15274b471835e586089e54228e54601f92d391", features = [
+    "interpolate",
+    "interpolate-linear",
+    "signal",
+] }
 inter-struct = "0.2.0"
 log = "0.4.17"
 num-traits = "0.2.15"
 rb = "0.4.0"
 reqwest = { version = "0.11.11", features = ["json", "blocking"] }
-rubato = "0.12.0"
 serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"

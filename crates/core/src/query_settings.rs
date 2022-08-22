@@ -10,6 +10,7 @@ pub struct SettingsMerge {
     pub judge_position: Option<i128>,
     pub scroll_direction: Option<ScrollDirection>,
     pub lane_gap: Option<u8>,
+    pub muted: Option<bool>,
 }
 
 /// Attempts to get the settings from the URL.
@@ -44,6 +45,14 @@ pub fn get_optional_settings() -> SettingsMerge {
                     "judge_position" => {
                         let judge_position = value.parse::<i128>().unwrap();
                         settings.judge_position.replace(judge_position);
+                    }
+                    "muted" => {
+                        let muted = value.parse::<bool>().unwrap();
+                        settings.muted.replace(muted);
+                    }
+                    "lane_gap" => {
+                        let lane_gap = value.parse::<u8>().unwrap();
+                        settings.lane_gap.replace(lane_gap);
                     }
 
                     &_ => (),

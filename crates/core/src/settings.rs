@@ -19,6 +19,7 @@ pub struct Settings {
     pub judge_position: i128,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
+    pub muted: bool,
 }
 
 impl Default for Settings {
@@ -29,6 +30,7 @@ impl Default for Settings {
             judge_position: 92,
             scroll_direction: ScrollDirection::Up,
             lane_gap: 72,
+            muted: true,
         }
     }
 }
@@ -40,12 +42,14 @@ impl Settings {
         judge_zero_point: i128,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
+        muted: bool,
     ) -> Self {
         Self {
             scroll_speed,
             judge_position: judge_zero_point,
             scroll_direction,
             lane_gap,
+            muted,
         }
     }
 }

@@ -41,7 +41,6 @@ pub struct Ready {
     turntable: Turntable<turntable::Loaded>,
 }
 
-#[derive(Clone)]
 pub struct Active {
     turntable: Turntable<turntable::Playing>,
     actions: BTreeMultiMap<CompiledNote, NoteAction>,
@@ -84,6 +83,20 @@ impl Play<Ready> {
         Self {
             field,
             state: self.state,
+            settings: self.settings,
+        }
+    }
+
+    #[must_use]
+    pub fn start_with_audio(self, judge_zero_point: i128) -> Play<Active> {
+        Play {
+            field: self.field,
+            state: Active {
+                turntable: self.state.turntable.play_with_audio(),
+                actions: BTreeMultiMap::default(),
+                judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judgement_report: JudgementReport::default(),
+            },
             settings: self.settings,
         }
     }
@@ -163,11 +176,13 @@ impl Play<Active> {
     fn check_miss(&mut self) {
         let song_progress = self.progress() as i128;
 
-        let state = self.state.clone();
-        let mapped_notes = state
+        let mapped_notes = self
+            .state
             .turntable
             .view(120)
-            .filter(|(&ts, note)| song_progress >= ts + 118 && !state.judge.misses.contains(note))
+            .filter(|(&ts, note)| {
+                song_progress >= ts + 118 && !self.state.judge.misses.contains(note)
+            })
             .map(|(_, note)| note.clone());
 
         let misses = mapped_notes.collect::<HashSet<CompiledNote>>();
@@ -197,8 +212,7 @@ impl Play<Active> {
     }
 
     pub fn do_action(&mut self, direction: Direction, ts: i128) {
-        let play = self.state.clone();
-        let view_result = play.turntable.view(500);
+        let view_result = self.state.turntable.view(500);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
             .next()

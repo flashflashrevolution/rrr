@@ -210,7 +210,11 @@ where
                         let ms = (normalized_note_progress * f64::from(self.settings.scroll_speed))
                             .round() as i128;
 
-                        let play_started = play.start(ms);
+                        let play_started = if self.settings.muted {
+                            play.start(ms)
+                        } else {
+                            play.start_with_audio(ms)
+                        };
                         self.play_stage = Some(play_started);
 
                         self.start();
