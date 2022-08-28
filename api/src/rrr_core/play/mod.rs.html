@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -368,8 +368,8 @@
 <span class="kw">use </span>btreemultimap::{BTreeMultiMap, MultiRange};
 <span class="kw">use </span>std::collections::HashSet;
 
-<span class="attribute">#[derive(Debug, Default, Clone)]</span>
-<span class="kw">pub struct </span>JudgementReport {
+<span class="attribute">#[derive(Debug, Default, Clone)]
+</span><span class="kw">pub struct </span>JudgementReport {
     <span class="kw">pub </span>amazings: u32,
     <span class="kw">pub </span>perfects: u32,
     <span class="kw">pub </span>goods: u32,
@@ -413,8 +413,8 @@
 <span class="kw">impl </span>PlayState <span class="kw">for </span>Concluded {}
 
 <span class="kw">impl </span>Play&lt;Ready&gt; {
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>new(turntable: Turntable&lt;turntable::Loaded&gt;, field: Field) -&gt; <span class="self">Self </span>{
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>new(turntable: Turntable&lt;turntable::Loaded&gt;, field: Field) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             state: Ready { turntable },
             settings: Settings::default(),
@@ -422,8 +422,8 @@
         }
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>with_settings(<span class="self">self</span>, settings: Settings) -&gt; <span class="self">Self </span>{
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>with_settings(<span class="self">self</span>, settings: Settings) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             field: <span class="self">self</span>.field,
             state: <span class="self">self</span>.state,
@@ -431,8 +431,8 @@
         }
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>with_field(<span class="self">self</span>, field: Field) -&gt; <span class="self">Self </span>{
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>with_field(<span class="self">self</span>, field: Field) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             field,
             state: <span class="self">self</span>.state,
@@ -440,8 +440,8 @@
         }
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>start_with_audio(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>start_with_audio(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
         Play {
             field: <span class="self">self</span>.field,
             state: Active {
@@ -454,8 +454,8 @@
         }
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>start(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>start(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
         Play {
             field: <span class="self">self</span>.field,
             state: Active {
@@ -470,8 +470,8 @@
 }
 
 <span class="kw">impl </span>Play&lt;Active&gt; {
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
         Play {
             field: <span class="self">self</span>.field,
             state: Ready {
@@ -481,8 +481,8 @@
         }
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; Play&lt;Concluded&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; Play&lt;Concluded&gt; {
         Play {
             field: <span class="self">self</span>.field,
             state: Concluded {
@@ -499,23 +499,23 @@
     /// Remove this after we create the `ChartDriver`.
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
-    </span><span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: u64) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, CompiledNote&gt; {
+    </span><span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: u64) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, CompiledNote&gt; {
         <span class="self">self</span>.state.turntable.view(range_in_milliseconds.into())
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>progress(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>progress(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
         <span class="self">self</span>.state.turntable.progress()
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>missed_notes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;CompiledNote&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>missed_notes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;CompiledNote&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.misses
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
     }
 
@@ -544,23 +544,23 @@
         <span class="self">self</span>.state.judge.misses.extend(misses);
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>field(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Field {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>field(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Field {
         <span class="kw-2">&amp;</span><span class="self">self</span>.field
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>judge_zero_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>judge_zero_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
         <span class="self">self</span>.state.judge.judge_zero_point
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>judgement_results(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>JudgementReport {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>judgement_results(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>JudgementReport {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judgement_report
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>judgements(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Judgement {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>judgements(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Judgement {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.judgements
     }
 
@@ -618,13 +618,13 @@
 }
 
 <span class="kw">impl </span>Play&lt;Concluded&gt; {
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
     }
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">pub fn </span>finalize(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
+    <span class="attribute">#[must_use]
+    </span><span class="kw">pub fn </span>finalize(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
         Play {
             field: <span class="self">self</span>.field,
             state: Ready {
@@ -636,11 +636,11 @@
 }
 
 <span class="kw">pub trait </span>Difference {
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">fn </span>abs_dif(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; <span class="self">Self</span>;
+    <span class="attribute">#[must_use]
+    </span><span class="kw">fn </span>abs_dif(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; <span class="self">Self</span>;
 
-    <span class="attribute">#[must_use]</span>
-    <span class="kw">fn </span>diff(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; i128;
+    <span class="attribute">#[must_use]
+    </span><span class="kw">fn </span>diff(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; i128;
 }
 
 <span class="kw">impl </span>Difference <span class="kw">for </span>i128 {
@@ -658,8 +658,8 @@
 }
 
 <span class="comment">// tests
-</span><span class="attribute">#[cfg(test)]</span>
-<span class="kw">mod </span>tests {
+</span><span class="attribute">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::math::lerp::Lerp;
 
     <span class="kw">fn </span>screen_pos_to_lerp_time() -&gt; f64 {
@@ -683,18 +683,18 @@
         ms.round()
     }
 
-    <span class="attribute">#[test]</span>
-    <span class="kw">fn </span>test_screen_space_to_judgement_zero() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_screen_space_to_judgement_zero() {
         <span class="macro">assert!</span>(screen_pos_to_lerp_time() - <span class="number">0.163_265_306_122_448_97 </span>&lt;= f64::EPSILON);
     }
 
-    <span class="attribute">#[test]</span>
-    <span class="kw">fn </span>test_screen_lerp_time_to_screen_space() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_screen_lerp_time_to_screen_space() {
         <span class="macro">assert!</span>((lerp_time_to_screen_pos() - <span class="number">64.</span>).abs() &lt; f64::EPSILON);
     }
 
-    <span class="attribute">#[test]</span>
-    <span class="kw">fn </span>test_ms_time_from_screen_height_time_on_screen_and_position() {
+    <span class="attribute">#[test]
+    </span><span class="kw">fn </span>test_ms_time_from_screen_height_time_on_screen_and_position() {
         <span class="macro">assert!</span>(
             (ms_time_from_screen_height_time_on_screen_and_position() - <span class="number">490.0</span>).abs() &lt; f64::EPSILON
         );
@@ -705,4 +705,4 @@
 // So if a note has a ms timestamp of 2000, and the zero point is at 2000,
 // how many milliseconds is the is the receptor before that. Ex. (2000 - 120)
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (878aef79d 2022-08-20)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
