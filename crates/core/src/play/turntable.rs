@@ -1,4 +1,5 @@
-use crate::{note::CompiledNote, record::Record, AudioPlayer};
+use super::record::Record;
+use crate::{audio::AudioPlayer, chart::RuntimeNote};
 use btreemultimap::MultiRange;
 use std::{borrow::BorrowMut, ops::Bound::Included};
 
@@ -97,7 +98,7 @@ impl Turntable<Playing> {
         self.state.progress
     }
 
-    pub fn view(&self, range_in_milliseconds: i128) -> MultiRange<'_, i128, CompiledNote> {
+    pub fn view(&self, range_in_milliseconds: i128) -> MultiRange<'_, i128, RuntimeNote> {
         let chart = &self.record.optimized_chart;
         chart.range((
             Included(self.state.progress as i128),

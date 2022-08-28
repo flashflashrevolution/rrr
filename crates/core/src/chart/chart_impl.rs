@@ -1,21 +1,21 @@
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
-use crate::{
+use super::{
     bpm::BpmChange,
-    note::{Color, CompiledNote, Direction, NoteRow},
+    note::{Color, Direction, NoteRow, RuntimeNote},
 };
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 /// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
-pub struct CompiledChart {
-    pub notes: Vec<CompiledNote>,
+pub struct RuntimeChart {
+    pub notes: Vec<RuntimeNote>,
 }
 
-impl CompiledChart {
+impl RuntimeChart {
     #[must_use]
-    pub fn new(notes: &[CompiledNote]) -> Self {
+    pub fn new(notes: &[RuntimeNote]) -> Self {
         Self {
             notes: notes.to_vec(),
         }
@@ -37,12 +37,12 @@ impl CompiledChart {
 ///
 /// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
 /// These are not used by [RRR](crate::RRR) directly.
-pub struct Chart {
+pub struct BinChart {
     beats: Vec<Beat>,
     bpm_changes: Vec<BpmChange>,
 }
 
-impl Chart {
+impl BinChart {
     #[must_use]
     pub fn new(beats: &[Beat], bpm_changes: &[BpmChange]) -> Self {
         Self {
@@ -53,10 +53,10 @@ impl Chart {
 
     #[must_use]
     #[allow(clippy::unused_self)]
-    pub fn compile(&self) -> CompiledChart {
-        CompiledChart {
+    pub fn compile(&self) -> RuntimeChart {
+        RuntimeChart {
             notes: vec![
-                CompiledNote {
+                RuntimeNote {
                     beat_position: 100,
                     color: Color::Red,
                     direction: Direction::Up,
@@ -93,14 +93,13 @@ impl Beat {
 
 #[cfg(test)]
 mod tests {
-    use crate::note::{Note, NoteRow};
-
     use super::*;
+    use crate::chart::note::Note;
 
     #[test]
     fn create_chart() {
         const FIRST_BPM: f32 = 120.;
-        let chart: Chart = Chart::new(
+        let chart: BinChart = BinChart::new(
             &[{
                 let note_rows: &[NoteRow] = &[NoteRow::new(0, &[Note::new(0)])];
                 Beat {
@@ -116,7 +115,7 @@ mod tests {
 
     #[test]
     fn compile_chart() {
-        let chart = Chart::default();
-        let _compiled_chart: CompiledChart = chart.compile();
+        let chart = BinChart::default();
+        let _compiled_chart: RuntimeChart = chart.compile();
     }
 }

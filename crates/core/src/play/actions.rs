@@ -1,6 +1,5 @@
+use crate::chart::RuntimeNote;
 use std::fmt::Display;
-
-use crate::note::CompiledNote;
 
 #[derive(Debug, Clone)]
 pub enum ActionState {
@@ -11,7 +10,7 @@ pub enum ActionState {
 
 #[derive(Debug, Clone)]
 pub struct NoteAction {
-    pub note: CompiledNote,
+    pub note: RuntimeNote,
     pub timestamp: i128,
     pub state: ActionState,
 }

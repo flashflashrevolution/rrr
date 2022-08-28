@@ -1,16 +1,18 @@
 pub mod actions;
 pub mod field;
 pub mod judge;
+pub mod record;
+pub mod turntable;
 
 use self::{
     actions::NoteAction,
     field::Field,
     judge::{Judge, JudgeWindow, Judgement},
+    turntable::Turntable,
 };
 use crate::{
-    note::{CompiledNote, Direction},
+    chart::{NoteDirection, RuntimeNote},
     settings::Settings,
-    turntable, Turntable,
 };
 use btreemultimap::{BTreeMultiMap, MultiRange};
 use std::collections::HashSet;
@@ -43,14 +45,14 @@ pub struct Ready {
 
 pub struct Active {
     turntable: Turntable<turntable::Playing>,
-    actions: BTreeMultiMap<CompiledNote, NoteAction>,
+    actions: BTreeMultiMap<RuntimeNote, NoteAction>,
     judge: Judge,
     judgement_report: JudgementReport,
 }
 
 pub struct Concluded {
     turntable: Turntable<turntable::Loaded>,
-    actions: BTreeMultiMap<CompiledNote, NoteAction>,
+    actions: BTreeMultiMap<RuntimeNote, NoteAction>,
     judgement_report: JudgementReport,
 }
 
@@ -147,7 +149,7 @@ impl Play<Active> {
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
     #[must_use]
-    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, i128, CompiledNote> {
+    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, i128, RuntimeNote> {
         self.state.turntable.view(range_in_milliseconds.into())
     }
 
@@ -157,12 +159,12 @@ impl Play<Active> {
     }
 
     #[must_use]
-    pub fn missed_notes(&self) -> &HashSet<CompiledNote> {
+    pub fn missed_notes(&self) -> &HashSet<RuntimeNote> {
         &self.state.judge.misses
     }
 
     #[must_use]
-    pub fn actions(&self) -> &BTreeMultiMap<CompiledNote, NoteAction> {
+    pub fn actions(&self) -> &BTreeMultiMap<RuntimeNote, NoteAction> {
         &self.state.actions
     }
 
@@ -185,7 +187,7 @@ impl Play<Active> {
             })
             .map(|(_, note)| note.clone());
 
-        let misses = mapped_notes.collect::<HashSet<CompiledNote>>();
+        let misses = mapped_notes.collect::<HashSet<RuntimeNote>>();
         self.state.judgement_report.misses += misses.len() as u32;
 
         self.state.judge.misses.extend(misses);
@@ -211,7 +213,7 @@ impl Play<Active> {
         &self.state.judge.judgements
     }
 
-    pub fn do_action(&mut self, direction: Direction, ts: i128) {
+    pub fn do_action(&mut self, direction: NoteDirection, ts: i128) {
         let view_result = self.state.turntable.view(500);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
@@ -234,7 +236,7 @@ impl Play<Active> {
         }
     }
 
-    fn determine_judgable(&self, note: &CompiledNote, direction: &Direction, ts: i128) -> bool {
+    fn determine_judgable(&self, note: &RuntimeNote, direction: &NoteDirection, ts: i128) -> bool {
         let is_judged = self.state.actions.contains_key(note);
         let is_same_direction = *direction == note.direction;
         let is_within_judge_range = note
@@ -266,7 +268,7 @@ impl Play<Active> {
 
 impl Play<Concluded> {
     #[must_use]
-    pub fn actions(&self) -> &BTreeMultiMap<CompiledNote, NoteAction> {
+    pub fn actions(&self) -> &BTreeMultiMap<RuntimeNote, NoteAction> {
         &self.state.actions
     }
 

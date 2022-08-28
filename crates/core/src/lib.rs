@@ -47,19 +47,13 @@ pub mod loaders;
 pub mod math;
 pub mod platform;
 pub mod play;
-pub mod query_settings;
-pub mod record;
 pub mod settings;
-pub mod turntable;
 
-pub use audio::*;
-use chart::chart_impl::CompiledChart;
-pub use chart::*;
-pub use platform::platform::time;
-pub use record::*;
-pub use settings::*;
+use chart::RuntimeChart;
+use settings::Settings;
+
+// Re-exports
 pub use strum;
-pub use turntable::*;
 
 #[derive(Debug, Default)]
 pub struct RRR {
@@ -80,14 +74,13 @@ impl RRR {
     }
 
     #[allow(clippy::unused_self)]
-    pub fn start_chart(&self, _chart: &CompiledChart) {}
+    pub fn start_chart(&self, _chart: &RuntimeChart) {}
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::chart_impl::Chart;
-
     use super::*;
+    use crate::chart::BinChart;
 
     #[test]
     fn custom_settings() {
@@ -98,7 +91,7 @@ mod tests {
     #[test]
     fn start_chart() {
         let rrr = RRR::new();
-        let chart = Chart::default();
+        let chart = BinChart::default();
         let compiled_chart = chart.compile();
         rrr.start_chart(&compiled_chart);
     }

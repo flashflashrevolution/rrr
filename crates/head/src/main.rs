@@ -53,16 +53,15 @@ use benchmark::BenchmarkData;
 use inter_struct::prelude::*;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
+    chart::{NoteColor, NoteDirection, SwfParser},
     fetch,
     math::lerp::Lerp,
-    note::{self, Direction},
-    parser::swf,
-    platform::{platform, TimeTrait},
-    play::{self, field::Field, Play},
-    query_settings,
-    settings::{self, Settings},
-    time::Time,
-    Turntable,
+    platform::{
+        platform::{self, time::Time},
+        TimeTrait,
+    },
+    play::{self, field::Field, turntable::Turntable, Play},
+    settings::{self, query::SettingsMerge, Settings},
 };
 use sprites::blit;
 use std::f64;
@@ -93,7 +92,7 @@ impl GameRenderer {
 }
 
 struct Action {
-    direction: Direction,
+    direction: NoteDirection,
     ts: i128,
 }
 
@@ -164,7 +163,7 @@ where
             match result {
                 Some(bytes) => match bytes {
                     fetch::BytesFetch::Ok(chart) => {
-                        let parser_compressed = swf::SwfParser::new(chart.to_vec());
+                        let parser_compressed = SwfParser::new(chart.to_vec());
                         let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
                             let parsing = ready_to_parse.parse();
                             let parsed = parsing.tick();
@@ -229,7 +228,7 @@ where
         }
     }
 
-    fn do_action(&mut self, direction: Direction) {
+    fn do_action(&mut self, direction: NoteDirection) {
         if let Some(stage) = &mut self.play_stage {
             self.action_queue.push(Action {
                 direction,
@@ -277,7 +276,7 @@ where
         self.previous_instant = self.current_instant;
     }
 
-    fn with_settings(&mut self, settings: Option<query_settings::SettingsMerge>) {
+    fn with_settings(&mut self, settings: Option<SettingsMerge>) {
         if let Some(settings) = settings {
             self.settings.merge(settings);
         }
@@ -302,10 +301,10 @@ fn draw_notes(
         let lane_offset = play.settings().lane_gap as f64;
 
         let lane_index = match note.direction {
-            note::Direction::Left => -1.5,
-            note::Direction::Down => -0.5,
-            note::Direction::Up => 0.5,
-            note::Direction::Right => 1.5,
+            NoteDirection::Left => -1.5,
+            NoteDirection::Down => -0.5,
+            NoteDirection::Up => 0.5,
+            NoteDirection::Right => 1.5,
         };
         let x = offset + (lane_offset * lane_index);
         let y = position;
@@ -328,34 +327,34 @@ fn draw_receptors(
     offset: f64,
     position: f64,
 ) {
-    let receptor_skin = noteskin.get_note(note::Color::Receptor);
+    let receptor_skin = noteskin.get_note(NoteColor::Receptor);
     let lane_offset = f64::from(play.settings().lane_gap);
     blit(
         frame,
         offset + (lane_offset * -1.5),
         position,
-        &note::Direction::Left,
+        &NoteDirection::Left,
         &receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * -0.5),
         position,
-        &note::Direction::Down,
+        &NoteDirection::Down,
         &receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * 0.5),
         position,
-        &note::Direction::Up,
+        &NoteDirection::Up,
         &receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * 1.5),
         position,
-        &note::Direction::Right,
+        &NoteDirection::Right,
         &receptor_skin,
     );
 }
@@ -486,10 +485,10 @@ async fn run() -> Result<(), Error> {
     }
 
     #[cfg(target_arch = "wasm32")]
-    let extracted_settings: Option<query_settings::SettingsMerge> =
-        { Some(query_settings::get_optional_settings()) };
+    let extracted_settings: Option<SettingsMerge> =
+        { Some(settings::query::get_optional_settings()) };
     #[cfg(not(target_arch = "wasm32"))]
-    let extracted_settings: Option<query_settings::SettingsMerge> = { None };
+    let extracted_settings: Option<SettingsMerge> = { None };
 
     run_game_loop(window, event_loop, extracted_settings).await
 }
@@ -510,7 +509,7 @@ fn do_toggle_game_state_debug(game: &mut Game<Time>) {
 async fn run_game_loop(
     window: winit::window::Window,
     event_loop: EventLoop<()>,
-    settings: Option<query_settings::SettingsMerge>,
+    settings: Option<SettingsMerge>,
 ) -> Result<(), anyhow::Error> {
     let window_size = window.inner_size();
     let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
@@ -723,14 +722,14 @@ fn handle_keyboard_input(
     };
     match key {
         Escape => *control_flow = ControlFlow::Exit,
-        Left => game.do_action(Direction::Left),
-        Down => game.do_action(Direction::Down),
-        Up => game.do_action(Direction::Up),
-        Right => game.do_action(Direction::Right),
-        M => game.do_action(Direction::Left),
-        Comma => game.do_action(Direction::Down),
-        Period => game.do_action(Direction::Up),
-        Slash => game.do_action(Direction::Right),
+        Left => game.do_action(NoteDirection::Left),
+        Down => game.do_action(NoteDirection::Down),
+        Up => game.do_action(NoteDirection::Up),
+        Right => game.do_action(NoteDirection::Right),
+        M => game.do_action(NoteDirection::Left),
+        Comma => game.do_action(NoteDirection::Down),
+        Period => game.do_action(NoteDirection::Up),
+        Slash => game.do_action(NoteDirection::Right),
         Space => {
             do_toggle_game_state_debug(game);
         }

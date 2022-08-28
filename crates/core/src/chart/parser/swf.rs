@@ -1,7 +1,6 @@
 use crate::{
-    chart::chart_impl::CompiledChart,
-    note::{Color, CompiledNote, Direction},
-    Record,
+    chart::{chart_impl::RuntimeChart, NoteColor, NoteDirection, RuntimeNote},
+    play::record::Record,
 };
 use anyhow::bail;
 use std::ops::ControlFlow;
@@ -21,10 +20,10 @@ enum ChartParseError {
     BeatPosition,
 
     #[error("Invalid direction in chart.")]
-    Direction,
+    NoteDirection,
 
     #[error("Invalid note color in chart.")]
-    Color,
+    NoteColor,
 
     #[error("Invalid timestamp in chart.")]
     Timestamp,
@@ -44,7 +43,7 @@ pub struct ReadyToParse {
 pub struct Parsing {
     stream: SwfBuf,
     mp3: Option<Vec<u8>>,
-    chart: Option<Vec<CompiledNote>>,
+    chart: Option<Vec<RuntimeNote>>,
 }
 pub struct Parsed {
     record: Record,
@@ -93,7 +92,7 @@ impl SwfParser<Parsing> {
     #[must_use]
     pub fn tick(self) -> SwfParser<Parsed> {
         let mut mp3_data: Vec<u8> = Vec::new();
-        let mut chart_data: Vec<CompiledNote> = Vec::new();
+        let mut chart_data: Vec<RuntimeNote> = Vec::new();
         let mut swf_reader = Reader::new(
             &self.state.stream.data[..],
             self.state.stream.header.version(),
@@ -126,7 +125,7 @@ impl SwfParser<Parsing> {
         //self.extra.chart.replace(chart_data);
         //self.extra.mp3.replace(mp3_data);
 
-        if let Ok(record) = Record::new(mp3_data, CompiledChart { notes: chart_data }) {
+        if let Ok(record) = Record::new(mp3_data, RuntimeChart { notes: chart_data }) {
             SwfParser {
                 state: Parsed { record },
             }
@@ -136,12 +135,12 @@ impl SwfParser<Parsing> {
         }
     }
 
-    fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<CompiledNote>> {
+    fn parse_action(action_raw: &[u8], version: u8) -> anyhow::Result<Vec<RuntimeNote>> {
         let mut action_reader = avm1::read::Reader::new(action_raw, version);
         let mut is_chart_data = false;
         let mut constant_pool: Option<ConstantPool<'_>> = None;
         let mut value_stack: Vec<Value<'_>> = Vec::with_capacity(4);
-        let mut beat_box: Vec<CompiledNote> = Vec::new();
+        let mut beat_box: Vec<RuntimeNote> = Vec::new();
 
         let mut done = false;
         while !done {
@@ -181,7 +180,7 @@ impl SwfParser<Parsing> {
                         if let (Ok(bp), Ok(dir), Ok(col), Ok(ts)) =
                             (beat_position, direction, color, timestamp)
                         {
-                            beat_box.push(CompiledNote {
+                            beat_box.push(RuntimeNote {
                                 beat_position: bp,
                                 direction: dir,
                                 color: col,
@@ -233,46 +232,46 @@ fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i128> {
 fn parse_color(
     value_stack: &mut Vec<Value<'_>>,
     constant_pool: &Option<ConstantPool<'_>>,
-) -> anyhow::Result<Color> {
+) -> anyhow::Result<NoteColor> {
     if let Some(Value::ConstantPool(color)) = value_stack.pop() {
         match constant_pool.clone().unwrap().strings[color as usize]
             .to_str_lossy(UTF_8)
             .to_string()
             .as_str()
         {
-            "red" => Ok(Color::Red),
-            "yellow" => Ok(Color::Yellow),
-            "blue" => Ok(Color::Blue),
-            "orange" => Ok(Color::Orange),
-            "green" => Ok(Color::Green),
-            "pink" => Ok(Color::Pink),
-            "purple" => Ok(Color::Purple),
-            "cyan" => Ok(Color::Cyan),
-            _ => bail!(ChartParseError::Color),
+            "red" => Ok(NoteColor::Red),
+            "yellow" => Ok(NoteColor::Yellow),
+            "blue" => Ok(NoteColor::Blue),
+            "orange" => Ok(NoteColor::Orange),
+            "green" => Ok(NoteColor::Green),
+            "pink" => Ok(NoteColor::Pink),
+            "purple" => Ok(NoteColor::Purple),
+            "cyan" => Ok(NoteColor::Cyan),
+            _ => bail!(ChartParseError::NoteColor),
         }
     } else {
-        bail!(ChartParseError::Color);
+        bail!(ChartParseError::NoteColor);
     }
 }
 
 fn parse_direction(
     value_stack: &mut Vec<Value<'_>>,
     constant_pool: &Option<ConstantPool<'_>>,
-) -> anyhow::Result<Direction> {
+) -> anyhow::Result<NoteDirection> {
     if let Some(Value::ConstantPool(dir)) = value_stack.pop() {
         match constant_pool.clone().unwrap().strings[dir as usize]
             .to_str_lossy(UTF_8)
             .to_string()
             .as_str()
         {
-            "L" => Ok(Direction::Left),
-            "U" => Ok(Direction::Up),
-            "D" => Ok(Direction::Down),
-            "R" => Ok(Direction::Right),
-            _ => bail!(ChartParseError::Direction),
+            "L" => Ok(NoteDirection::Left),
+            "U" => Ok(NoteDirection::Up),
+            "D" => Ok(NoteDirection::Down),
+            "R" => Ok(NoteDirection::Right),
+            _ => bail!(ChartParseError::NoteDirection),
         }
     } else {
-        bail!(ChartParseError::Direction);
+        bail!(ChartParseError::NoteDirection);
     }
 }
 

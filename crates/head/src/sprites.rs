@@ -1,6 +1,6 @@
 use crate::{HEIGHT, WIDTH};
 use image::{DynamicImage, GenericImageView, SubImage};
-use rrr_core::note::Direction;
+use rrr_core::chart::NoteDirection;
 use std::f64;
 
 /// Drawables can be blitted to the pixel buffer and animated.
@@ -14,7 +14,7 @@ pub(crate) fn blit<'a, S>(
     screen: &mut [u8],
     dest_x: f64,
     dest_y: f64,
-    dir: &Direction,
+    dir: &NoteDirection,
     drawable: &S,
 ) where
     S: Drawable<'a>,
@@ -41,19 +41,19 @@ pub(crate) fn blit<'a, S>(
             let mut source_x: u32;
             let mut source_y: u32;
             match *dir {
-                Direction::Down => {
+                NoteDirection::Down => {
                     source_x = ((screen_x as f64) - dest_x).round() as u32;
                     source_y = ((screen_y as f64) - dest_y).round() as u32;
                 }
-                Direction::Right => {
+                NoteDirection::Right => {
                     source_x = (width - 1. - ((screen_y as f64) - dest_y)).round() as u32;
                     source_y = ((screen_x as f64) - dest_x).round() as u32;
                 }
-                Direction::Up => {
+                NoteDirection::Up => {
                     source_x = (width - 1. - ((screen_x as f64) - dest_x)).round() as u32;
                     source_y = (height - 1. - ((screen_y as f64) - dest_y)).round() as u32;
                 }
-                Direction::Left => {
+                NoteDirection::Left => {
                     source_x = ((screen_y as f64) - dest_y).round() as u32;
                     source_y = (height - 1. - ((screen_x as f64) - dest_x)).round() as u32;
                 }

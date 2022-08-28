@@ -40,14 +40,14 @@ pub enum Direction {
 }
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
-pub struct CompiledNote {
+pub struct RuntimeNote {
     pub beat_position: i32,
     pub color: Color,
     pub direction: Direction,
     pub timestamp: i128,
 }
 
-impl Display for CompiledNote {
+impl Display for RuntimeNote {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -57,13 +57,13 @@ impl Display for CompiledNote {
     }
 }
 
-impl Ord for CompiledNote {
+impl Ord for RuntimeNote {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.beat_position.cmp(&other.beat_position)
     }
 }
 
-impl PartialOrd for CompiledNote {
+impl PartialOrd for RuntimeNote {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         match self.beat_position.partial_cmp(&other.beat_position) {
             Some(core::cmp::Ordering::Equal) => {}

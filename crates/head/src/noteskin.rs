@@ -2,12 +2,12 @@
 
 use crate::sprites::Drawable;
 use image::{DynamicImage, GenericImageView, SubImage};
-use rrr_core::note::Color;
+use rrr_core::chart::NoteColor;
 
 pub(crate) struct Definition {
     pub note_width: usize,
     pub note_height: usize,
-    pub color_indices: Vec<Color>,
+    pub color_indices: Vec<NoteColor>,
     pub rotations: Vec<usize>,
     pub image: DynamicImage,
     pub rows: usize,
@@ -22,16 +22,16 @@ impl Default for Definition {
             note_width: 64,
             note_height: 64,
             color_indices: [
-                Color::Blue,
-                Color::Orange,
-                Color::Red,
-                Color::Cyan,
-                Color::Pink,
-                Color::White,
-                Color::Green,
-                Color::Purple,
-                Color::Yellow,
-                Color::Receptor,
+                NoteColor::Blue,
+                NoteColor::Orange,
+                NoteColor::Red,
+                NoteColor::Cyan,
+                NoteColor::Pink,
+                NoteColor::White,
+                NoteColor::Green,
+                NoteColor::Purple,
+                NoteColor::Yellow,
+                NoteColor::Receptor,
             ]
             .to_vec(),
             rotations: [0, 90, 180, 270].to_vec(),
@@ -44,7 +44,7 @@ impl Default for Definition {
 pub(crate) struct Note<'a> {
     pub(crate) width: usize,
     pub(crate) height: usize,
-    pub(crate) color: Color,
+    pub(crate) color: NoteColor,
     pub(crate) image: SubImage<&'a DynamicImage>,
 }
 
@@ -70,7 +70,7 @@ impl Definition {
     pub(crate) fn new(
         note_width: usize,
         note_height: usize,
-        color_indices: Vec<Color>,
+        color_indices: Vec<NoteColor>,
         rotations: Vec<usize>,
         image: DynamicImage,
         rows: usize,
@@ -89,7 +89,7 @@ impl Definition {
         &self.rotations
     }
 
-    pub(crate) fn get_note(&self, color: Color) -> Note<'_> {
+    pub(crate) fn get_note(&self, color: NoteColor) -> Note<'_> {
         let width = self.note_width;
         let height = self.note_height;
         let color_index = self.color_indices.iter().position(|c| *c == color).unwrap();
@@ -133,16 +133,16 @@ mod tests {
             64,
             64,
             [
-                Color::Blue,
-                Color::Orange,
-                Color::Red,
-                Color::Cyan,
-                Color::Pink,
-                Color::White,
-                Color::Green,
-                Color::Purple,
-                Color::Yellow,
-                Color::Receptor,
+                NoteColor::Blue,
+                NoteColor::Orange,
+                NoteColor::Red,
+                NoteColor::Cyan,
+                NoteColor::Pink,
+                NoteColor::White,
+                NoteColor::Green,
+                NoteColor::Purple,
+                NoteColor::Yellow,
+                NoteColor::Receptor,
             ]
             .to_vec(),
             [0, 90, 180, 270].to_vec(),
@@ -150,7 +150,7 @@ mod tests {
             3,
         );
 
-        for color in Color::iter() {
+        for color in NoteColor::iter() {
             let note = definition.get_note(color);
             assert_eq!(note.color, color);
             assert_eq!(note.width, 64);
@@ -163,7 +163,7 @@ mod tests {
             assert!(image_out.is_ok());
         }
 
-        for color in Color::iter() {
+        for color in NoteColor::iter() {
             match std::fs::remove_file(format!("{color:?}.png")) {
                 Ok(_) => {}
                 Err(err) => {

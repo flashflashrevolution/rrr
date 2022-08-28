@@ -1,12 +1,8 @@
-use std::{
-    collections::{HashMap, HashSet},
-    fmt::Display,
-};
-
 use rrr_core::{
-    note::{self, CompiledNote, Direction},
-    play::{self, judge, Difference},
+    chart::{NoteColor, NoteDirection, RuntimeNote},
+    play::judge,
 };
+use std::collections::HashSet;
 
 #[derive(Debug)]
 struct JudgeWindow(i8);
@@ -33,77 +29,77 @@ enum Accuracy {
 
 #[derive(Debug)]
 struct Judgement<'a> {
-    note: Option<&'a CompiledNote>,
+    note: Option<&'a RuntimeNote>,
     accuracy: Accuracy,
     timestamp: Option<i128>,
 }
 
 fn main() {
     let view = vec![
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 40,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 44,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 80,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 110,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 160,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Up,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
             timestamp: 180,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Left,
+            color: NoteColor::Red,
+            direction: NoteDirection::Left,
             timestamp: 240,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Down,
+            color: NoteColor::Red,
+            direction: NoteDirection::Down,
             timestamp: 240,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Down,
+            color: NoteColor::Red,
+            direction: NoteDirection::Down,
             timestamp: 260,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Down,
+            color: NoteColor::Red,
+            direction: NoteDirection::Down,
             timestamp: 270,
         },
-        note::CompiledNote {
+        RuntimeNote {
             beat_position: 0,
-            color: note::Color::Red,
-            direction: note::Direction::Down,
+            color: NoteColor::Red,
+            direction: NoteDirection::Down,
             timestamp: 350,
         },
     ];
@@ -111,13 +107,13 @@ fn main() {
     let current_receptor_ms_position = 160u64;
 
     let key_actions = [
-        (note::Direction::Up, current_receptor_ms_position),
-        (note::Direction::Left, current_receptor_ms_position),
-        (note::Direction::Down, current_receptor_ms_position),
+        (NoteDirection::Up, current_receptor_ms_position),
+        (NoteDirection::Left, current_receptor_ms_position),
+        (NoteDirection::Down, current_receptor_ms_position),
     ];
 
     let missed_view = view.clone();
-    let missed_notes: HashSet<&CompiledNote> = missed_view
+    let missed_notes: HashSet<&RuntimeNote> = missed_view
         .iter()
         .filter(|&note| {
             current_receptor_ms_position as i128 + i128::abs(judge::JUDGE[0].0 as i128)

@@ -1,4 +1,4 @@
-use crate::ScrollDirection;
+use super::ScrollDirection;
 use inter_struct::prelude::*;
 use reqwest::Url;
 use std::str::FromStr;

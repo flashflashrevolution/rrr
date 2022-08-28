@@ -1,7 +1,6 @@
-use crate::note::CompiledNote;
-use std::collections::{HashMap, HashSet};
-
 use super::Difference;
+use crate::chart::RuntimeNote;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 pub struct JudgeWindow(pub i128);
@@ -16,13 +15,13 @@ pub static JUDGE: [JudgeWindow; 8] = [
     JudgeWindow(117),
 ];
 
-pub type Judgement = HashMap<CompiledNote, JudgeWindow>;
+pub type Judgement = HashMap<RuntimeNote, JudgeWindow>;
 pub type Boo = HashSet<i128>;
 
 #[derive(Debug, Clone)]
 pub struct Judge {
     pub judgements: Judgement,
-    pub misses: HashSet<CompiledNote>,
+    pub misses: HashSet<RuntimeNote>,
     pub boos: Boo,
     pub judge_zero_point: u32,
 }
@@ -45,7 +44,7 @@ impl Judge {
     pub fn judge(
         &mut self,
         current_timestamp: i128,
-        closest_note: &CompiledNote,
+        closest_note: &RuntimeNote,
     ) -> anyhow::Result<Option<JudgeWindow>> {
         if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
             let diff = closest_note

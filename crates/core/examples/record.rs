@@ -1,11 +1,11 @@
 use rrr_core::{
-    chart::chart_impl::{Chart, CompiledChart},
-    Record, Turntable,
+    chart::{BinChart, RuntimeChart},
+    play::{record::Record, turntable::Turntable},
 };
 
 fn main() {
-    let chart = Chart::default();
-    let compiled_chart: CompiledChart = chart.compile();
+    let chart = BinChart::default();
+    let compiled_chart: RuntimeChart = chart.compile();
     if let Ok(record) = Record::new(vec![], compiled_chart) {
         let loaded_turntable = Turntable::load(record);
         let playing_turntable = loaded_turntable.play();

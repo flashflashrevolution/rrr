@@ -2,6 +2,8 @@
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
 
+pub mod query;
+
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumString)]
 pub enum ScrollDirection {

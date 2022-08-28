@@ -1,7 +1,7 @@
 #[cfg(not(target_arch = "wasm32"))]
 mod async_loader {
     pub use bytes::Bytes;
-    pub use rrr_core::note::Color;
+    pub use rrr_core::chart::NoteColor;
     pub use std::{io::Cursor, pin::Pin};
     pub use tokio::io::{AsyncRead, AsyncReadExt, BufReader};
 
@@ -16,7 +16,7 @@ mod async_loader {
     pub struct Noteskin {
         note_width: usize,
         note_height: usize,
-        color_indexs: Vec<Color>,
+        color_indexs: Vec<NoteColor>,
         rotations: Vec<usize>,
         rows: usize,
     }
