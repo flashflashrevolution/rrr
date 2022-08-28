@@ -4,36 +4,6 @@ use rrr_core::{
 };
 use std::collections::HashSet;
 
-#[derive(Debug)]
-struct JudgeWindow(i8);
-static JUDGE: &[JudgeWindow] = &[
-    JudgeWindow(-118),
-    JudgeWindow(-85),
-    JudgeWindow(-51),
-    JudgeWindow(-18),
-    JudgeWindow(17),
-    JudgeWindow(50),
-    JudgeWindow(84),
-    JudgeWindow(117),
-];
-
-#[derive(Debug)]
-enum Accuracy {
-    Amazing,
-    Perfect,
-    Good,
-    Average,
-    Miss,
-    Boo,
-}
-
-#[derive(Debug)]
-struct Judgement<'a> {
-    note: Option<&'a RuntimeNote>,
-    accuracy: Accuracy,
-    timestamp: Option<i128>,
-}
-
 fn main() {
     let view = vec![
         RuntimeNote {
@@ -129,7 +99,7 @@ fn main() {
 
             let judge = {
                 let mut last_judge = None;
-                for judge in JUDGE {
+                for judge in judge::JUDGE {
                     if diff > judge.0.into() {
                         last_judge.replace(judge);
                     }
