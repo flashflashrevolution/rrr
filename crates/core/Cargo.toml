@@ -32,7 +32,6 @@ features = ["serde"]
 [dependencies]
 anyhow = "1.0.62"
 btreemultimap = "0.1.0"
-bytes = { version = "1.2.1", features = ["serde"] }
 dasp = { git = "https://github.com/RustAudio/dasp", rev = "6b15274b471835e586089e54228e54601f92d391", features = [
     "interpolate",
     "interpolate-linear",
@@ -42,7 +41,6 @@ inter-struct = "0.2.0"
 log = "0.4.17"
 num-traits = "0.2.15"
 rb = "0.4.1"
-reqwest = { version = "0.11.11", features = ["json", "blocking"] }
 serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"
@@ -57,10 +55,7 @@ console_error_panic_hook = "0.1.7"
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
-gloo-net = { git = "https://github.com/cdata/gloo.git" }
-gloo-worker = "0.2.1"
 js-sys = "0.3.59"
-futures = { version = "0.3.23", features = ["thread-pool"] }
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-test = "0.3.32"
 wasm-bindgen-futures = "0.4.32"

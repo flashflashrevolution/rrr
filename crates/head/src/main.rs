@@ -43,25 +43,27 @@
 #![feature(poll_ready)]
 
 mod benchmark;
+mod fetch;
 mod geo;
 mod noteskin;
+mod platform;
+mod query;
+mod settings;
 mod sprites;
 mod visibility;
 
+use crate::platform::{platform::time::Time, TimeTrait};
+use crate::settings::Settings;
 use anyhow::Error;
 use benchmark::BenchmarkData;
+use fetch::platform::Fetcher;
 use inter_struct::prelude::*;
 use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+use query::SettingsMerge;
 use rrr_core::{
     chart::{NoteColor, NoteDirection, SwfParser},
-    fetch,
     math::lerp::Lerp,
-    platform::{
-        platform::{self, time::Time},
-        TimeTrait,
-    },
     play::{self, field::Field, turntable::Turntable, Play},
-    settings::{self, query::SettingsMerge, Settings},
 };
 use sprites::blit;
 use std::f64;
@@ -96,12 +98,44 @@ struct Action {
     ts: i128,
 }
 
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
+#[derive(Default)]
+pub struct Engine {
+    settings: Settings,
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
+impl Engine {
+    #[cfg_attr(
+        target_arch = "wasm32",
+        wasm_bindgen::prelude::wasm_bindgen(constructor)
+    )]
+    pub fn new() -> Self {
+        Self {
+            ..Default::default()
+        }
+    }
+
+    pub fn modify_settings(&mut self, partial_settings: SettingsMerge) -> bool {
+        self.settings.merge(partial_settings);
+        true
+    }
+
+    #[cfg_attr(
+        target_arch = "wasm32",
+        wasm_bindgen::prelude::wasm_bindgen(js_name = toJSON)
+    )]
+    pub fn to_json(&self) -> Settings {
+        self.settings
+    }
+}
+
 struct Game<T: TimeTrait> {
     renderer: Option<GameRenderer>,
     note_height: usize,
     note_width: usize,
     play_stage: Option<Play<play::Active>>,
-    fetcher: Option<platform::Fetcher>,
+    fetcher: Option<Fetcher>,
     start_instant: T,
     previous_instant: T,
     current_instant: T,
@@ -200,8 +234,7 @@ where
                                 start_position,
                                 end_position,
                             },
-                        )
-                        .with_settings(self.settings);
+                        );
 
                         // Calculate judge zero position.
                         let normalized_note_progress =
@@ -247,7 +280,7 @@ where
 
             if let Some(play) = &self.play_stage {
                 if let noteskin = &renderer.noteskin {
-                    let time_on_screen = u64::from(play.settings().scroll_speed);
+                    let time_on_screen = u64::from(self.settings.scroll_speed);
                     let offset = WIDTH as f64 / 2.0 - noteskin.note_width as f64 * 0.5;
                     let chart_progress = play.progress();
 
@@ -256,7 +289,14 @@ where
                     let position =
                         get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
 
-                    draw_receptors(play, noteskin, frame, offset, position);
+                    draw_receptors(
+                        play,
+                        noteskin,
+                        frame,
+                        offset,
+                        position,
+                        self.settings.lane_gap,
+                    );
 
                     draw_notes(
                         play,
@@ -266,6 +306,7 @@ where
                         offset,
                         frame,
                         noteskin,
+                        self.settings.lane_gap,
                     );
                 }
             }
@@ -292,13 +333,14 @@ fn draw_notes(
     offset: f64,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
+    lane_gap: u8,
 ) {
     let view = play.view(time_on_screen);
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
         let note_progress = duration - chart_progress as i128;
         let normalized = note_progress as f64 / time_on_screen as f64;
         let position = field.end_position.lerp(field.start_position, normalized);
-        let lane_offset = play.settings().lane_gap as f64;
+        let lane_offset = lane_gap as f64;
 
         let lane_index = match note.direction {
             NoteDirection::Left => -1.5,
@@ -326,9 +368,10 @@ fn draw_receptors(
     frame: &mut [u8],
     offset: f64,
     position: f64,
+    lane_gap: u8,
 ) {
     let receptor_skin = noteskin.get_note(NoteColor::Receptor);
-    let lane_offset = f64::from(play.settings().lane_gap);
+    let lane_offset = f64::from(lane_gap);
     blit(
         frame,
         offset + (lane_offset * -1.5),
@@ -367,6 +410,16 @@ cfg_if::cfg_if! {
     } else {
         fn init_log() { simple_logger::init().unwrap(); }
     }
+}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen::prelude::wasm_bindgen(start)]
+pub fn wasm_startup() {}
+
+#[cfg(target_arch = "wasm32")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub fn play() {
+    main();
 }
 
 fn main() {
@@ -485,8 +538,7 @@ async fn run() -> Result<(), Error> {
     }
 
     #[cfg(target_arch = "wasm32")]
-    let extracted_settings: Option<SettingsMerge> =
-        { Some(settings::query::get_optional_settings()) };
+    let extracted_settings: Option<SettingsMerge> = { Some(query::get_optional_settings()) };
     #[cfg(not(target_arch = "wasm32"))]
     let extracted_settings: Option<SettingsMerge> = { None };
 
@@ -718,7 +770,7 @@ fn handle_keyboard_input(
     modifiers: ModifiersState,
 ) {
     use winit::event::VirtualKeyCode::{
-        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, G, H, M,
+        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, M,
     };
     match key {
         Escape => *control_flow = ControlFlow::Exit,

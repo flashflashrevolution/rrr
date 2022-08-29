@@ -1,16 +1,31 @@
-use super::ScrollDirection;
+use crate::settings::ScrollDirection;
 use inter_struct::prelude::*;
 use reqwest::Url;
 use std::str::FromStr;
 
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
 #[derive(StructMerge, Debug, Clone, Copy, PartialEq, Default)]
 #[struct_merge("crate::settings::Settings")]
 pub struct SettingsMerge {
     pub scroll_speed: Option<u16>,
-    pub judge_position: Option<i128>,
+    pub judge_position: Option<i32>,
     pub scroll_direction: Option<ScrollDirection>,
     pub lane_gap: Option<u8>,
     pub muted: Option<bool>,
+}
+
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
+impl SettingsMerge {
+    #[cfg_attr(
+        target_arch = "wasm32",
+        wasm_bindgen::prelude::wasm_bindgen(constructor)
+    )]
+    #[must_use]
+    pub fn new() -> Self {
+        Self {
+            ..Default::default()
+        }
+    }
 }
 
 /// Attempts to get the settings from the URL.
@@ -43,7 +58,7 @@ pub fn get_optional_settings() -> SettingsMerge {
                         settings.scroll_direction.replace(direction);
                     }
                     "judge_position" => {
-                        let judge_position = value.parse::<i128>().unwrap();
+                        let judge_position = value.parse::<i32>().unwrap();
                         settings.judge_position.replace(judge_position);
                     }
                     "muted" => {

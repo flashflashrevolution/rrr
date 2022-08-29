@@ -2,8 +2,10 @@
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
 
-pub mod query;
-
+#[cfg_attr(
+    target_arch = "wasm32",
+    wasm_bindgen::prelude::wasm_bindgen(inspectable)
+)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, EnumString)]
 pub enum ScrollDirection {
@@ -14,11 +16,15 @@ pub enum ScrollDirection {
 }
 
 /// Stores RRR settings to start charts with.
+#[cfg_attr(
+    target_arch = "wasm32",
+    wasm_bindgen::prelude::wasm_bindgen(inspectable)
+)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Settings {
     pub scroll_speed: u16,
-    pub judge_position: i128,
+    pub judge_position: i32,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
     pub muted: bool,
@@ -41,7 +47,7 @@ impl Settings {
     #[must_use]
     pub fn new(
         scroll_speed: u16,
-        judge_zero_point: i128,
+        judge_zero_point: i32,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
         muted: bool,

@@ -42,10 +42,8 @@
 
 pub mod audio;
 pub mod chart;
-pub mod fetch;
 pub mod loaders;
 pub mod math;
-pub mod platform;
 pub mod play;
 pub mod settings;
 

@@ -21,6 +21,7 @@ develop = [
     "simple_logger",
     "log/max_level_info",
     "log/release_max_level_info",
+    "serde",
     "rrr-core/develop",
 ]
 release = [
@@ -29,6 +30,7 @@ release = [
     "log/release_max_level_off",
     "rrr-core/release",
     "web",
+    "serde",
 ]
 
 [dependencies]
@@ -39,7 +41,10 @@ inter-struct = "0.2.0"
 lerp = "0.4.0"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/parasyte/pixels.git", branch = "main" }
+reqwest = { version = "0.11.11", features = ["json", "blocking"] }
 rrr-core = { path = "../core", default-features = false }
+serde = { version = "1.0.144", optional = true, features = ["derive"] }
+strum = { version = "0.24.1", features = ["derive"] }
 winit = "0.27.2"
 tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
 
@@ -51,7 +56,10 @@ futures = "0.3.23"
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.7"
 console_log = { version = "0.2.0", features = ["color"], optional = true }
+futures = { version = "0.3.23", features = ["thread-pool"] }
 gloo = "0.8.0"
+gloo-net = { git = "https://github.com/cdata/gloo.git" }
+gloo-worker = "0.2.1"
 wasm-bindgen = "0.2.82"
 wasm-bindgen-futures = "0.4.32"
 wgpu = "0.13.1"
@@ -59,3 +67,6 @@ wgpu = "0.13.1"
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
 version = "0.3.59"
 features = ["Window", "Document", "EventListener"]
+
+[dev-dependencies]
+bytes = { version = "1.2.1", features = ["serde"] }
