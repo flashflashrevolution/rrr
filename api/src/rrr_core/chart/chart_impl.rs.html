@@ -119,25 +119,24 @@
 <span id="119">119</span>
 <span id="120">120</span>
 <span id="121">121</span>
-<span id="122">122</span>
 </pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
-<span class="kw">use crate</span>::{
+<span class="kw">use super</span>::{
     bpm::BpmChange,
-    note::{Color, CompiledNote, Direction, NoteRow},
+    note::{Color, Direction, NoteRow, RuntimeNote},
 };
 
 <span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 </span><span class="doccomment">/// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
-</span><span class="kw">pub struct </span>CompiledChart {
-    <span class="kw">pub </span>notes: Vec&lt;CompiledNote&gt;,
+</span><span class="kw">pub struct </span>RuntimeChart {
+    <span class="kw">pub </span>notes: Vec&lt;RuntimeNote&gt;,
 }
 
-<span class="kw">impl </span>CompiledChart {
+<span class="kw">impl </span>RuntimeChart {
     <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(notes: <span class="kw-2">&amp;</span>[CompiledNote]) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(notes: <span class="kw-2">&amp;</span>[RuntimeNote]) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             notes: notes.to_vec(),
         }
@@ -159,12 +158,12 @@
 ///
 /// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
 /// These are not used by [RRR](crate::RRR) directly.
-</span><span class="kw">pub struct </span>Chart {
+</span><span class="kw">pub struct </span>BinChart {
     beats: Vec&lt;Beat&gt;,
     bpm_changes: Vec&lt;BpmChange&gt;,
 }
 
-<span class="kw">impl </span>Chart {
+<span class="kw">impl </span>BinChart {
     <span class="attribute">#[must_use]
     </span><span class="kw">pub fn </span>new(beats: <span class="kw-2">&amp;</span>[Beat], bpm_changes: <span class="kw-2">&amp;</span>[BpmChange]) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
@@ -175,10 +174,10 @@
 
     <span class="attribute">#[must_use]
     #[allow(clippy::unused_self)]
-    </span><span class="kw">pub fn </span>compile(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CompiledChart {
-        CompiledChart {
+    </span><span class="kw">pub fn </span>compile(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeChart {
+        RuntimeChart {
             notes: <span class="macro">vec!</span>[
-                CompiledNote {
+                RuntimeNote {
                     beat_position: <span class="number">100</span>,
                     color: Color::Red,
                     direction: Direction::Up,
@@ -215,14 +214,13 @@
 
 <span class="attribute">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">crate</span>::note::{Note, NoteRow};
-
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::chart::note::Note;
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>create_chart() {
         <span class="kw">const </span>FIRST_BPM: f32 = <span class="number">120.</span>;
-        <span class="kw">let </span>chart: Chart = Chart::new(
+        <span class="kw">let </span>chart: BinChart = BinChart::new(
             <span class="kw-2">&amp;</span>[{
                 <span class="kw">let </span>note_rows: <span class="kw-2">&amp;</span>[NoteRow] = <span class="kw-2">&amp;</span>[NoteRow::new(<span class="number">0</span>, <span class="kw-2">&amp;</span>[Note::new(<span class="number">0</span>)])];
                 Beat {
@@ -238,9 +236,9 @@
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>compile_chart() {
-        <span class="kw">let </span>chart = Chart::default();
-        <span class="kw">let </span>_compiled_chart: CompiledChart = chart.compile();
+        <span class="kw">let </span>chart = BinChart::default();
+        <span class="kw">let </span>_compiled_chart: RuntimeChart = chart.compile();
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

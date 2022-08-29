@@ -94,15 +94,6 @@
 <span id="94">94</span>
 <span id="95">95</span>
 <span id="96">96</span>
-<span id="97">97</span>
-<span id="98">98</span>
-<span id="99">99</span>
-<span id="100">100</span>
-<span id="101">101</span>
-<span id="102">102</span>
-<span id="103">103</span>
-<span id="104">104</span>
-<span id="105">105</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]
 #![warn(
     elided_lifetimes_in_paths,
@@ -147,24 +138,16 @@
 
 </span><span class="kw">pub mod </span>audio;
 <span class="kw">pub mod </span>chart;
-<span class="kw">pub mod </span>fetch;
 <span class="kw">pub mod </span>loaders;
 <span class="kw">pub mod </span>math;
-<span class="kw">pub mod </span>platform;
 <span class="kw">pub mod </span>play;
-<span class="kw">pub mod </span>query_settings;
-<span class="kw">pub mod </span>record;
 <span class="kw">pub mod </span>settings;
-<span class="kw">pub mod </span>turntable;
 
-<span class="kw">pub use </span>audio::<span class="kw-2">*</span>;
-<span class="kw">use </span>chart::chart_impl::CompiledChart;
-<span class="kw">pub use </span>chart::<span class="kw-2">*</span>;
-<span class="kw">pub use </span>platform::platform::time;
-<span class="kw">pub use </span>record::<span class="kw-2">*</span>;
-<span class="kw">pub use </span>settings::<span class="kw-2">*</span>;
-<span class="kw">pub use </span>strum;
-<span class="kw">pub use </span>turntable::<span class="kw-2">*</span>;
+<span class="kw">use </span>chart::RuntimeChart;
+<span class="kw">use </span>settings::Settings;
+
+<span class="comment">// Re-exports
+</span><span class="kw">pub use </span>strum;
 
 <span class="attribute">#[derive(Debug, Default)]
 </span><span class="kw">pub struct </span>RRR {
@@ -185,14 +168,13 @@
     }
 
     <span class="attribute">#[allow(clippy::unused_self)]
-    </span><span class="kw">pub fn </span>start_chart(<span class="kw-2">&amp;</span><span class="self">self</span>, _chart: <span class="kw-2">&amp;</span>CompiledChart) {}
+    </span><span class="kw">pub fn </span>start_chart(<span class="kw-2">&amp;</span><span class="self">self</span>, _chart: <span class="kw-2">&amp;</span>RuntimeChart) {}
 }
 
 <span class="attribute">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">crate</span>::chart_impl::Chart;
-
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::chart::BinChart;
 
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>custom_settings() {
@@ -203,10 +185,10 @@
     <span class="attribute">#[test]
     </span><span class="kw">fn </span>start_chart() {
         <span class="kw">let </span>rrr = RRR::new();
-        <span class="kw">let </span>chart = Chart::default();
+        <span class="kw">let </span>chart = BinChart::default();
         <span class="kw">let </span>compiled_chart = chart.compile();
         rrr.start_chart(<span class="kw-2">&amp;</span>compiled_chart);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

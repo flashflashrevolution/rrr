@@ -2,9 +2,21 @@
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
-</pre><pre class="rust"><code><span class="kw">pub mod </span>bpm;
-<span class="kw">pub mod </span>chart_impl;
-<span class="kw">pub mod </span>note;
-<span class="kw">pub mod </span>parser;
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+</pre><pre class="rust"><code><span class="kw">mod </span>bpm;
+<span class="kw">mod </span>chart_impl;
+<span class="kw">mod </span>note;
+<span class="kw">mod </span>parser;
+
+<span class="kw">pub use </span>chart_impl::{Beat, BinChart, RuntimeChart};
+<span class="kw">pub use </span>note::{
+    Color <span class="kw">as </span>NoteColor, ColorIter, Direction <span class="kw">as </span>NoteDirection, Note, NoteRow, RuntimeNote,
+};
+<span class="kw">pub use </span>parser::swf::SwfParser;
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

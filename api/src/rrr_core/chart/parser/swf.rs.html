@@ -311,11 +311,9 @@
 <span id="311">311</span>
 <span id="312">312</span>
 <span id="313">313</span>
-<span id="314">314</span>
 </pre><pre class="rust"><code><span class="kw">use crate</span>::{
-    chart::chart_impl::CompiledChart,
-    note::{Color, CompiledNote, Direction},
-    Record,
+    chart::{chart_impl::RuntimeChart, NoteColor, NoteDirection, RuntimeNote},
+    play::record::Record,
 };
 <span class="kw">use </span>anyhow::bail;
 <span class="kw">use </span>std::ops::ControlFlow;
@@ -335,10 +333,10 @@
     </span>BeatPosition,
 
     <span class="attribute">#[error(<span class="string">&quot;Invalid direction in chart.&quot;</span>)]
-    </span>Direction,
+    </span>NoteDirection,
 
     <span class="attribute">#[error(<span class="string">&quot;Invalid note color in chart.&quot;</span>)]
-    </span>Color,
+    </span>NoteColor,
 
     <span class="attribute">#[error(<span class="string">&quot;Invalid timestamp in chart.&quot;</span>)]
     </span>Timestamp,
@@ -358,7 +356,7 @@
 <span class="kw">pub struct </span>Parsing {
     stream: SwfBuf,
     mp3: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
-    chart: <span class="prelude-ty">Option</span>&lt;Vec&lt;CompiledNote&gt;&gt;,
+    chart: <span class="prelude-ty">Option</span>&lt;Vec&lt;RuntimeNote&gt;&gt;,
 }
 <span class="kw">pub struct </span>Parsed {
     record: Record,
@@ -407,7 +405,7 @@
     <span class="attribute">#[must_use]
     </span><span class="kw">pub fn </span>tick(<span class="self">self</span>) -&gt; SwfParser&lt;Parsed&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>mp3_data: Vec&lt;u8&gt; = Vec::new();
-        <span class="kw">let </span><span class="kw-2">mut </span>chart_data: Vec&lt;CompiledNote&gt; = Vec::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>chart_data: Vec&lt;RuntimeNote&gt; = Vec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>swf_reader = Reader::new(
             <span class="kw-2">&amp;</span><span class="self">self</span>.state.stream.data[..],
             <span class="self">self</span>.state.stream.header.version(),
@@ -440,7 +438,7 @@
         //self.extra.chart.replace(chart_data);
         //self.extra.mp3.replace(mp3_data);
 
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(record) = Record::new(mp3_data, CompiledChart { notes: chart_data }) {
+        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(record) = Record::new(mp3_data, RuntimeChart { notes: chart_data }) {
             SwfParser {
                 state: Parsed { record },
             }
@@ -450,12 +448,12 @@
         }
     }
 
-    <span class="kw">fn </span>parse_action(action_raw: <span class="kw-2">&amp;</span>[u8], version: u8) -&gt; anyhow::Result&lt;Vec&lt;CompiledNote&gt;&gt; {
+    <span class="kw">fn </span>parse_action(action_raw: <span class="kw-2">&amp;</span>[u8], version: u8) -&gt; anyhow::Result&lt;Vec&lt;RuntimeNote&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>action_reader = avm1::read::Reader::new(action_raw, version);
         <span class="kw">let </span><span class="kw-2">mut </span>is_chart_data = <span class="bool-val">false</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>constant_pool: <span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>value_stack: Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = Vec::with_capacity(<span class="number">4</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>beat_box: Vec&lt;CompiledNote&gt; = Vec::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>beat_box: Vec&lt;RuntimeNote&gt; = Vec::new();
 
         <span class="kw">let </span><span class="kw-2">mut </span>done = <span class="bool-val">false</span>;
         <span class="kw">while </span>!done {
@@ -495,7 +493,7 @@
                         <span class="kw">if let </span>(<span class="prelude-val">Ok</span>(bp), <span class="prelude-val">Ok</span>(dir), <span class="prelude-val">Ok</span>(col), <span class="prelude-val">Ok</span>(ts)) =
                             (beat_position, direction, color, timestamp)
                         {
-                            beat_box.push(CompiledNote {
+                            beat_box.push(RuntimeNote {
                                 beat_position: bp,
                                 direction: dir,
                                 color: col,
@@ -547,46 +545,46 @@
 <span class="kw">fn </span>parse_color(
     value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
     constant_pool: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-) -&gt; anyhow::Result&lt;Color&gt; {
+) -&gt; anyhow::Result&lt;NoteColor&gt; {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::ConstantPool(color)) = value_stack.pop() {
         <span class="kw">match </span>constant_pool.clone().unwrap().strings[color <span class="kw">as </span>usize]
             .to_str_lossy(UTF_8)
             .to_string()
             .as_str()
         {
-            <span class="string">&quot;red&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Red),
-            <span class="string">&quot;yellow&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Yellow),
-            <span class="string">&quot;blue&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Blue),
-            <span class="string">&quot;orange&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Orange),
-            <span class="string">&quot;green&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Green),
-            <span class="string">&quot;pink&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Pink),
-            <span class="string">&quot;purple&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Purple),
-            <span class="string">&quot;cyan&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Color::Cyan),
-            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::Color),
+            <span class="string">&quot;red&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Red),
+            <span class="string">&quot;yellow&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Yellow),
+            <span class="string">&quot;blue&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Blue),
+            <span class="string">&quot;orange&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Orange),
+            <span class="string">&quot;green&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Green),
+            <span class="string">&quot;pink&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Pink),
+            <span class="string">&quot;purple&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Purple),
+            <span class="string">&quot;cyan&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Cyan),
+            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::NoteColor),
         }
     } <span class="kw">else </span>{
-        <span class="macro">bail!</span>(ChartParseError::Color);
+        <span class="macro">bail!</span>(ChartParseError::NoteColor);
     }
 }
 
 <span class="kw">fn </span>parse_direction(
     value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
     constant_pool: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-) -&gt; anyhow::Result&lt;Direction&gt; {
+) -&gt; anyhow::Result&lt;NoteDirection&gt; {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::ConstantPool(dir)) = value_stack.pop() {
         <span class="kw">match </span>constant_pool.clone().unwrap().strings[dir <span class="kw">as </span>usize]
             .to_str_lossy(UTF_8)
             .to_string()
             .as_str()
         {
-            <span class="string">&quot;L&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Direction::Left),
-            <span class="string">&quot;U&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Direction::Up),
-            <span class="string">&quot;D&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Direction::Down),
-            <span class="string">&quot;R&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Direction::Right),
-            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::Direction),
+            <span class="string">&quot;L&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Left),
+            <span class="string">&quot;U&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Up),
+            <span class="string">&quot;D&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Down),
+            <span class="string">&quot;R&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Right),
+            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::NoteDirection),
         }
     } <span class="kw">else </span>{
-        <span class="macro">bail!</span>(ChartParseError::Direction);
+        <span class="macro">bail!</span>(ChartParseError::NoteDirection);
     }
 }
 
@@ -627,4 +625,4 @@
     ControlFlow::Continue(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

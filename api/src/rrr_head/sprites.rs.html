@@ -86,7 +86,7 @@
 <span id="86">86</span>
 </pre><pre class="rust"><code><span class="kw">use crate</span>::{HEIGHT, WIDTH};
 <span class="kw">use </span>image::{DynamicImage, GenericImageView, SubImage};
-<span class="kw">use </span>rrr_core::note::Direction;
+<span class="kw">use </span>rrr_core::chart::NoteDirection;
 <span class="kw">use </span>std::f64;
 
 <span class="doccomment">/// Drawables can be blitted to the pixel buffer and animated.
@@ -100,7 +100,7 @@
     screen: <span class="kw-2">&amp;mut </span>[u8],
     dest_x: f64,
     dest_y: f64,
-    dir: <span class="kw-2">&amp;</span>Direction,
+    dir: <span class="kw-2">&amp;</span>NoteDirection,
     drawable: <span class="kw-2">&amp;</span>S,
 ) <span class="kw">where
     </span>S: Drawable&lt;<span class="lifetime">&#39;a</span>&gt;,
@@ -127,19 +127,19 @@
             </span><span class="kw">let </span><span class="kw-2">mut </span>source_x: u32;
             <span class="kw">let </span><span class="kw-2">mut </span>source_y: u32;
             <span class="kw">match </span><span class="kw-2">*</span>dir {
-                Direction::Down =&gt; {
+                NoteDirection::Down =&gt; {
                     source_x = ((screen_x <span class="kw">as </span>f64) - dest_x).round() <span class="kw">as </span>u32;
                     source_y = ((screen_y <span class="kw">as </span>f64) - dest_y).round() <span class="kw">as </span>u32;
                 }
-                Direction::Right =&gt; {
+                NoteDirection::Right =&gt; {
                     source_x = (width - <span class="number">1. </span>- ((screen_y <span class="kw">as </span>f64) - dest_y)).round() <span class="kw">as </span>u32;
                     source_y = ((screen_x <span class="kw">as </span>f64) - dest_x).round() <span class="kw">as </span>u32;
                 }
-                Direction::Up =&gt; {
+                NoteDirection::Up =&gt; {
                     source_x = (width - <span class="number">1. </span>- ((screen_x <span class="kw">as </span>f64) - dest_x)).round() <span class="kw">as </span>u32;
                     source_y = (height - <span class="number">1. </span>- ((screen_y <span class="kw">as </span>f64) - dest_y)).round() <span class="kw">as </span>u32;
                 }
-                Direction::Left =&gt; {
+                NoteDirection::Left =&gt; {
                     source_x = ((screen_y <span class="kw">as </span>f64) - dest_y).round() <span class="kw">as </span>u32;
                     source_y = (height - <span class="number">1. </span>- ((screen_x <span class="kw">as </span>f64) - dest_x)).round() <span class="kw">as </span>u32;
                 }
@@ -171,4 +171,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

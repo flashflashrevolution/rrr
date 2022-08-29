@@ -177,12 +177,12 @@
 
 </span><span class="kw">use </span><span class="kw">crate</span>::sprites::Drawable;
 <span class="kw">use </span>image::{DynamicImage, GenericImageView, SubImage};
-<span class="kw">use </span>rrr_core::note::Color;
+<span class="kw">use </span>rrr_core::chart::NoteColor;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Definition {
     <span class="kw">pub </span>note_width: usize,
     <span class="kw">pub </span>note_height: usize,
-    <span class="kw">pub </span>color_indices: Vec&lt;Color&gt;,
+    <span class="kw">pub </span>color_indices: Vec&lt;NoteColor&gt;,
     <span class="kw">pub </span>rotations: Vec&lt;usize&gt;,
     <span class="kw">pub </span>image: DynamicImage,
     <span class="kw">pub </span>rows: usize,
@@ -197,16 +197,16 @@
             note_width: <span class="number">64</span>,
             note_height: <span class="number">64</span>,
             color_indices: [
-                Color::Blue,
-                Color::Orange,
-                Color::Red,
-                Color::Cyan,
-                Color::Pink,
-                Color::White,
-                Color::Green,
-                Color::Purple,
-                Color::Yellow,
-                Color::Receptor,
+                NoteColor::Blue,
+                NoteColor::Orange,
+                NoteColor::Red,
+                NoteColor::Cyan,
+                NoteColor::Pink,
+                NoteColor::White,
+                NoteColor::Green,
+                NoteColor::Purple,
+                NoteColor::Yellow,
+                NoteColor::Receptor,
             ]
             .to_vec(),
             rotations: [<span class="number">0</span>, <span class="number">90</span>, <span class="number">180</span>, <span class="number">270</span>].to_vec(),
@@ -219,7 +219,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Note&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="kw">pub</span>(<span class="kw">crate</span>) width: usize,
     <span class="kw">pub</span>(<span class="kw">crate</span>) height: usize,
-    <span class="kw">pub</span>(<span class="kw">crate</span>) color: Color,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) color: NoteColor,
     <span class="kw">pub</span>(<span class="kw">crate</span>) image: SubImage&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>DynamicImage&gt;,
 }
 
@@ -245,7 +245,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>new(
         note_width: usize,
         note_height: usize,
-        color_indices: Vec&lt;Color&gt;,
+        color_indices: Vec&lt;NoteColor&gt;,
         rotations: Vec&lt;usize&gt;,
         image: DynamicImage,
         rows: usize,
@@ -264,7 +264,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.rotations
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_note(<span class="kw-2">&amp;</span><span class="self">self</span>, color: Color) -&gt; Note&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_note(<span class="kw-2">&amp;</span><span class="self">self</span>, color: NoteColor) -&gt; Note&lt;<span class="lifetime">&#39;_</span>&gt; {
         <span class="kw">let </span>width = <span class="self">self</span>.note_width;
         <span class="kw">let </span>height = <span class="self">self</span>.note_height;
         <span class="kw">let </span>color_index = <span class="self">self</span>.color_indices.iter().position(|c| <span class="kw-2">*</span>c == color).unwrap();
@@ -308,16 +308,16 @@
             <span class="number">64</span>,
             <span class="number">64</span>,
             [
-                Color::Blue,
-                Color::Orange,
-                Color::Red,
-                Color::Cyan,
-                Color::Pink,
-                Color::White,
-                Color::Green,
-                Color::Purple,
-                Color::Yellow,
-                Color::Receptor,
+                NoteColor::Blue,
+                NoteColor::Orange,
+                NoteColor::Red,
+                NoteColor::Cyan,
+                NoteColor::Pink,
+                NoteColor::White,
+                NoteColor::Green,
+                NoteColor::Purple,
+                NoteColor::Yellow,
+                NoteColor::Receptor,
             ]
             .to_vec(),
             [<span class="number">0</span>, <span class="number">90</span>, <span class="number">180</span>, <span class="number">270</span>].to_vec(),
@@ -325,7 +325,7 @@
             <span class="number">3</span>,
         );
 
-        <span class="kw">for </span>color <span class="kw">in </span>Color::iter() {
+        <span class="kw">for </span>color <span class="kw">in </span>NoteColor::iter() {
             <span class="kw">let </span>note = definition.get_note(color);
             <span class="macro">assert_eq!</span>(note.color, color);
             <span class="macro">assert_eq!</span>(note.width, <span class="number">64</span>);
@@ -338,7 +338,7 @@
             <span class="macro">assert!</span>(image_out.is_ok());
         }
 
-        <span class="kw">for </span>color <span class="kw">in </span>Color::iter() {
+        <span class="kw">for </span>color <span class="kw">in </span>NoteColor::iter() {
             <span class="kw">match </span>std::fs::remove_file(<span class="macro">format!</span>(<span class="string">&quot;{color:?}.png&quot;</span>)) {
                 <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {}
                 <span class="prelude-val">Err</span>(err) =&gt; {
@@ -349,4 +349,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

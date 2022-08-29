@@ -741,6 +741,57 @@
 <span id="741">741</span>
 <span id="742">742</span>
 <span id="743">743</span>
+<span id="744">744</span>
+<span id="745">745</span>
+<span id="746">746</span>
+<span id="747">747</span>
+<span id="748">748</span>
+<span id="749">749</span>
+<span id="750">750</span>
+<span id="751">751</span>
+<span id="752">752</span>
+<span id="753">753</span>
+<span id="754">754</span>
+<span id="755">755</span>
+<span id="756">756</span>
+<span id="757">757</span>
+<span id="758">758</span>
+<span id="759">759</span>
+<span id="760">760</span>
+<span id="761">761</span>
+<span id="762">762</span>
+<span id="763">763</span>
+<span id="764">764</span>
+<span id="765">765</span>
+<span id="766">766</span>
+<span id="767">767</span>
+<span id="768">768</span>
+<span id="769">769</span>
+<span id="770">770</span>
+<span id="771">771</span>
+<span id="772">772</span>
+<span id="773">773</span>
+<span id="774">774</span>
+<span id="775">775</span>
+<span id="776">776</span>
+<span id="777">777</span>
+<span id="778">778</span>
+<span id="779">779</span>
+<span id="780">780</span>
+<span id="781">781</span>
+<span id="782">782</span>
+<span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
 </pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]
 #![warn(
     elided_lifetimes_in_paths,
@@ -786,26 +837,27 @@
 #![feature(poll_ready)]
 
 </span><span class="kw">mod </span>benchmark;
+<span class="kw">mod </span>fetch;
 <span class="kw">mod </span>geo;
 <span class="kw">mod </span>noteskin;
+<span class="kw">mod </span>platform;
+<span class="kw">mod </span>query;
+<span class="kw">mod </span>settings;
 <span class="kw">mod </span>sprites;
 <span class="kw">mod </span>visibility;
 
+<span class="kw">use </span><span class="kw">crate</span>::platform::{platform::time::Time, TimeTrait};
+<span class="kw">use </span><span class="kw">crate</span>::settings::Settings;
 <span class="kw">use </span>anyhow::Error;
 <span class="kw">use </span>benchmark::BenchmarkData;
+<span class="kw">use </span>fetch::platform::Fetcher;
 <span class="kw">use </span>inter_struct::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>pixels::{Pixels, PixelsBuilder, SurfaceTexture};
+<span class="kw">use </span>query::SettingsMerge;
 <span class="kw">use </span>rrr_core::{
-    fetch,
+    chart::{NoteColor, NoteDirection, SwfParser},
     math::lerp::Lerp,
-    note::{<span class="self">self</span>, Direction},
-    parser::swf,
-    platform::{platform, TimeTrait},
-    play::{<span class="self">self</span>, field::Field, Play},
-    query_settings,
-    settings::{<span class="self">self</span>, Settings},
-    time::Time,
-    Turntable,
+    play::{<span class="self">self</span>, field::Field, turntable::Turntable, Play},
 };
 <span class="kw">use </span>sprites::blit;
 <span class="kw">use </span>std::f64;
@@ -836,8 +888,40 @@
 }
 
 <span class="kw">struct </span>Action {
-    direction: Direction,
+    direction: NoteDirection,
     ts: i128,
+}
+
+<span class="attribute">#[cfg_attr(target_arch = <span class="string">&quot;wasm32&quot;</span>, wasm_bindgen::prelude::wasm_bindgen)]
+#[derive(Default)]
+</span><span class="kw">pub struct </span>Engine {
+    settings: Settings,
+}
+
+<span class="attribute">#[cfg_attr(target_arch = <span class="string">&quot;wasm32&quot;</span>, wasm_bindgen::prelude::wasm_bindgen)]
+</span><span class="kw">impl </span>Engine {
+    <span class="attribute">#[cfg_attr(
+        target_arch = <span class="string">&quot;wasm32&quot;</span>,
+        wasm_bindgen::prelude::wasm_bindgen(constructor)
+    )]
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            ..Default::default()
+        }
+    }
+
+    <span class="kw">pub fn </span>modify_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, partial_settings: SettingsMerge) -&gt; bool {
+        <span class="self">self</span>.settings.merge(partial_settings);
+        <span class="bool-val">true
+    </span>}
+
+    <span class="attribute">#[cfg_attr(
+        target_arch = <span class="string">&quot;wasm32&quot;</span>,
+        wasm_bindgen::prelude::wasm_bindgen(js_name = toJSON)
+    )]
+    </span><span class="kw">pub fn </span>to_json(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Settings {
+        <span class="self">self</span>.settings
+    }
 }
 
 <span class="kw">struct </span>Game&lt;T: TimeTrait&gt; {
@@ -845,7 +929,7 @@
     note_height: usize,
     note_width: usize,
     play_stage: <span class="prelude-ty">Option</span>&lt;Play&lt;play::Active&gt;&gt;,
-    fetcher: <span class="prelude-ty">Option</span>&lt;platform::Fetcher&gt;,
+    fetcher: <span class="prelude-ty">Option</span>&lt;Fetcher&gt;,
     start_instant: T,
     previous_instant: T,
     current_instant: T,
@@ -907,7 +991,7 @@
             <span class="kw">match </span>result {
                 <span class="prelude-val">Some</span>(bytes) =&gt; <span class="kw">match </span>bytes {
                     fetch::BytesFetch::Ok(chart) =&gt; {
-                        <span class="kw">let </span>parser_compressed = swf::SwfParser::new(chart.to_vec());
+                        <span class="kw">let </span>parser_compressed = SwfParser::new(chart.to_vec());
                         <span class="kw">let </span>record = <span class="kw">if let </span><span class="prelude-val">Ok</span>(ready_to_parse) = parser_compressed.decompress() {
                             <span class="kw">let </span>parsing = ready_to_parse.parse();
                             <span class="kw">let </span>parsed = parsing.tick();
@@ -944,8 +1028,7 @@
                                 start_position,
                                 end_position,
                             },
-                        )
-                        .with_settings(<span class="self">self</span>.settings);
+                        );
 
                         <span class="comment">// Calculate judge zero position.
                         </span><span class="kw">let </span>normalized_note_progress =
@@ -972,7 +1055,7 @@
         }
     }
 
-    <span class="kw">fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: Direction) {
+    <span class="kw">fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: NoteDirection) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(stage) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.play_stage {
             <span class="self">self</span>.action_queue.push(Action {
                 direction,
@@ -991,7 +1074,7 @@
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(play) = <span class="kw-2">&amp;</span><span class="self">self</span>.play_stage {
                 <span class="kw">if let </span>noteskin = <span class="kw-2">&amp;</span>renderer.noteskin {
-                    <span class="kw">let </span>time_on_screen = u64::from(play.settings().scroll_speed);
+                    <span class="kw">let </span>time_on_screen = u64::from(<span class="self">self</span>.settings.scroll_speed);
                     <span class="kw">let </span>offset = WIDTH <span class="kw">as </span>f64 / <span class="number">2.0 </span>- noteskin.note_width <span class="kw">as </span>f64 * <span class="number">0.5</span>;
                     <span class="kw">let </span>chart_progress = play.progress();
 
@@ -1000,7 +1083,14 @@
                     <span class="kw">let </span>position =
                         get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
 
-                    draw_receptors(play, noteskin, frame, offset, position);
+                    draw_receptors(
+                        play,
+                        noteskin,
+                        frame,
+                        offset,
+                        position,
+                        <span class="self">self</span>.settings.lane_gap,
+                    );
 
                     draw_notes(
                         play,
@@ -1010,6 +1100,7 @@
                         offset,
                         frame,
                         noteskin,
+                        <span class="self">self</span>.settings.lane_gap,
                     );
                 }
             }
@@ -1020,7 +1111,7 @@
         <span class="self">self</span>.previous_instant = <span class="self">self</span>.current_instant;
     }
 
-    <span class="kw">fn </span>with_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt;) {
+    <span class="kw">fn </span>with_settings(<span class="kw-2">&amp;mut </span><span class="self">self</span>, settings: <span class="prelude-ty">Option</span>&lt;SettingsMerge&gt;) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(settings) = settings {
             <span class="self">self</span>.settings.merge(settings);
         }
@@ -1036,19 +1127,20 @@
     offset: f64,
     frame: <span class="kw-2">&amp;mut </span>[u8],
     noteskin: <span class="kw-2">&amp;</span>noteskin::Definition,
+    lane_gap: u8,
 ) {
     <span class="kw">let </span>view = play.view(time_on_screen);
     <span class="kw">for </span>(<span class="kw-2">&amp;</span>duration, note) <span class="kw">in </span>view.filter(|(<span class="kw">_</span>, note)| !play.judgements().contains_key(note)) {
         <span class="kw">let </span>note_progress = duration - chart_progress <span class="kw">as </span>i128;
         <span class="kw">let </span>normalized = note_progress <span class="kw">as </span>f64 / time_on_screen <span class="kw">as </span>f64;
         <span class="kw">let </span>position = field.end_position.lerp(field.start_position, normalized);
-        <span class="kw">let </span>lane_offset = play.settings().lane_gap <span class="kw">as </span>f64;
+        <span class="kw">let </span>lane_offset = lane_gap <span class="kw">as </span>f64;
 
         <span class="kw">let </span>lane_index = <span class="kw">match </span>note.direction {
-            note::Direction::Left =&gt; -<span class="number">1.5</span>,
-            note::Direction::Down =&gt; -<span class="number">0.5</span>,
-            note::Direction::Up =&gt; <span class="number">0.5</span>,
-            note::Direction::Right =&gt; <span class="number">1.5</span>,
+            NoteDirection::Left =&gt; -<span class="number">1.5</span>,
+            NoteDirection::Down =&gt; -<span class="number">0.5</span>,
+            NoteDirection::Up =&gt; <span class="number">0.5</span>,
+            NoteDirection::Right =&gt; <span class="number">1.5</span>,
         };
         <span class="kw">let </span>x = offset + (lane_offset * lane_index);
         <span class="kw">let </span>y = position;
@@ -1070,35 +1162,36 @@
     frame: <span class="kw-2">&amp;mut </span>[u8],
     offset: f64,
     position: f64,
+    lane_gap: u8,
 ) {
-    <span class="kw">let </span>receptor_skin = noteskin.get_note(note::Color::Receptor);
-    <span class="kw">let </span>lane_offset = f64::from(play.settings().lane_gap);
+    <span class="kw">let </span>receptor_skin = noteskin.get_note(NoteColor::Receptor);
+    <span class="kw">let </span>lane_offset = f64::from(lane_gap);
     blit(
         frame,
         offset + (lane_offset * -<span class="number">1.5</span>),
         position,
-        <span class="kw-2">&amp;</span>note::Direction::Left,
+        <span class="kw-2">&amp;</span>NoteDirection::Left,
         <span class="kw-2">&amp;</span>receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * -<span class="number">0.5</span>),
         position,
-        <span class="kw-2">&amp;</span>note::Direction::Down,
+        <span class="kw-2">&amp;</span>NoteDirection::Down,
         <span class="kw-2">&amp;</span>receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * <span class="number">0.5</span>),
         position,
-        <span class="kw-2">&amp;</span>note::Direction::Up,
+        <span class="kw-2">&amp;</span>NoteDirection::Up,
         <span class="kw-2">&amp;</span>receptor_skin,
     );
     blit(
         frame,
         offset + (lane_offset * <span class="number">1.5</span>),
         position,
-        <span class="kw-2">&amp;</span>note::Direction::Right,
+        <span class="kw-2">&amp;</span>NoteDirection::Right,
         <span class="kw-2">&amp;</span>receptor_skin,
     );
 }
@@ -1111,6 +1204,16 @@
     } <span class="kw">else </span>{
         <span class="kw">fn </span>init_log() { simple_logger::init().unwrap(); }
     }
+}
+
+<span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+#[wasm_bindgen::prelude::wasm_bindgen(start)]
+</span><span class="kw">pub fn </span>wasm_startup() {}
+
+<span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
+#[wasm_bindgen::prelude::wasm_bindgen]
+</span><span class="kw">pub fn </span>play() {
+    main();
 }
 
 <span class="kw">fn </span>main() {
@@ -1229,10 +1332,9 @@
     }
 
     <span class="attribute">#[cfg(target_arch = <span class="string">&quot;wasm32&quot;</span>)]
-    </span><span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt; =
-        { <span class="prelude-val">Some</span>(query_settings::get_optional_settings()) };
+    </span><span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;SettingsMerge&gt; = { <span class="prelude-val">Some</span>(query::get_optional_settings()) };
     <span class="attribute">#[cfg(not(target_arch = <span class="string">&quot;wasm32&quot;</span>))]
-    </span><span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt; = { <span class="prelude-val">None </span>};
+    </span><span class="kw">let </span>extracted_settings: <span class="prelude-ty">Option</span>&lt;SettingsMerge&gt; = { <span class="prelude-val">None </span>};
 
     run_game_loop(window, event_loop, extracted_settings).<span class="kw">await
 </span>}
@@ -1253,7 +1355,7 @@
 <span class="kw">async fn </span>run_game_loop(
     window: winit::window::Window,
     event_loop: EventLoop&lt;()&gt;,
-    settings: <span class="prelude-ty">Option</span>&lt;query_settings::SettingsMerge&gt;,
+    settings: <span class="prelude-ty">Option</span>&lt;SettingsMerge&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), anyhow::Error&gt; {
     <span class="kw">let </span>window_size = window.inner_size();
     <span class="kw">let </span>surface_texture = SurfaceTexture::new(window_size.width, window_size.height, <span class="kw-2">&amp;</span>window);
@@ -1462,18 +1564,18 @@
     modifiers: ModifiersState,
 ) {
     <span class="kw">use </span>winit::event::VirtualKeyCode::{
-        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, G, H, M,
+        Comma, Down, Escape, Left, Period, Right, Slash, Space, Up, M,
     };
     <span class="kw">match </span>key {
         Escape =&gt; <span class="kw-2">*</span>control_flow = ControlFlow::Exit,
-        Left =&gt; game.do_action(Direction::Left),
-        Down =&gt; game.do_action(Direction::Down),
-        Up =&gt; game.do_action(Direction::Up),
-        Right =&gt; game.do_action(Direction::Right),
-        M =&gt; game.do_action(Direction::Left),
-        Comma =&gt; game.do_action(Direction::Down),
-        Period =&gt; game.do_action(Direction::Up),
-        Slash =&gt; game.do_action(Direction::Right),
+        Left =&gt; game.do_action(NoteDirection::Left),
+        Down =&gt; game.do_action(NoteDirection::Down),
+        Up =&gt; game.do_action(NoteDirection::Up),
+        Right =&gt; game.do_action(NoteDirection::Right),
+        M =&gt; game.do_action(NoteDirection::Left),
+        Comma =&gt; game.do_action(NoteDirection::Down),
+        Period =&gt; game.do_action(NoteDirection::Up),
+        Slash =&gt; game.do_action(NoteDirection::Right),
         Space =&gt; {
             do_toggle_game_state_debug(game);
         }
@@ -1485,4 +1587,4 @@
     frame.fill(<span class="number">0</span>);
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

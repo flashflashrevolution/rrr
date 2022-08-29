@@ -20,10 +20,8 @@
 <span id="20">20</span>
 <span id="21">21</span>
 <span id="22">22</span>
-<span id="23">23</span>
-</pre><pre class="rust"><code><span class="kw">use </span>std::fmt::Display;
-
-<span class="kw">use </span><span class="kw">crate</span>::note::CompiledNote;
+</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::chart::RuntimeNote;
+<span class="kw">use </span>std::fmt::Display;
 
 <span class="attribute">#[derive(Debug, Clone)]
 </span><span class="kw">pub enum </span>ActionState {
@@ -34,7 +32,7 @@
 
 <span class="attribute">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>NoteAction {
-    <span class="kw">pub </span>note: CompiledNote,
+    <span class="kw">pub </span>note: RuntimeNote,
     <span class="kw">pub </span>timestamp: i128,
     <span class="kw">pub </span>state: ActionState,
 }
@@ -45,4 +43,4 @@
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

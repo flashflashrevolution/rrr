@@ -98,11 +98,9 @@
 <span id="98">98</span>
 <span id="99">99</span>
 <span id="100">100</span>
-<span id="101">101</span>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::note::CompiledNote;
+</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Difference;
+<span class="kw">use </span><span class="kw">crate</span>::chart::RuntimeNote;
 <span class="kw">use </span>std::collections::{HashMap, HashSet};
-
-<span class="kw">use </span><span class="kw">super</span>::Difference;
 
 <span class="attribute">#[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
 </span><span class="kw">pub struct </span>JudgeWindow(<span class="kw">pub </span>i128);
@@ -117,13 +115,13 @@
     JudgeWindow(<span class="number">117</span>),
 ];
 
-<span class="kw">pub type </span>Judgement = HashMap&lt;CompiledNote, JudgeWindow&gt;;
+<span class="kw">pub type </span>Judgement = HashMap&lt;RuntimeNote, JudgeWindow&gt;;
 <span class="kw">pub type </span>Boo = HashSet&lt;i128&gt;;
 
 <span class="attribute">#[derive(Debug, Clone)]
 </span><span class="kw">pub struct </span>Judge {
     <span class="kw">pub </span>judgements: Judgement,
-    <span class="kw">pub </span>misses: HashSet&lt;CompiledNote&gt;,
+    <span class="kw">pub </span>misses: HashSet&lt;RuntimeNote&gt;,
     <span class="kw">pub </span>boos: Boo,
     <span class="kw">pub </span>judge_zero_point: u32,
 }
@@ -146,7 +144,7 @@
     </span><span class="kw">pub fn </span>judge(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         current_timestamp: i128,
-        closest_note: <span class="kw-2">&amp;</span>CompiledNote,
+        closest_note: <span class="kw-2">&amp;</span>RuntimeNote,
     ) -&gt; anyhow::Result&lt;<span class="prelude-ty">Option</span>&lt;JudgeWindow&gt;&gt; {
         <span class="kw">if </span>!<span class="self">self</span>.misses.contains(closest_note) &amp;&amp; !<span class="self">self</span>.judgements.contains_key(closest_note) {
             <span class="kw">let </span>diff = closest_note
@@ -201,4 +199,4 @@
 // Judgement can either be a HIT, with an associated note, or a boo, with no associated not.
 // Every judgement is stored in the judgement vector, any judgement with an associated note is also added to a hashset.
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

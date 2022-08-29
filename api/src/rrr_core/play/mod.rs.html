@@ -351,19 +351,23 @@
 <span id="351">351</span>
 <span id="352">352</span>
 <span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
 <span class="kw">pub mod </span>field;
 <span class="kw">pub mod </span>judge;
+<span class="kw">pub mod </span>record;
+<span class="kw">pub mod </span>turntable;
 
 <span class="kw">use </span><span class="self">self</span>::{
     actions::NoteAction,
     field::Field,
     judge::{Judge, JudgeWindow, Judgement},
+    turntable::Turntable,
 };
 <span class="kw">use crate</span>::{
-    note::{CompiledNote, Direction},
+    chart::{NoteDirection, RuntimeNote},
     settings::Settings,
-    turntable, Turntable,
 };
 <span class="kw">use </span>btreemultimap::{BTreeMultiMap, MultiRange};
 <span class="kw">use </span>std::collections::HashSet;
@@ -396,14 +400,14 @@
 
 <span class="kw">pub struct </span>Active {
     turntable: Turntable&lt;turntable::Playing&gt;,
-    actions: BTreeMultiMap&lt;CompiledNote, NoteAction&gt;,
+    actions: BTreeMultiMap&lt;RuntimeNote, NoteAction&gt;,
     judge: Judge,
     judgement_report: JudgementReport,
 }
 
 <span class="kw">pub struct </span>Concluded {
     turntable: Turntable&lt;turntable::Loaded&gt;,
-    actions: BTreeMultiMap&lt;CompiledNote, NoteAction&gt;,
+    actions: BTreeMultiMap&lt;RuntimeNote, NoteAction&gt;,
     judgement_report: JudgementReport,
 }
 
@@ -500,7 +504,7 @@
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
     </span><span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: u64) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, CompiledNote&gt; {
+    </span><span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: u64) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, RuntimeNote&gt; {
         <span class="self">self</span>.state.turntable.view(range_in_milliseconds.into())
     }
 
@@ -510,12 +514,12 @@
     }
 
     <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>missed_notes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;CompiledNote&gt; {
+    </span><span class="kw">pub fn </span>missed_notes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;RuntimeNote&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.misses
     }
 
     <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
+    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;RuntimeNote, NoteAction&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
     }
 
@@ -538,7 +542,7 @@
             })
             .map(|(<span class="kw">_</span>, note)| note.clone());
 
-        <span class="kw">let </span>misses = mapped_notes.collect::&lt;HashSet&lt;CompiledNote&gt;&gt;();
+        <span class="kw">let </span>misses = mapped_notes.collect::&lt;HashSet&lt;RuntimeNote&gt;&gt;();
         <span class="self">self</span>.state.judgement_report.misses += misses.len() <span class="kw">as </span>u32;
 
         <span class="self">self</span>.state.judge.misses.extend(misses);
@@ -564,7 +568,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.judgements
     }
 
-    <span class="kw">pub fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: Direction, ts: i128) {
+    <span class="kw">pub fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: NoteDirection, ts: i128) {
         <span class="kw">let </span>view_result = <span class="self">self</span>.state.turntable.view(<span class="number">500</span>);
         <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, closest_note)) = view_result
             .filter(|(<span class="kw">_</span>, note)| <span class="self">self</span>.determine_judgable(note, <span class="kw-2">&amp;</span>direction, ts))
@@ -587,7 +591,7 @@
         }
     }
 
-    <span class="kw">fn </span>determine_judgable(<span class="kw-2">&amp;</span><span class="self">self</span>, note: <span class="kw-2">&amp;</span>CompiledNote, direction: <span class="kw-2">&amp;</span>Direction, ts: i128) -&gt; bool {
+    <span class="kw">fn </span>determine_judgable(<span class="kw-2">&amp;</span><span class="self">self</span>, note: <span class="kw-2">&amp;</span>RuntimeNote, direction: <span class="kw-2">&amp;</span>NoteDirection, ts: i128) -&gt; bool {
         <span class="kw">let </span>is_judged = <span class="self">self</span>.state.actions.contains_key(note);
         <span class="kw">let </span>is_same_direction = <span class="kw-2">*</span>direction == note.direction;
         <span class="kw">let </span>is_within_judge_range = note
@@ -619,7 +623,7 @@
 
 <span class="kw">impl </span>Play&lt;Concluded&gt; {
     <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;CompiledNote, NoteAction&gt; {
+    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;RuntimeNote, NoteAction&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
     }
 
@@ -705,4 +709,4 @@
 // So if a note has a ms timestamp of 2000, and the zero point is at 2000,
 // how many milliseconds is the is the receptor before that. Ex. (2000 - 120)
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (eaadb8947 2022-08-27)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>

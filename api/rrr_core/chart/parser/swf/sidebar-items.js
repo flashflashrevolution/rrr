@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":[["Compressed",""],["Parsed",""],["Parsing",""],["ReadyToParse",""],["SwfParser",""]],"trait":[["SwfParserState",""]]};

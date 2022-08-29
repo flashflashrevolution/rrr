@@ -1,3 +1,3 @@
 (function() {var implementors = {
-"rrr_core":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"struct\" href=\"rrr_core/chart/note/struct.ColorIter.html\" title=\"struct rrr_core::chart::note::ColorIter\">ColorIter</a>"]]
+"rrr_core":[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/nightly/core/iter/traits/iterator/trait.Iterator.html\" title=\"trait core::iter::traits::iterator::Iterator\">Iterator</a> for <a class=\"struct\" href=\"rrr_core/chart/struct.ColorIter.html\" title=\"struct rrr_core::chart::ColorIter\">ColorIter</a>"]]
 };if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
