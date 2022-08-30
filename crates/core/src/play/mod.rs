@@ -328,7 +328,7 @@ mod tests {
         let normalized_note_progress = end_position.inv_lerp(start_position, judge_position);
         let ms: f64 = normalized_note_progress * time_on_screen;
 
-        println!("normalized: {}", ms);
+        log::info!("normalized: {}", ms);
         ms.round()
     }
 

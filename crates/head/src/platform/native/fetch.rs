@@ -24,7 +24,7 @@ impl Fetcher {
                 "https://www.flashflashrevolution.com/game/r3/r3-songLoad.php?id={}&mode=2&type=ChartFFR_music",
                 temp_hash
             );
-            println!("{}", url);
+            log::info!("{}", url);
             let dat = fetch_data(url);
             tx.send(dat).unwrap();
         });

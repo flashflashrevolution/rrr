@@ -91,7 +91,7 @@ fn main() {
         })
         .collect();
 
-    println!("Missed notes: {:?}", missed_notes);
+    log::info!("Missed notes: {:?}", missed_notes);
 
     for note in view {
         if !missed_notes.contains(&note) {
@@ -108,7 +108,7 @@ fn main() {
             };
 
             if let Some(judge) = judge {
-                println!("{:?}", judge);
+                log::info!("{:?}", judge);
             }
         }
     }
