@@ -30,7 +30,7 @@ release = ["log/release_max_level_off", "serde"]
 features = ["serde"]
 
 [dependencies]
-anyhow = "1.0.62"
+anyhow = "1.0.63"
 btreemultimap = "0.1.0"
 dasp = { git = "https://github.com/RustAudio/dasp", rev = "6b15274b471835e586089e54228e54601f92d391", features = [
     "interpolate",
