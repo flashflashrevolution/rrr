@@ -30,7 +30,7 @@ release = ["log/release_max_level_off", "serde"]
 features = ["serde"]
 
 [dependencies]
-anyhow = "1.0.62"
+anyhow = "1.0.64"
 btreemultimap = "0.1.0"
 dasp = { git = "https://github.com/RustAudio/dasp", rev = "6b15274b471835e586089e54228e54601f92d391", features = [
     "interpolate",
@@ -45,7 +45,7 @@ serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
-thiserror = "1.0.32"
+thiserror = "1.0.34"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }
@@ -73,4 +73,4 @@ features = [
 ]
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dev-dependencies]
-tokio = { version = "1.20.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.21.0", features = ["macros", "rt-multi-thread"] }
