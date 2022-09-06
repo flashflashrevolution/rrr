@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["HEIGHT",""],["WIDTH",""]],"fn":[["build_window",""],["clear",""],["do_toggle_game_state_debug",""],["draw_notes",""],["draw_receptors",""],["get_pos_from_ms",""],["handle_keyboard_input",""],["init_log",""],["main",""],["run",""],["run_game_loop",""]],"mod":[["benchmark",""],["fetch",""],["geo","Simple geometry primitives."],["noteskin",""],["platform",""],["query",""],["settings",""],["sprites",""],["visibility",""]],"struct":[["Action",""],["Engine",""],["Game",""],["GameRenderer",""]]};
+window.SIDEBAR_ITEMS = {};

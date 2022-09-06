@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":[["blit",""]],"trait":[["Drawable","Drawables can be blitted to the pixel buffer and animated."]]};

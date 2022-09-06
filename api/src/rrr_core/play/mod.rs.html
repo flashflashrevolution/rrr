@@ -683,7 +683,7 @@
         <span class="kw">let </span>normalized_note_progress = end_position.inv_lerp(start_position, judge_position);
         <span class="kw">let </span>ms: f64 = normalized_note_progress * time_on_screen;
 
-        <span class="macro">println!</span>(<span class="string">&quot;normalized: {}&quot;</span>, ms);
+        <span class="macro">log::info!</span>(<span class="string">&quot;normalized: {}&quot;</span>, ms);
         ms.round()
     }
 
@@ -709,4 +709,4 @@
 // So if a note has a ms timestamp of 2000, and the zero point is at 2000,
 // how many milliseconds is the is the receptor before that. Ex. (2000 - 120)
 </span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (ce36e8825 2022-08-28)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (b44197abb 2022-09-05)" ></div></body></html>
