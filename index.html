@@ -76,8 +76,27 @@
         </div>
     </div>
     <script type="module">
-        import main from "./bin/rrr.js";
-        main();
+        // import main from "./bin/rrr.js";
+        // main();
+
+        import init, { play, Engine, SettingsMerge } from "./bin/rrr.js";
+        async function run() {
+            await init();
+
+            var engine = new Engine();
+            console.log("Engine: ", engine.toJSON().toJSON());
+
+            var settings = new SettingsMerge();
+            settings.scroll_speed = 1000;
+            engine.modify_settings(settings);
+
+            console.log("Post Edit Engine: ", engine.toJSON().toJSON());
+
+            // Launch the game
+            play();
+        }
+
+        run();
     </script>
 </body>
 
