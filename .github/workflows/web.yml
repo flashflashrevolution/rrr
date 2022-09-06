@@ -59,7 +59,7 @@ jobs:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
           command: build
-          args: --release --package rrr-core --target wasm32-unknown-unknown --target-dir target --features release
+          args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features release
 
       - name: Generate web workers
         run: wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm

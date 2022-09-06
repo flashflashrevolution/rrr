@@ -13,6 +13,10 @@ edition = "2021"
 publish = false
 rust-version = "1.64.0"
 
+[[bin]]
+name = "worker"
+path = "bin/worker.rs"
+
 [features]
 default = ["develop", "web"]
 web = ["wgpu/webgl", "console_log"]

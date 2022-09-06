@@ -197,7 +197,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package rrr-core --features release --target wasm32-unknown-unknown --target-dir target --features release && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
+                "cargo build --release --package rrr-head --features release --target wasm32-unknown-unknown --target-dir target --features release && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
             ],
             "problemMatcher": [
                 {
