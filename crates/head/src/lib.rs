@@ -2,7 +2,7 @@ pub(crate) mod benchmark;
 pub(crate) mod fetch;
 pub(crate) mod geo;
 pub(crate) mod noteskin;
-pub(crate) mod platform;
+pub mod platform;
 pub(crate) mod query;
 pub(crate) mod settings;
 pub(crate) mod sprites;
