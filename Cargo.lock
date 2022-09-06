@@ -3015,16 +3015,19 @@ dependencies = [
  "instant",
  "libc",
  "log",
+ "mio",
  "ndk 0.7.0",
  "ndk-glue",
  "objc",
  "once_cell",
  "parking_lot",
+ "percent-encoding",
  "raw-window-handle 0.4.3",
  "raw-window-handle 0.5.0",
  "wasm-bindgen",
  "web-sys",
  "windows-sys",
+ "x11-dl",
 ]
 
 [[package]]
@@ -3034,4 +3037,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "x11-dl"
+version = "2.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0c83627bc137605acc00bb399c7b908ef460b621fc37c953db2b09f88c449ea6"
+dependencies = [
+ "lazy_static",
+ "libc",
+ "pkg-config",
 ]
