@@ -58,7 +58,7 @@ futures = { version = "0.3.24", features = ["thread-pool"] }
 gloo = "0.8.0"
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
 gloo-worker = "0.2.1"
-wasm-bindgen = "0.2.82"
+wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.32"
 wgpu = "0.13.1"
 
