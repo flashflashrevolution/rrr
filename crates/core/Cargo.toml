@@ -51,7 +51,7 @@ console_error_panic_hook = "0.1.7"
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
-js-sys = "0.3.59"
+js-sys = "0.3.60"
 wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
 wasm-bindgen-test = "0.3.32"
 wasm-bindgen-futures = "0.4.32"
