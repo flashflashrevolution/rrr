@@ -68,4 +68,4 @@ features = ["Window", "Document", "EventListener"]
 
 [dev-dependencies]
 bytes = { version = "1.2.1", features = ["serde"] }
-tokio = { version = "1.21.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.21.1", features = ["macros", "rt-multi-thread"] }
