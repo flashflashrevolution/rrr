@@ -4,7 +4,7 @@
     "Zageron <hello@adambryant.ca>"
   ],
   "description": "WASM head for the RRR game.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
@@ -16,6 +16,8 @@
     "rrr_bg.js",
     "rrr.d.ts"
   ],
+  "type": "module",
+  "main": "rrr.js",
   "module": "rrr.js",
   "homepage": "https://github.com/flashflashrevolution/rrr",
   "types": "rrr.d.ts",
