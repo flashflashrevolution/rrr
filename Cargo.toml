@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
-members = ["crates/*"]
+#members = ["crates/*"] # Uncomment for WASM specific development.
+members = ["crates/head", "crates/head", "crates/head-native"]
+exclude = ["crates/wasm-workers", "crates/head-wasm"]
 
 [profile.release]
 lto = "thin"

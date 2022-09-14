@@ -1,8 +1,8 @@
 [package]
-name = "rrr-head"
+name = "rrr-head-wasm"
 version = "0.1.0"
 authors = ["Zageron <hello@adambryant.ca>"]
-description = "Macroquad interface for the RRR game."
+description = "WASM head for the RRR game."
 homepage = "https://github.com/flashflashrevolution/rrr"
 repository = "https://github.com/flashflashrevolution/rrr"
 readme = "README.md"
@@ -13,16 +13,11 @@ edition = "2021"
 publish = false
 rust-version = "1.64.0"
 
+[lib]
+crate-type = ["cdylib"]
+
 [features]
-default = ["develop", "web"]
-web = ["wgpu/webgl"]
-develop = [
-    "log/max_level_info",
-    "log/release_max_level_info",
-    "serde",
-    "rrr-core/develop",
-]
-release = ["log/release_max_level_off", "rrr-core/release", "serde"]
+default = ["rrr-head/release", "rrr-head/web"]
 
 [dependencies]
 anyhow = "1.0.65"
@@ -33,21 +28,12 @@ lerp = "0.4.0"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/parasyte/pixels.git", branch = "main" }
 reqwest = { version = "0.11.11", features = ["json", "blocking"] }
-rrr-core = { path = "../core", default-features = false }
+rrr-head = { path = "../head", default-features = false }
 serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
-
-[target.'cfg(unix)'.dependencies]
-winit = { version = "0.27.3", default-features = false, features = ['x11'] }
-
-[target.'cfg(not(unix))'.dependencies]
 winit = { version = "0.27.3", default-features = false }
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-futures = "0.3.24"
-
-[target.'cfg(target_arch = "wasm32")'.dependencies]
 console_error_panic_hook = "0.1.7"
+console_log = { version = "0.2.0", features = ["color"] }
 futures = { version = "0.3.24", features = ["thread-pool"] }
 gloo = "0.8.0"
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
@@ -56,10 +42,20 @@ wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.33"
 wgpu = "0.13.1"
 
-[target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
+[dependencies.web-sys]
 version = "0.3.60"
-features = ["Window", "Document", "EventListener"]
+features = [
+    "Window",
+    "Document",
+    "EventListener",
+    "HtmlCanvasElement",
+    "FocusEvent",
+]
 
 [dev-dependencies]
 bytes = { version = "1.2.1", features = ["serde"] }
-tokio = { version = "1.21.1", features = ["macros", "rt-multi-thread"] }
+wasm-bindgen-test = "0.3.33"
+
+[profile.release]
+# Tell `rustc` to optimize for small code size.
+opt-level = "s"

@@ -47,22 +47,26 @@ jobs:
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
+          working-directory: ${{ github.workspace }}/crates/head-wasm
           command: build
-          args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features release
+          args: --release --target wasm32-unknown-unknown --target-dir target
 
       - name: Generate the .wasm for web deploy.
-        run: wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
+        working-directory: ${{ github.workspace }}/crates/head-wasm
+        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
 
       - name: Build Workers
         uses: actions-rs/cargo@v1.0.3
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
+          working-directory: ${{ github.workspace }}/crates/wasm0-workers
           command: build
-          args: --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features release
+          args: --release --bins --target wasm32-unknown-unknown --target-dir target
 
       - name: Generate web workers
-        run: wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm
+        working-directory: ${{ github.workspace }}/crates/wasm-workers
+        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0

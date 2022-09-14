@@ -7,6 +7,80 @@
         {
             "type": "lldb",
             "request": "launch",
+            "name": "Debug executable 'head-native'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=head-native",
+                    "--package=head-native",
+                ],
+                "filter": {
+                    "name": "head-native",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'rrr-head'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=rrr-head"
+                ],
+                "filter": {
+                    "name": "rrr-head",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'loaders'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=loaders",
+                    "--package=rrr-head"
+                ],
+                "filter": {
+                    "name": "loaders",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'loaders'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=loaders",
+                    "--package=rrr-head"
+                ],
+                "filter": {
+                    "name": "loaders",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug unit tests in library 'rrr-core'",
             "cargo": {
                 "args": [
@@ -54,43 +128,6 @@
                 ],
                 "filter": {
                     "name": "actions",
-                    "kind": "example"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug example 'loaders'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--example=loaders",
-                    "--package=rrr-core"
-                ],
-                "filter": {
-                    "name": "loaders",
-                    "kind": "example"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in example 'loaders'",
-            "cargo": {
-                "args": [
-                    "test",
-                    "--no-run",
-                    "--example=loaders",
-                    "--package=rrr-core"
-                ],
-                "filter": {
-                    "name": "loaders",
                     "kind": "example"
                 }
             },
@@ -211,34 +248,16 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Debug executable 'rrr-head'",
-            "cargo": {
-                "args": [
-                    "build",
-                    "--bin=rrr-head",
-                    "--package=rrr-head"
-                ],
-                "filter": {
-                    "name": "rrr-head",
-                    "kind": "bin"
-                }
-            },
-            "args": [],
-            "cwd": "${workspaceFolder}"
-        },
-        {
-            "type": "lldb",
-            "request": "launch",
-            "name": "Debug unit tests in executable 'rrr-head'",
+            "name": "Debug unit tests in executable 'head-native'",
             "cargo": {
                 "args": [
                     "test",
                     "--no-run",
-                    "--bin=rrr-head",
-                    "--package=rrr-head"
+                    "--bin=head-native",
+                    "--package=head-native"
                 ],
                 "filter": {
-                    "name": "rrr-head",
+                    "name": "head-native",
                     "kind": "bin"
                 }
             },

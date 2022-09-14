@@ -1,0 +1,28 @@
+[package]
+name = "rrr-wasm-workers"
+version = "0.1.0"
+authors = ["Zageron <hello@adambryant.ca>"]
+description = "Workers for async behaviour on WASM platform."
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+edition = "2021"
+publish = false
+rust-version = "1.64.0"
+
+[[bin]]
+name = "fetch"
+path = "src/fetch.rs"
+
+[features]
+release = ["rrr-head/release", "rrr-head/web"]
+
+[dependencies]
+console_error_panic_hook = "0.1.7"
+gloo-worker = "0.2.1"
+rrr-head = { path = "../head", default-features = false }
+# Note that the below dependencies shouldn't be required.
+# Separate fetch out from head.

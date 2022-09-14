@@ -1,0 +1,22 @@
+[package]
+name = "head-native"
+version = "0.1.0"
+authors = ["Zageron <hello@adambryant.ca>"]
+description = "Native head for the RRR game."
+homepage = "https://github.com/flashflashrevolution/rrr"
+repository = "https://github.com/flashflashrevolution/rrr"
+readme = "README.md"
+keywords = ["game"]
+categories = ["games"]
+license = "AGPL-3.0"
+edition = "2021"
+publish = false
+rust-version = "1.64.0"
+
+[features]
+default = ["rrr-head/develop"]
+release = ["rrr-head/release"]
+
+[dependencies]
+rrr-head = { path = "../head", default-features = false }
+simple_logger = { version = "2.3.0" }

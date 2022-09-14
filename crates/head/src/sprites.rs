@@ -1,4 +1,3 @@
-use crate::{HEIGHT, WIDTH};
 use image::{DynamicImage, GenericImageView, SubImage};
 use rrr_core::chart::NoteDirection;
 use std::f64;
@@ -12,6 +11,8 @@ pub(crate) trait Drawable<'a> {
 
 pub(crate) fn blit<'a, S>(
     screen: &mut [u8],
+    screen_width: u32,
+    screen_height: u32,
     dest_x: f64,
     dest_y: f64,
     dir: &NoteDirection,
@@ -24,9 +25,9 @@ pub(crate) fn blit<'a, S>(
     let height: f64 = drawable.height() as f64;
 
     let x_min: f64 = f64::max(0., dest_x);
-    let x_max: f64 = f64::min(WIDTH as f64, dest_x + width);
+    let x_max: f64 = f64::min(screen_width as f64, dest_x + width);
     let y_min: f64 = f64::max(0., dest_y);
-    let y_max: f64 = f64::min(HEIGHT as f64, dest_y + height);
+    let y_max: f64 = f64::min(screen_height as f64, dest_y + height);
 
     let x_min_u: usize = x_min.round() as usize;
     let x_max_u: usize = x_max.round() as usize;
@@ -35,7 +36,7 @@ pub(crate) fn blit<'a, S>(
 
     for screen_y in y_min_u..y_max_u {
         for screen_x in x_min_u..x_max_u {
-            let i: usize = (screen_y * (WIDTH as usize) + screen_x) * 4;
+            let i: usize = (screen_y * (screen_width as usize) + screen_x) * 4;
 
             // I make no guarantees that this will work with a non-square drawable
             let mut source_x: u32;

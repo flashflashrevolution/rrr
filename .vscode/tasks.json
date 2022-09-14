@@ -134,6 +134,7 @@
             "runOptions": {
                 "runOn": "folderOpen"
             },
+            "options": {"cwd": "${workspaceFolder}/crates/head-wasm"},
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -153,7 +154,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package rrr-head --target wasm32-unknown-unknown --target-dir target --features develop && wasm-bindgen --out-name rrr --out-dir web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm"
+                "cargo build --release --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --out-name rrr --out-dir ${workspaceFolder}/web/bin --target web target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm"
             ],
             "problemMatcher": [
                 {
@@ -178,6 +179,7 @@
             "type": "shell",
             "isBackground": true,
             "command": "cargo",
+            "options": {"cwd": "${workspaceFolder}/crates/wasm-workers"},
             "presentation": {
                 "echo": true,
                 "reveal": "silent",
@@ -197,7 +199,7 @@
                 "-i",
                 "./web/*",
                 "-s",
-                "cargo build --release --package rrr-head --features release --target wasm32-unknown-unknown --target-dir target --features release && wasm-bindgen --no-typescript --out-name worker --out-dir web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm"
+                "cargo build --release --bins --target wasm32-unknown-unknown --target-dir target && wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${workspaceFolder}/web/bin --target no-modules target/wasm32-unknown-unknown/release/fetch.wasm"
             ],
             "problemMatcher": [
                 {

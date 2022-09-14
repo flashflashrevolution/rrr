@@ -76,9 +76,6 @@
         </div>
     </div>
     <script type="module">
-        // import main from "./bin/rrr.js";
-        // main();
-
         import init, { play, Engine, SettingsMerge } from "./bin/rrr.js";
         async function run() {
             await init();
@@ -93,7 +90,7 @@
             console.log("Post Edit Engine: ", engine.toJSON().toJSON());
 
             // Launch the game
-            play();
+            play(512, 720);
         }
 
         run();
