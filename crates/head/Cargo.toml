@@ -29,7 +29,7 @@ develop = [
 release = ["log/release_max_level_off", "rrr-core/release", "serde"]
 
 [dependencies]
-anyhow = "1.0.64"
+anyhow = "1.0.65"
 cfg-if = "1.0.0"
 image = { version = "0.24.3", default-features = false, features = ["png"] }
 inter-struct = "0.2.0"
@@ -42,10 +42,10 @@ serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 
 [target.'cfg(unix)'.dependencies]
-winit = { version = "0.27.2", default-features = false, features = ['x11'] }
+winit = { version = "0.27.3", default-features = false, features = ['x11'] }
 
 [target.'cfg(not(unix))'.dependencies]
-winit = { version = "0.27.2", default-features = false }
+winit = { version = "0.27.3", default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 simple_logger = { version = "2.3.0" }
@@ -58,14 +58,14 @@ futures = { version = "0.3.24", features = ["thread-pool"] }
 gloo = "0.8.0"
 gloo-net = { git = "https://github.com/cdata/gloo.git" }
 gloo-worker = "0.2.1"
-wasm-bindgen = "0.2.82"
-wasm-bindgen-futures = "0.4.32"
+wasm-bindgen = "0.2.83"
+wasm-bindgen-futures = "0.4.33"
 wgpu = "0.13.1"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
-version = "0.3.59"
+version = "0.3.60"
 features = ["Window", "Document", "EventListener"]
 
 [dev-dependencies]
 bytes = { version = "1.2.1", features = ["serde"] }
-tokio = { version = "1.21.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.21.1", features = ["macros", "rt-multi-thread"] }

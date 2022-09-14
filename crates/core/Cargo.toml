@@ -26,7 +26,7 @@ release = ["log/release_max_level_off", "serde"]
 features = ["serde"]
 
 [dependencies]
-anyhow = "1.0.64"
+anyhow = "1.0.65"
 btreemultimap = "0.1.0"
 dasp = { git = "https://github.com/RustAudio/dasp", rev = "6b15274b471835e586089e54228e54601f92d391", features = [
     "interpolate",
@@ -41,7 +41,7 @@ serde = { version = "1.0.144", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
-thiserror = "1.0.34"
+thiserror = "1.0.35"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }
@@ -51,13 +51,13 @@ console_error_panic_hook = "0.1.7"
 cpal = { git = "https://github.com/RustAudio/cpal.git", features = [
     "wasm-bindgen",
 ] }
-js-sys = "0.3.59"
-wasm-bindgen = { version = "0.2.82", features = ["serde-serialize"] }
-wasm-bindgen-test = "0.3.32"
-wasm-bindgen-futures = "0.4.32"
+js-sys = "0.3.60"
+wasm-bindgen = { version = "0.2.83", features = ["serde-serialize"] }
+wasm-bindgen-test = "0.3.33"
+wasm-bindgen-futures = "0.4.33"
 
 [target.'cfg(all(target_arch = "wasm32", target_os = "unknown"))'.dependencies.web-sys]
-version = "0.3.59"
+version = "0.3.60"
 features = [
     'Headers',
     'Request',
@@ -69,4 +69,4 @@ features = [
 ]
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dev-dependencies]
-tokio = { version = "1.21.0", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.21.1", features = ["macros", "rt-multi-thread"] }
