@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["ScrollDirection",""]],"struct":[["Settings","Stores RRR settings to start charts with."]]};

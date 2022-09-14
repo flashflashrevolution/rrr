@@ -84,8 +84,8 @@
 <span id="84">84</span>
 <span id="85">85</span>
 <span id="86">86</span>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{HEIGHT, WIDTH};
-<span class="kw">use </span>image::{DynamicImage, GenericImageView, SubImage};
+<span id="87">87</span>
+</pre><pre class="rust"><code><span class="kw">use </span>image::{DynamicImage, GenericImageView, SubImage};
 <span class="kw">use </span>rrr_core::chart::NoteDirection;
 <span class="kw">use </span>std::f64;
 
@@ -98,6 +98,8 @@
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>blit&lt;<span class="lifetime">&#39;a</span>, S&gt;(
     screen: <span class="kw-2">&amp;mut </span>[u8],
+    screen_width: u32,
+    screen_height: u32,
     dest_x: f64,
     dest_y: f64,
     dir: <span class="kw-2">&amp;</span>NoteDirection,
@@ -110,9 +112,9 @@
     <span class="kw">let </span>height: f64 = drawable.height() <span class="kw">as </span>f64;
 
     <span class="kw">let </span>x_min: f64 = f64::max(<span class="number">0.</span>, dest_x);
-    <span class="kw">let </span>x_max: f64 = f64::min(WIDTH <span class="kw">as </span>f64, dest_x + width);
+    <span class="kw">let </span>x_max: f64 = f64::min(screen_width <span class="kw">as </span>f64, dest_x + width);
     <span class="kw">let </span>y_min: f64 = f64::max(<span class="number">0.</span>, dest_y);
-    <span class="kw">let </span>y_max: f64 = f64::min(HEIGHT <span class="kw">as </span>f64, dest_y + height);
+    <span class="kw">let </span>y_max: f64 = f64::min(screen_height <span class="kw">as </span>f64, dest_y + height);
 
     <span class="kw">let </span>x_min_u: usize = x_min.round() <span class="kw">as </span>usize;
     <span class="kw">let </span>x_max_u: usize = x_max.round() <span class="kw">as </span>usize;
@@ -121,7 +123,7 @@
 
     <span class="kw">for </span>screen_y <span class="kw">in </span>y_min_u..y_max_u {
         <span class="kw">for </span>screen_x <span class="kw">in </span>x_min_u..x_max_u {
-            <span class="kw">let </span>i: usize = (screen_y * (WIDTH <span class="kw">as </span>usize) + screen_x) * <span class="number">4</span>;
+            <span class="kw">let </span>i: usize = (screen_y * (screen_width <span class="kw">as </span>usize) + screen_x) * <span class="number">4</span>;
 
             <span class="comment">// I make no guarantees that this will work with a non-square drawable
             </span><span class="kw">let </span><span class="kw-2">mut </span>source_x: u32;
