@@ -54,14 +54,14 @@ jobs:
         run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
 
       - name: Build Workers
-        working-directory: ${{ github.workspace }}/crates/head-wasm
+        working-directory: ${{ github.workspace }}/crates/wasm-workers
         run: |
           cargo build --release --bins --target wasm32-unknown-unknown --target-dir target
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
 
       - name: Generate web workers
-        working-directory: ${{ github.workspace }}/crates/head-wasm
+        working-directory: ${{ github.workspace }}/crates/wasm-workers
         run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/fetch.wasm
 
       - name: Upload Web Directory
