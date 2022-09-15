@@ -42,6 +42,7 @@
     </div>
 
     <div id="canvas">
+        <canvas class="game" id="rrr" width="512" height="720"></canvas>
         <div class="progress">
             <div class="progress-inner">
                 <p id="progress">Press Space to Start!</p>
@@ -76,9 +77,6 @@
         </div>
     </div>
     <script type="module">
-        // import main from "./bin/rrr.js";
-        // main();
-
         import init, { play, Engine, SettingsMerge } from "./bin/rrr.js";
         async function run() {
             await init();
@@ -93,7 +91,7 @@
             console.log("Post Edit Engine: ", engine.toJSON().toJSON());
 
             // Launch the game
-            play();
+            play(document.getElementById("rrr"), 512, 720);
         }
 
         run();
