@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/chart/chart_impl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>chart_impl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/chart/chart_impl.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>chart_impl.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -119,126 +125,127 @@
 <span id="119">119</span>
 <span id="120">120</span>
 <span id="121">121</span>
-</pre><pre class="rust"><code><span class="attribute">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
-</span><span class="kw">use </span>serde::{Deserialize, Serialize};
+</pre><pre class="rust"><code><span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>)]</span>
+<span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="kw">use super</span>::{
-    bpm::BpmChange,
-    note::{Color, Direction, NoteRow, RuntimeNote},
+<span class="kw">use</span> <span class="kw">super</span>::{
+    <span class="ident">bpm::BpmChange</span>,
+    <span class="ident">note</span>::{<span class="ident">Color</span>, <span class="ident">Direction</span>, <span class="ident">NoteRow</span>, <span class="ident">RuntimeNote</span>},
 };
 
-<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
-</span><span class="doccomment">/// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.
-</span><span class="kw">pub struct </span>RuntimeChart {
-    <span class="kw">pub </span>notes: Vec&lt;RuntimeNote&gt;,
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>)]</span>
+<span class="doccomment">/// A runtime efficient representation of a chart used by an [RRR](crate::RRR) instance.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RuntimeChart</span> {
+    <span class="kw">pub</span> <span class="ident">notes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl </span>RuntimeChart {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(notes: <span class="kw-2">&amp;</span>[RuntimeNote]) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            notes: notes.to_vec(),
+<span class="kw">impl</span> <span class="ident">RuntimeChart</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">notes</span>: <span class="kw-2">&amp;</span>[<span class="ident">RuntimeNote</span>]) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">notes</span>: <span class="ident">notes</span>.<span class="ident">to_vec</span>(),
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>get_duration(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;i128, anyhow::Error&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(last_note) = <span class="self">self</span>.notes.first() {
-            <span class="prelude-val">Ok</span>(last_note.timestamp)
-        } <span class="kw">else </span>{
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_duration</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">i128</span>, <span class="ident">anyhow::Error</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">last_note</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">notes</span>.<span class="ident">first</span>() {
+            <span class="prelude-val">Ok</span>(<span class="ident">last_note</span>.<span class="ident">timestamp</span>)
+        } <span class="kw">else</span> {
             <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;No notes in chart&quot;</span>))
         }
     }
 }
 
-<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
-#[derive(Clone, PartialEq, PartialOrd, Debug, Default)]
-</span><span class="doccomment">/// A space/memory efficient representation of a chart.
-///
-/// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).
-/// These are not used by [RRR](crate::RRR) directly.
-</span><span class="kw">pub struct </span>BinChart {
-    beats: Vec&lt;Beat&gt;,
-    bpm_changes: Vec&lt;BpmChange&gt;,
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">PartialOrd</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
+<span class="doccomment">/// A space/memory efficient representation of a chart.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Contains a collection of [beats](Beat) and [BPM changes](BpmChange).</span>
+<span class="doccomment">/// These are not used by [RRR](crate::RRR) directly.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BinChart</span> {
+    <span class="ident">beats</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Beat</span><span class="op">&gt;</span>,
+    <span class="ident">bpm_changes</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">BpmChange</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">impl </span>BinChart {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(beats: <span class="kw-2">&amp;</span>[Beat], bpm_changes: <span class="kw-2">&amp;</span>[BpmChange]) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            beats: beats.into(),
-            bpm_changes: bpm_changes.into(),
+<span class="kw">impl</span> <span class="ident">BinChart</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">beats</span>: <span class="kw-2">&amp;</span>[<span class="ident">Beat</span>], <span class="ident">bpm_changes</span>: <span class="kw-2">&amp;</span>[<span class="ident">BpmChange</span>]) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">beats</span>: <span class="ident">beats</span>.<span class="ident">into</span>(),
+            <span class="ident">bpm_changes</span>: <span class="ident">bpm_changes</span>.<span class="ident">into</span>(),
         }
     }
 
-    <span class="attribute">#[must_use]
-    #[allow(clippy::unused_self)]
-    </span><span class="kw">pub fn </span>compile(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RuntimeChart {
-        RuntimeChart {
-            notes: <span class="macro">vec!</span>[
-                RuntimeNote {
-                    beat_position: <span class="number">100</span>,
-                    color: Color::Red,
-                    direction: Direction::Up,
-                    timestamp: <span class="number">0i128
-                </span>};
-                <span class="number">100
-            </span>],
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unused_self</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">compile</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RuntimeChart</span> {
+        <span class="ident">RuntimeChart</span> {
+            <span class="ident">notes</span>: <span class="macro">vec!</span>[
+                <span class="ident">RuntimeNote</span> {
+                    <span class="ident">beat_position</span>: <span class="number">100</span>,
+                    <span class="ident">color</span>: <span class="ident">Color::Red</span>,
+                    <span class="ident">direction</span>: <span class="ident">Direction::Up</span>,
+                    <span class="ident">timestamp</span>: <span class="number">0i128</span>
+                };
+                <span class="number">100</span>
+            ],
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>get_first_bpm(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;f32&gt; {
-        <span class="self">self</span>.bpm_changes.first().map(|first_bpm| first_bpm.bpm())
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get_first_bpm</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f32</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">bpm_changes</span>.<span class="ident">first</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">first_bpm</span><span class="op">|</span> <span class="ident">first_bpm</span>.<span class="ident">bpm</span>())
     }
 }
 
-<span class="attribute">#[cfg_attr(feature = <span class="string">&quot;serde&quot;</span>, derive(Serialize, Deserialize))]
-#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Default)]
-</span><span class="doccomment">/// Stores all of the [note rows](NoteRow) that represent a beat.
-</span><span class="kw">pub struct </span>Beat {
-    note_rows: Vec&lt;NoteRow&gt;,
-    subdivisions: u32,
+<span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;serde&quot;</span>, <span class="ident">derive</span>(<span class="ident">Serialize</span>, <span class="ident">Deserialize</span>))]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Eq</span>, <span class="ident">PartialEq</span>, <span class="ident">Ord</span>, <span class="ident">PartialOrd</span>, <span class="ident">Hash</span>, <span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
+<span class="doccomment">/// Stores all of the [note rows](NoteRow) that represent a beat.</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Beat</span> {
+    <span class="ident">note_rows</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">NoteRow</span><span class="op">&gt;</span>,
+    <span class="ident">subdivisions</span>: <span class="ident">u32</span>,
 }
 
-<span class="kw">impl </span>Beat {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(note_rows: <span class="kw-2">&amp;</span>[NoteRow], subdivisions: u32) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            note_rows: note_rows.into(),
-            subdivisions,
+<span class="kw">impl</span> <span class="ident">Beat</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">note_rows</span>: <span class="kw-2">&amp;</span>[<span class="ident">NoteRow</span>], <span class="ident">subdivisions</span>: <span class="ident">u32</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">note_rows</span>: <span class="ident">note_rows</span>.<span class="ident">into</span>(),
+            <span class="ident">subdivisions</span>,
         }
     }
 }
 
-<span class="attribute">#[cfg(test)]
-</span><span class="kw">mod </span>tests {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::chart::note::Note;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::chart::note::Note</span>;
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>create_chart() {
-        <span class="kw">const </span>FIRST_BPM: f32 = <span class="number">120.</span>;
-        <span class="kw">let </span>chart: BinChart = BinChart::new(
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">create_chart</span>() {
+        <span class="kw">const</span> <span class="ident">FIRST_BPM</span>: <span class="ident">f32</span> <span class="op">=</span> <span class="number">120.</span>;
+        <span class="kw">let</span> <span class="ident">chart</span>: <span class="ident">BinChart</span> <span class="op">=</span> <span class="ident">BinChart::new</span>(
             <span class="kw-2">&amp;</span>[{
-                <span class="kw">let </span>note_rows: <span class="kw-2">&amp;</span>[NoteRow] = <span class="kw-2">&amp;</span>[NoteRow::new(<span class="number">0</span>, <span class="kw-2">&amp;</span>[Note::new(<span class="number">0</span>)])];
-                Beat {
-                    note_rows: note_rows.into(),
-                    subdivisions: <span class="number">4</span>,
+                <span class="kw">let</span> <span class="ident">note_rows</span>: <span class="kw-2">&amp;</span>[<span class="ident">NoteRow</span>] <span class="op">=</span> <span class="kw-2">&amp;</span>[<span class="ident">NoteRow::new</span>(<span class="number">0</span>, <span class="kw-2">&amp;</span>[<span class="ident">Note::new</span>(<span class="number">0</span>)])];
+                <span class="ident">Beat</span> {
+                    <span class="ident">note_rows</span>: <span class="ident">note_rows</span>.<span class="ident">into</span>(),
+                    <span class="ident">subdivisions</span>: <span class="number">4</span>,
                 }
             }],
-            <span class="kw-2">&amp;</span>[BpmChange::new(FIRST_BPM, <span class="number">0</span>)],
+            <span class="kw-2">&amp;</span>[<span class="ident">BpmChange::new</span>(<span class="ident">FIRST_BPM</span>, <span class="number">0</span>)],
         );
 
-        <span class="macro">assert_eq!</span>(chart.get_first_bpm(), <span class="prelude-val">Some</span>(FIRST_BPM));
+        <span class="macro">assert_eq!</span>(<span class="ident">chart</span>.<span class="ident">get_first_bpm</span>(), <span class="prelude-val">Some</span>(<span class="ident">FIRST_BPM</span>));
     }
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>compile_chart() {
-        <span class="kw">let </span>chart = BinChart::default();
-        <span class="kw">let </span>_compiled_chart: RuntimeChart = chart.compile();
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">compile_chart</span>() {
+        <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="ident">BinChart::default</span>();
+        <span class="kw">let</span> <span class="ident">_compiled_chart</span>: <span class="ident">RuntimeChart</span> <span class="op">=</span> <span class="ident">chart</span>.<span class="ident">compile</span>();
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>

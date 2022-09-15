@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/chart/parser/swf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>swf.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../../normalize.css"><link rel="stylesheet" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../../ayu.css" disabled><link rel="stylesheet" href="../../../../dark.css" disabled><link rel="stylesheet" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../rrr_core/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/chart/parser/swf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>swf.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../main.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../rrr_core/index.html"><img class="rust-logo" src="../../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -311,318 +317,319 @@
 <span id="311">311</span>
 <span id="312">312</span>
 <span id="313">313</span>
-</pre><pre class="rust"><code><span class="kw">use crate</span>::{
-    chart::{chart_impl::RuntimeChart, NoteColor, NoteDirection, RuntimeNote},
-    play::record::Record,
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">chart</span>::{<span class="ident">chart_impl::RuntimeChart</span>, <span class="ident">NoteColor</span>, <span class="ident">NoteDirection</span>, <span class="ident">RuntimeNote</span>},
+    <span class="ident">play::record::Record</span>,
 };
-<span class="kw">use </span>anyhow::bail;
-<span class="kw">use </span>std::ops::ControlFlow;
-<span class="kw">use </span>swf::{
-    avm1::{
+<span class="kw">use</span> <span class="ident">anyhow::bail</span>;
+<span class="kw">use</span> <span class="ident">std::ops::ControlFlow</span>;
+<span class="kw">use</span> <span class="ident">swf</span>::{
+    <span class="ident">avm1</span>::{
         <span class="self">self</span>,
-        types::{ConstantPool, Value},
+        <span class="ident">types</span>::{<span class="ident">ConstantPool</span>, <span class="ident">Value</span>},
     },
-    read::Reader,
-    SwfBuf, UTF_8,
+    <span class="ident">read::Reader</span>,
+    <span class="ident">SwfBuf</span>, <span class="ident">UTF_8</span>,
 };
-<span class="kw">use </span>thiserror::Error;
+<span class="kw">use</span> <span class="ident">thiserror::Error</span>;
 
-<span class="attribute">#[derive(Error, Debug)]
-</span><span class="kw">enum </span>ChartParseError {
-    <span class="attribute">#[error(<span class="string">&quot;Invalid beat position in chart.&quot;</span>)]
-    </span>BeatPosition,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Error</span>, <span class="ident">Debug</span>)]</span>
+<span class="kw">enum</span> <span class="ident">ChartParseError</span> {
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Invalid beat position in chart.&quot;</span>)]</span>
+    <span class="ident">BeatPosition</span>,
 
-    <span class="attribute">#[error(<span class="string">&quot;Invalid direction in chart.&quot;</span>)]
-    </span>NoteDirection,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Invalid direction in chart.&quot;</span>)]</span>
+    <span class="ident">NoteDirection</span>,
 
-    <span class="attribute">#[error(<span class="string">&quot;Invalid note color in chart.&quot;</span>)]
-    </span>NoteColor,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Invalid note color in chart.&quot;</span>)]</span>
+    <span class="ident">NoteColor</span>,
 
-    <span class="attribute">#[error(<span class="string">&quot;Invalid timestamp in chart.&quot;</span>)]
-    </span>Timestamp,
+    <span class="attribute">#[<span class="ident">error</span>(<span class="string">&quot;Invalid timestamp in chart.&quot;</span>)]</span>
+    <span class="ident">Timestamp</span>,
 }
 
-<span class="kw">pub struct </span>SwfParser&lt;S: SwfParserState&gt; {
-    state: S,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">SwfParserState</span><span class="op">&gt;</span> {
+    <span class="ident">state</span>: <span class="ident">S</span>,
 }
 
-<span class="kw">pub struct </span>Compressed {
-    raw_swf: Vec&lt;u8&gt;,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Compressed</span> {
+    <span class="ident">raw_swf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 }
-<span class="kw">pub struct </span>ReadyToParse {
-    stream: SwfBuf,
-}
-
-<span class="kw">pub struct </span>Parsing {
-    stream: SwfBuf,
-    mp3: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
-    chart: <span class="prelude-ty">Option</span>&lt;Vec&lt;RuntimeNote&gt;&gt;,
-}
-<span class="kw">pub struct </span>Parsed {
-    record: Record,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ReadyToParse</span> {
+    <span class="ident">stream</span>: <span class="ident">SwfBuf</span>,
 }
 
-<span class="kw">pub trait </span>SwfParserState {}
-<span class="kw">impl </span>SwfParserState <span class="kw">for </span>Compressed {}
-<span class="kw">impl </span>SwfParserState <span class="kw">for </span>ReadyToParse {}
-<span class="kw">impl </span>SwfParserState <span class="kw">for </span>Parsing {}
-<span class="kw">impl </span>SwfParserState <span class="kw">for </span>Parsed {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Parsing</span> {
+    <span class="ident">stream</span>: <span class="ident">SwfBuf</span>,
+    <span class="ident">mp3</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">chart</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Parsed</span> {
+    <span class="ident">record</span>: <span class="ident">Record</span>,
+}
 
-<span class="kw">impl </span>SwfParser&lt;Compressed&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(swf_file: Vec&lt;u8&gt;) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            state: Compressed { raw_swf: swf_file },
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">SwfParserState</span> {}
+<span class="kw">impl</span> <span class="ident">SwfParserState</span> <span class="kw">for</span> <span class="ident">Compressed</span> {}
+<span class="kw">impl</span> <span class="ident">SwfParserState</span> <span class="kw">for</span> <span class="ident">ReadyToParse</span> {}
+<span class="kw">impl</span> <span class="ident">SwfParserState</span> <span class="kw">for</span> <span class="ident">Parsing</span> {}
+<span class="kw">impl</span> <span class="ident">SwfParserState</span> <span class="kw">for</span> <span class="ident">Parsed</span> {}
+
+<span class="kw">impl</span> <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">Compressed</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">swf_file</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">state</span>: <span class="ident">Compressed</span> { <span class="ident">raw_swf</span>: <span class="ident">swf_file</span> },
         }
     }
 
-    <span class="doccomment">/// # Errors
-    ///
-    /// Will return `swf::error::Error` if `swf_file` is not a valid swf binary slice.
-    </span><span class="kw">pub fn </span>decompress(<span class="self">self</span>) -&gt; anyhow::Result&lt;SwfParser&lt;ReadyToParse&gt;, swf::error::Error&gt; {
-        <span class="kw">let </span>stream = swf::decompress_swf(<span class="self">self</span>.state.raw_swf.as_slice())<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(SwfParser {
-            state: ReadyToParse { stream },
+    <span class="doccomment">/// # Errors</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Will return `swf::error::Error` if `swf_file` is not a valid swf binary slice.</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decompress</span>(<span class="self">self</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">ReadyToParse</span><span class="op">&gt;</span>, <span class="ident">swf::error::Error</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">stream</span> <span class="op">=</span> <span class="ident">swf::decompress_swf</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">raw_swf</span>.<span class="ident">as_slice</span>())<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="ident">SwfParser</span> {
+            <span class="ident">state</span>: <span class="ident">ReadyToParse</span> { <span class="ident">stream</span> },
         })
     }
 }
 
-<span class="kw">impl </span>SwfParser&lt;ReadyToParse&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>parse(<span class="self">self</span>) -&gt; SwfParser&lt;Parsing&gt; {
-        SwfParser {
-            state: Parsing {
-                stream: <span class="self">self</span>.state.stream,
-                mp3: <span class="prelude-val">None</span>,
-                chart: <span class="prelude-val">None</span>,
+<span class="kw">impl</span> <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">ReadyToParse</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="self">self</span>) -&gt; <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">Parsing</span><span class="op">&gt;</span> {
+        <span class="ident">SwfParser</span> {
+            <span class="ident">state</span>: <span class="ident">Parsing</span> {
+                <span class="ident">stream</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">stream</span>,
+                <span class="ident">mp3</span>: <span class="prelude-val">None</span>,
+                <span class="ident">chart</span>: <span class="prelude-val">None</span>,
             },
         }
     }
 }
 
-<span class="comment">// TODO: Make this parse function async.
-</span><span class="kw">impl </span>SwfParser&lt;Parsing&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>tick(<span class="self">self</span>) -&gt; SwfParser&lt;Parsed&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>mp3_data: Vec&lt;u8&gt; = Vec::new();
-        <span class="kw">let </span><span class="kw-2">mut </span>chart_data: Vec&lt;RuntimeNote&gt; = Vec::new();
-        <span class="kw">let </span><span class="kw-2">mut </span>swf_reader = Reader::new(
-            <span class="kw-2">&amp;</span><span class="self">self</span>.state.stream.data[..],
-            <span class="self">self</span>.state.stream.header.version(),
+<span class="comment">// TODO: Make this parse function async.</span>
+<span class="kw">impl</span> <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">Parsing</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="self">self</span>) -&gt; <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">Parsed</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mp3_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">chart_data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">swf_reader</span> <span class="op">=</span> <span class="ident">Reader::new</span>(
+            <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">stream</span>.<span class="ident">data</span>[..],
+            <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">stream</span>.<span class="ident">header</span>.<span class="ident">version</span>(),
         );
-        <span class="kw">while let </span><span class="prelude-val">Ok</span>(tag) = swf_reader.read_tag() {
-            <span class="kw">match </span>tag {
-                swf::Tag::DefineSound(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;DefineSound&quot;</span>),
-                swf::Tag::DoAction(action) =&gt; {
-                    <span class="kw">let </span>res = SwfParser::parse_action(action, swf_reader.version());
-                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(chart) = res {
-                        chart_data = chart;
+        <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">tag</span>) <span class="op">=</span> <span class="ident">swf_reader</span>.<span class="ident">read_tag</span>() {
+            <span class="kw">match</span> <span class="ident">tag</span> {
+                <span class="ident">swf::Tag::DefineSound</span>(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;DefineSound&quot;</span>),
+                <span class="ident">swf::Tag::DoAction</span>(<span class="ident">action</span>) =&gt; {
+                    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">SwfParser::parse_action</span>(<span class="ident">action</span>, <span class="ident">swf_reader</span>.<span class="ident">version</span>());
+                    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">chart</span>) <span class="op">=</span> <span class="ident">res</span> {
+                        <span class="ident">chart_data</span> <span class="op">=</span> <span class="ident">chart</span>;
                     }
                 }
-                swf::Tag::SoundStreamBlock(sound) =&gt; {
-                    mp3_data.extend_from_slice(sound);
+                <span class="ident">swf::Tag::SoundStreamBlock</span>(<span class="ident">sound</span>) =&gt; {
+                    <span class="ident">mp3_data</span>.<span class="ident">extend_from_slice</span>(<span class="ident">sound</span>);
                 }
-                swf::Tag::SoundStreamHead(ssh) =&gt; {
+                <span class="ident">swf::Tag::SoundStreamHead</span>(<span class="ident">ssh</span>) =&gt; {
                     <span class="macro">log::info!</span>(<span class="string">&quot;SoundStreamHead&quot;</span>);
-                    <span class="macro">log::info!</span>(<span class="string">&quot;latency seek: {}&quot;</span>, ssh.latency_seek);
-                    <span class="macro">log::info!</span>(<span class="string">&quot;playback format: {:?}&quot;</span>, ssh.playback_format);
-                    <span class="macro">log::info!</span>(<span class="string">&quot;num samples per block: {}&quot;</span>, ssh.num_samples_per_block);
-                    <span class="macro">log::info!</span>(<span class="string">&quot;stream format: {:?}&quot;</span>, ssh.stream_format);
+                    <span class="macro">log::info!</span>(<span class="string">&quot;latency seek: {}&quot;</span>, <span class="ident">ssh</span>.<span class="ident">latency_seek</span>);
+                    <span class="macro">log::info!</span>(<span class="string">&quot;playback format: {:?}&quot;</span>, <span class="ident">ssh</span>.<span class="ident">playback_format</span>);
+                    <span class="macro">log::info!</span>(<span class="string">&quot;num samples per block: {}&quot;</span>, <span class="ident">ssh</span>.<span class="ident">num_samples_per_block</span>);
+                    <span class="macro">log::info!</span>(<span class="string">&quot;stream format: {:?}&quot;</span>, <span class="ident">ssh</span>.<span class="ident">stream_format</span>);
                 }
-                swf::Tag::SoundStreamHead2(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;SoundStreamHead2&quot;</span>),
-                <span class="kw">_ </span>=&gt; {}
+                <span class="ident">swf::Tag::SoundStreamHead2</span>(<span class="kw">_</span>) =&gt; <span class="macro">log::info!</span>(<span class="string">&quot;SoundStreamHead2&quot;</span>),
+                <span class="kw">_</span> =&gt; {}
             }
         }
 
-        <span class="comment">// TODO: State data for when parsing is tickable.
-        //self.extra.chart.replace(chart_data);
-        //self.extra.mp3.replace(mp3_data);
+        <span class="comment">// TODO: State data for when parsing is tickable.</span>
+        <span class="comment">//self.extra.chart.replace(chart_data);</span>
+        <span class="comment">//self.extra.mp3.replace(mp3_data);</span>
 
-        </span><span class="kw">if let </span><span class="prelude-val">Ok</span>(record) = Record::new(mp3_data, RuntimeChart { notes: chart_data }) {
-            SwfParser {
-                state: Parsed { record },
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">record</span>) <span class="op">=</span> <span class="ident">Record::new</span>(<span class="ident">mp3_data</span>, <span class="ident">RuntimeChart</span> { <span class="ident">notes</span>: <span class="ident">chart_data</span> }) {
+            <span class="ident">SwfParser</span> {
+                <span class="ident">state</span>: <span class="ident">Parsed</span> { <span class="ident">record</span> },
             }
-        } <span class="kw">else </span>{
-            <span class="comment">// this tick function should return a result instead of a panic.
-            </span><span class="macro">panic!</span>(<span class="string">&quot;Invalid chart of unknown length.&quot;</span>);
+        } <span class="kw">else</span> {
+            <span class="comment">// this tick function should return a result instead of a panic.</span>
+            <span class="macro">panic!</span>(<span class="string">&quot;Invalid chart of unknown length.&quot;</span>);
         }
     }
 
-    <span class="kw">fn </span>parse_action(action_raw: <span class="kw-2">&amp;</span>[u8], version: u8) -&gt; anyhow::Result&lt;Vec&lt;RuntimeNote&gt;&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>action_reader = avm1::read::Reader::new(action_raw, version);
-        <span class="kw">let </span><span class="kw-2">mut </span>is_chart_data = <span class="bool-val">false</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>constant_pool: <span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = <span class="prelude-val">None</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>value_stack: Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt; = Vec::with_capacity(<span class="number">4</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>beat_box: Vec&lt;RuntimeNote&gt; = Vec::new();
+    <span class="kw">fn</span> <span class="ident">parse_action</span>(<span class="ident">action_raw</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">version</span>: <span class="ident">u8</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">action_reader</span> <span class="op">=</span> <span class="ident">avm1::read::Reader::new</span>(<span class="ident">action_raw</span>, <span class="ident">version</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">is_chart_data</span> <span class="op">=</span> <span class="bool-val">false</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">constant_pool</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConstantPool</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">value_stack</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::with_capacity</span>(<span class="number">4</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">beat_box</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
-        <span class="kw">let </span><span class="kw-2">mut </span>done = <span class="bool-val">false</span>;
-        <span class="kw">while </span>!done {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(action) = action_reader.read_action() {
-                <span class="kw">match </span>action {
-                    avm1::types::Action::ConstantPool(cp) =&gt; {
-                        constant_pool.replace(cp);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">done</span> <span class="op">=</span> <span class="bool-val">false</span>;
+        <span class="kw">while</span> <span class="op">!</span><span class="ident">done</span> {
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">action</span>) <span class="op">=</span> <span class="ident">action_reader</span>.<span class="ident">read_action</span>() {
+                <span class="kw">match</span> <span class="ident">action</span> {
+                    <span class="ident">avm1::types::Action::ConstantPool</span>(<span class="ident">cp</span>) =&gt; {
+                        <span class="ident">constant_pool</span>.<span class="ident">replace</span>(<span class="ident">cp</span>);
                     }
 
-                    avm1::types::Action::Push(<span class="kw-2">mut </span>push_object) =&gt; {
-                        <span class="kw">if let </span>ControlFlow::Break(<span class="kw">_</span>) =
-                            parse_push_action(is_chart_data, <span class="kw-2">&amp;mut </span>push_object, <span class="kw-2">&amp;mut </span>value_stack)
+                    <span class="ident">avm1::types::Action::Push</span>(<span class="kw-2">mut</span> <span class="ident">push_object</span>) =&gt; {
+                        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">ControlFlow::Break</span>(<span class="kw">_</span>) <span class="op">=</span>
+                            <span class="ident">parse_push_action</span>(<span class="ident">is_chart_data</span>, <span class="kw-2">&amp;mut</span> <span class="ident">push_object</span>, <span class="kw-2">&amp;mut</span> <span class="ident">value_stack</span>)
                         {
                             <span class="kw">continue</span>;
                         }
                     }
 
-                    avm1::types::Action::End | avm1::types::Action::Stop =&gt; {
-                        done = <span class="bool-val">true</span>;
+                    <span class="ident">avm1::types::Action::End</span> <span class="op">|</span> <span class="ident">avm1::types::Action::Stop</span> =&gt; {
+                        <span class="ident">done</span> <span class="op">=</span> <span class="bool-val">true</span>;
                     }
 
-                    avm1::types::Action::GetVariable =&gt; {
-                        is_chart_data = <span class="bool-val">true</span>;
+                    <span class="ident">avm1::types::Action::GetVariable</span> =&gt; {
+                        <span class="ident">is_chart_data</span> <span class="op">=</span> <span class="bool-val">true</span>;
                     }
 
-                    avm1::types::Action::InitArray =&gt; {
-                        <span class="comment">// Ignore the first `InitArray`, data at this point is garbage.
-                        </span><span class="kw">if </span>value_stack.is_empty() {
+                    <span class="ident">avm1::types::Action::InitArray</span> =&gt; {
+                        <span class="comment">// Ignore the first `InitArray`, data at this point is garbage.</span>
+                        <span class="kw">if</span> <span class="ident">value_stack</span>.<span class="ident">is_empty</span>() {
                             <span class="kw">continue</span>;
                         }
 
-                        <span class="kw">let </span>beat_position = parse_beat_position(<span class="kw-2">&amp;mut </span>value_stack);
-                        <span class="kw">let </span>direction = parse_direction(<span class="kw-2">&amp;mut </span>value_stack, <span class="kw-2">&amp;</span>constant_pool);
-                        <span class="kw">let </span>color = parse_color(<span class="kw-2">&amp;mut </span>value_stack, <span class="kw-2">&amp;</span>constant_pool);
-                        <span class="kw">let </span>timestamp = parse_timestamp(<span class="kw-2">&amp;mut </span>value_stack);
+                        <span class="kw">let</span> <span class="ident">beat_position</span> <span class="op">=</span> <span class="ident">parse_beat_position</span>(<span class="kw-2">&amp;mut</span> <span class="ident">value_stack</span>);
+                        <span class="kw">let</span> <span class="ident">direction</span> <span class="op">=</span> <span class="ident">parse_direction</span>(<span class="kw-2">&amp;mut</span> <span class="ident">value_stack</span>, <span class="kw-2">&amp;</span><span class="ident">constant_pool</span>);
+                        <span class="kw">let</span> <span class="ident">color</span> <span class="op">=</span> <span class="ident">parse_color</span>(<span class="kw-2">&amp;mut</span> <span class="ident">value_stack</span>, <span class="kw-2">&amp;</span><span class="ident">constant_pool</span>);
+                        <span class="kw">let</span> <span class="ident">timestamp</span> <span class="op">=</span> <span class="ident">parse_timestamp</span>(<span class="kw-2">&amp;mut</span> <span class="ident">value_stack</span>);
 
-                        <span class="kw">if let </span>(<span class="prelude-val">Ok</span>(bp), <span class="prelude-val">Ok</span>(dir), <span class="prelude-val">Ok</span>(col), <span class="prelude-val">Ok</span>(ts)) =
-                            (beat_position, direction, color, timestamp)
+                        <span class="kw">if</span> <span class="kw">let</span> (<span class="prelude-val">Ok</span>(<span class="ident">bp</span>), <span class="prelude-val">Ok</span>(<span class="ident">dir</span>), <span class="prelude-val">Ok</span>(<span class="ident">col</span>), <span class="prelude-val">Ok</span>(<span class="ident">ts</span>)) <span class="op">=</span>
+                            (<span class="ident">beat_position</span>, <span class="ident">direction</span>, <span class="ident">color</span>, <span class="ident">timestamp</span>)
                         {
-                            beat_box.push(RuntimeNote {
-                                beat_position: bp,
-                                direction: dir,
-                                color: col,
-                                timestamp: ts,
+                            <span class="ident">beat_box</span>.<span class="ident">push</span>(<span class="ident">RuntimeNote</span> {
+                                <span class="ident">beat_position</span>: <span class="ident">bp</span>,
+                                <span class="ident">direction</span>: <span class="ident">dir</span>,
+                                <span class="ident">color</span>: <span class="ident">col</span>,
+                                <span class="ident">timestamp</span>: <span class="ident">ts</span>,
                             });
-                        } <span class="kw">else </span>{
-                            <span class="macro">bail!</span>(ChartParseError::Timestamp);
+                        } <span class="kw">else</span> {
+                            <span class="macro">bail!</span>(<span class="ident">ChartParseError::Timestamp</span>);
                         }
                     }
 
-                    avm1::types::Action::SetMember =&gt; {
-                        is_chart_data = <span class="bool-val">false</span>;
+                    <span class="ident">avm1::types::Action::SetMember</span> =&gt; {
+                        <span class="ident">is_chart_data</span> <span class="op">=</span> <span class="bool-val">false</span>;
                     }
 
-                    <span class="kw">_ </span>=&gt; {
-                        <span class="macro">log::error!</span>(<span class="string">&quot;Unexpectedly unhandled action: {:?}&quot;</span>, action);
+                    <span class="kw">_</span> =&gt; {
+                        <span class="macro">log::error!</span>(<span class="string">&quot;Unexpectedly unhandled action: {:?}&quot;</span>, <span class="ident">action</span>);
                     }
                 }
             }
         }
 
-        <span class="kw">if </span>beat_box.is_empty() {
-            <span class="kw">if </span>is_chart_data {
-                <span class="macro">bail!</span>(ChartParseError::BeatPosition);
+        <span class="kw">if</span> <span class="ident">beat_box</span>.<span class="ident">is_empty</span>() {
+            <span class="kw">if</span> <span class="ident">is_chart_data</span> {
+                <span class="macro">bail!</span>(<span class="ident">ChartParseError::BeatPosition</span>);
             }
 
             <span class="macro">bail!</span>(<span class="string">&quot;Not chart data.&quot;</span>);
         }
 
-        <span class="prelude-val">Ok</span>(beat_box)
+        <span class="prelude-val">Ok</span>(<span class="ident">beat_box</span>)
     }
 }
 
-<span class="kw">impl </span>SwfParser&lt;Parsed&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>produce_tape(<span class="self">self</span>) -&gt; Record {
-        <span class="self">self</span>.state.record
+<span class="kw">impl</span> <span class="ident">SwfParser</span><span class="op">&lt;</span><span class="ident">Parsed</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">produce_tape</span>(<span class="self">self</span>) -&gt; <span class="ident">Record</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">record</span>
     }
 }
 
-<span class="kw">fn </span>parse_timestamp(value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; anyhow::Result&lt;i128&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::Int(ms)) = value_stack.pop() {
-        <span class="prelude-val">Ok</span>(ms.try_into().unwrap())
-    } <span class="kw">else </span>{
-        <span class="macro">bail!</span>(ChartParseError::Timestamp);
+<span class="kw">fn</span> <span class="ident">parse_timestamp</span>(<span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">i128</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::Int</span>(<span class="ident">ms</span>)) <span class="op">=</span> <span class="ident">value_stack</span>.<span class="ident">pop</span>() {
+        <span class="prelude-val">Ok</span>(<span class="ident">ms</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>())
+    } <span class="kw">else</span> {
+        <span class="macro">bail!</span>(<span class="ident">ChartParseError::Timestamp</span>);
     }
 }
 
-<span class="kw">fn </span>parse_color(
-    value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-    constant_pool: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-) -&gt; anyhow::Result&lt;NoteColor&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::ConstantPool(color)) = value_stack.pop() {
-        <span class="kw">match </span>constant_pool.clone().unwrap().strings[color <span class="kw">as </span>usize]
-            .to_str_lossy(UTF_8)
-            .to_string()
-            .as_str()
+<span class="kw">fn</span> <span class="ident">parse_color</span>(
+    <span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">constant_pool</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConstantPool</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">NoteColor</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::ConstantPool</span>(<span class="ident">color</span>)) <span class="op">=</span> <span class="ident">value_stack</span>.<span class="ident">pop</span>() {
+        <span class="kw">match</span> <span class="ident">constant_pool</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>().<span class="ident">strings</span>[<span class="ident">color</span> <span class="kw">as</span> <span class="ident">usize</span>]
+            .<span class="ident">to_str_lossy</span>(<span class="ident">UTF_8</span>)
+            .<span class="ident">to_string</span>()
+            .<span class="ident">as_str</span>()
         {
-            <span class="string">&quot;red&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Red),
-            <span class="string">&quot;yellow&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Yellow),
-            <span class="string">&quot;blue&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Blue),
-            <span class="string">&quot;orange&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Orange),
-            <span class="string">&quot;green&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Green),
-            <span class="string">&quot;pink&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Pink),
-            <span class="string">&quot;purple&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Purple),
-            <span class="string">&quot;cyan&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteColor::Cyan),
-            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::NoteColor),
+            <span class="string">&quot;red&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Red</span>),
+            <span class="string">&quot;yellow&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Yellow</span>),
+            <span class="string">&quot;blue&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Blue</span>),
+            <span class="string">&quot;orange&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Orange</span>),
+            <span class="string">&quot;green&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Green</span>),
+            <span class="string">&quot;pink&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Pink</span>),
+            <span class="string">&quot;purple&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Purple</span>),
+            <span class="string">&quot;cyan&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteColor::Cyan</span>),
+            <span class="kw">_</span> =&gt; <span class="macro">bail!</span>(<span class="ident">ChartParseError::NoteColor</span>),
         }
-    } <span class="kw">else </span>{
-        <span class="macro">bail!</span>(ChartParseError::NoteColor);
+    } <span class="kw">else</span> {
+        <span class="macro">bail!</span>(<span class="ident">ChartParseError::NoteColor</span>);
     }
 }
 
-<span class="kw">fn </span>parse_direction(
-    value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-    constant_pool: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;ConstantPool&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
-) -&gt; anyhow::Result&lt;NoteDirection&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::ConstantPool(dir)) = value_stack.pop() {
-        <span class="kw">match </span>constant_pool.clone().unwrap().strings[dir <span class="kw">as </span>usize]
-            .to_str_lossy(UTF_8)
-            .to_string()
-            .as_str()
+<span class="kw">fn</span> <span class="ident">parse_direction</span>(
+    <span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">constant_pool</span>: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ConstantPool</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">NoteDirection</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::ConstantPool</span>(<span class="ident">dir</span>)) <span class="op">=</span> <span class="ident">value_stack</span>.<span class="ident">pop</span>() {
+        <span class="kw">match</span> <span class="ident">constant_pool</span>.<span class="ident">clone</span>().<span class="ident">unwrap</span>().<span class="ident">strings</span>[<span class="ident">dir</span> <span class="kw">as</span> <span class="ident">usize</span>]
+            .<span class="ident">to_str_lossy</span>(<span class="ident">UTF_8</span>)
+            .<span class="ident">to_string</span>()
+            .<span class="ident">as_str</span>()
         {
-            <span class="string">&quot;L&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Left),
-            <span class="string">&quot;U&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Up),
-            <span class="string">&quot;D&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Down),
-            <span class="string">&quot;R&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NoteDirection::Right),
-            <span class="kw">_ </span>=&gt; <span class="macro">bail!</span>(ChartParseError::NoteDirection),
+            <span class="string">&quot;L&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteDirection::Left</span>),
+            <span class="string">&quot;U&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteDirection::Up</span>),
+            <span class="string">&quot;D&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteDirection::Down</span>),
+            <span class="string">&quot;R&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">NoteDirection::Right</span>),
+            <span class="kw">_</span> =&gt; <span class="macro">bail!</span>(<span class="ident">ChartParseError::NoteDirection</span>),
         }
-    } <span class="kw">else </span>{
-        <span class="macro">bail!</span>(ChartParseError::NoteDirection);
+    } <span class="kw">else</span> {
+        <span class="macro">bail!</span>(<span class="ident">ChartParseError::NoteDirection</span>);
     }
 }
 
-<span class="kw">fn </span>parse_beat_position(value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; anyhow::Result&lt;i32&gt; {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::Int(ms)) = value_stack.pop() {
-        <span class="prelude-val">Ok</span>(ms)
-    } <span class="kw">else </span>{
+<span class="kw">fn</span> <span class="ident">parse_beat_position</span>(<span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span><span class="op">&gt;</span><span class="op">&gt;</span>) -&gt; <span class="ident">anyhow::Result</span><span class="op">&lt;</span><span class="ident">i32</span><span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::Int</span>(<span class="ident">ms</span>)) <span class="op">=</span> <span class="ident">value_stack</span>.<span class="ident">pop</span>() {
+        <span class="prelude-val">Ok</span>(<span class="ident">ms</span>)
+    } <span class="kw">else</span> {
         <span class="macro">log::error!</span>(<span class="string">&quot;No beat position found&quot;</span>);
-        <span class="macro">bail!</span>(ChartParseError::BeatPosition);
+        <span class="macro">bail!</span>(<span class="ident">ChartParseError::BeatPosition</span>);
     }
 }
 
-<span class="kw">fn </span>parse_push_action&lt;<span class="lifetime">&#39;a</span>&gt;(
-    is_chart_data: bool,
-    push_object: <span class="kw-2">&amp;mut </span>avm1::types::Push&lt;<span class="lifetime">&#39;a</span>&gt;,
-    value_stack: <span class="kw-2">&amp;mut </span>Vec&lt;Value&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
-) -&gt; ControlFlow&lt;()&gt; {
-    <span class="kw">if </span>!is_chart_data {
-        <span class="kw">return </span>ControlFlow::Break(());
+<span class="kw">fn</span> <span class="ident">parse_push_action</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(
+    <span class="ident">is_chart_data</span>: <span class="ident">bool</span>,
+    <span class="ident">push_object</span>: <span class="kw-2">&amp;mut</span> <span class="ident">avm1::types::Push</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>,
+    <span class="ident">value_stack</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Value</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+) -&gt; <span class="ident">ControlFlow</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">is_chart_data</span> {
+        <span class="kw">return</span> <span class="ident">ControlFlow::Break</span>(());
     }
 
-    <span class="kw">if </span>push_object.values.len() &lt; <span class="number">2 </span>{
-        <span class="kw">return </span>ControlFlow::Break(());
+    <span class="kw">if</span> <span class="ident">push_object</span>.<span class="ident">values</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="number">2</span> {
+        <span class="kw">return</span> <span class="ident">ControlFlow::Break</span>(());
     }
 
-    <span class="kw">let </span>real_size = push_object.values.pop();
-    <span class="kw">let </span>total_size = push_object.values.len();
-    <span class="kw">let </span>garbage = <span class="kw">if let </span><span class="prelude-val">Some</span>(Value::Int(len)) = real_size {
-        total_size.checked_sub(len.try_into().unwrap()).unwrap()
-    } <span class="kw">else </span>{
-        <span class="number">0
-    </span>};
+    <span class="kw">let</span> <span class="ident">real_size</span> <span class="op">=</span> <span class="ident">push_object</span>.<span class="ident">values</span>.<span class="ident">pop</span>();
+    <span class="kw">let</span> <span class="ident">total_size</span> <span class="op">=</span> <span class="ident">push_object</span>.<span class="ident">values</span>.<span class="ident">len</span>();
+    <span class="kw">let</span> <span class="ident">garbage</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">Value::Int</span>(<span class="ident">len</span>)) <span class="op">=</span> <span class="ident">real_size</span> {
+        <span class="ident">total_size</span>.<span class="ident">checked_sub</span>(<span class="ident">len</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()).<span class="ident">unwrap</span>()
+    } <span class="kw">else</span> {
+        <span class="number">0</span>
+    };
 
-    <span class="kw">for </span>i <span class="kw">in </span>garbage..total_size {
-        value_stack.push(push_object.values.get(i).unwrap().clone());
+    <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="ident">garbage</span>..<span class="ident">total_size</span> {
+        <span class="ident">value_stack</span>.<span class="ident">push</span>(<span class="ident">push_object</span>.<span class="ident">values</span>.<span class="ident">get</span>(<span class="ident">i</span>).<span class="ident">unwrap</span>().<span class="ident">clone</span>());
     }
 
-    ControlFlow::Continue(())
+    <span class="ident">ControlFlow::Continue</span>(())
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>

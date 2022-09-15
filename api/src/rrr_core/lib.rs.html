@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../normalize.css"><link rel="stylesheet" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../ayu.css" disabled><link rel="stylesheet" href="../../dark.css" disabled><link rel="stylesheet" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rrr_core/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script><script defer src="../../main.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../rrr_core/index.html"><img class="rust-logo" src="../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -94,101 +100,102 @@
 <span id="94">94</span>
 <span id="95">95</span>
 <span id="96">96</span>
-</pre><pre class="rust"><code><span class="attribute">#![deny(rust_2018_idioms)]
-#![warn(
-    elided_lifetimes_in_paths,
-    trivial_casts,
-    trivial_numeric_casts,
-    unreachable_pub,
-    variant_size_differences,
-    clippy::all,
-    clippy::cargo,
-    clippy::pedantic,
-    clippy::as_conversions,
-    clippy::clone_on_ref_ptr,
-    clippy::dbg_macro,
-    clippy::decimal_literal_representation,
-    clippy::exit,
-    clippy::expect_used,
-    clippy::filetype_is_file,
-    clippy::float_cmp_const,
-    clippy::get_unwrap,
-    clippy::indexing_slicing,
-    clippy::integer_arithmetic,
-    clippy::integer_division,
-    clippy::let_underscore_must_use,
-    clippy::lossy_float_literal,
-    clippy::mem_forget,
-    clippy::multiple_inherent_impl,
-    clippy::panic,
-    clippy::pattern_type_mismatch,
-    clippy::print_stdout,
-    clippy::rest_pat_in_fully_bound_structs,
-    clippy::shadow_reuse,
-    clippy::todo,
-    clippy::unimplemented,
-    clippy::unneeded_field_pattern,
-    clippy::unreachable,
-    clippy::unwrap_used,
-    clippy::use_debug,
-    clippy::verbose_file_reads
-)]
-#![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
-#![forbid(unsafe_code)]
+</pre><pre class="rust"><code><span class="attribute">#![<span class="ident">deny</span>(<span class="ident">rust_2018_idioms</span>)]</span>
+<span class="attribute">#![<span class="ident">warn</span>(
+    <span class="ident">elided_lifetimes_in_paths</span>,
+    <span class="ident">trivial_casts</span>,
+    <span class="ident">trivial_numeric_casts</span>,
+    <span class="ident">unreachable_pub</span>,
+    <span class="ident">variant_size_differences</span>,
+    <span class="ident">clippy::all</span>,
+    <span class="ident">clippy::cargo</span>,
+    <span class="ident">clippy::pedantic</span>,
+    <span class="ident">clippy::as_conversions</span>,
+    <span class="ident">clippy::clone_on_ref_ptr</span>,
+    <span class="ident">clippy::dbg_macro</span>,
+    <span class="ident">clippy::decimal_literal_representation</span>,
+    <span class="ident">clippy::exit</span>,
+    <span class="ident">clippy::expect_used</span>,
+    <span class="ident">clippy::filetype_is_file</span>,
+    <span class="ident">clippy::float_cmp_const</span>,
+    <span class="ident">clippy::get_unwrap</span>,
+    <span class="ident">clippy::indexing_slicing</span>,
+    <span class="ident">clippy::integer_arithmetic</span>,
+    <span class="ident">clippy::integer_division</span>,
+    <span class="ident">clippy::let_underscore_must_use</span>,
+    <span class="ident">clippy::lossy_float_literal</span>,
+    <span class="ident">clippy::mem_forget</span>,
+    <span class="ident">clippy::multiple_inherent_impl</span>,
+    <span class="ident">clippy::panic</span>,
+    <span class="ident">clippy::pattern_type_mismatch</span>,
+    <span class="ident">clippy::print_stdout</span>,
+    <span class="ident">clippy::rest_pat_in_fully_bound_structs</span>,
+    <span class="ident">clippy::shadow_reuse</span>,
+    <span class="ident">clippy::todo</span>,
+    <span class="ident">clippy::unimplemented</span>,
+    <span class="ident">clippy::unneeded_field_pattern</span>,
+    <span class="ident">clippy::unreachable</span>,
+    <span class="ident">clippy::unwrap_used</span>,
+    <span class="ident">clippy::use_debug</span>,
+    <span class="ident">clippy::verbose_file_reads</span>
+)]</span>
+<span class="attribute">#![<span class="ident">allow</span>(<span class="ident">clippy::module_name_repetitions</span>, <span class="ident">clippy::multiple_crate_versions</span>)]</span>
+<span class="attribute">#![<span class="ident">forbid</span>(<span class="ident">unsafe_code</span>)]</span>
 
-</span><span class="kw">pub mod </span>audio;
-<span class="kw">pub mod </span>chart;
-<span class="kw">pub mod </span>loaders;
-<span class="kw">pub mod </span>math;
-<span class="kw">pub mod </span>play;
-<span class="kw">pub mod </span>settings;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">audio</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">chart</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">loaders</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">math</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">play</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">settings</span>;
 
-<span class="kw">use </span>chart::RuntimeChart;
-<span class="kw">use </span>settings::Settings;
+<span class="kw">use</span> <span class="ident">chart::RuntimeChart</span>;
+<span class="kw">use</span> <span class="ident">settings::Settings</span>;
 
-<span class="comment">// Re-exports
-</span><span class="kw">pub use </span>strum;
+<span class="comment">// Re-exports</span>
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident">strum</span>;
 
-<span class="attribute">#[derive(Debug, Default)]
-</span><span class="kw">pub struct </span>RRR {
-    _settings: Settings,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">RRR</span> {
+    <span class="ident">_settings</span>: <span class="ident">Settings</span>,
 }
 
-<span class="kw">impl </span>RRR {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::default()
+<span class="kw">impl</span> <span class="ident">RRR</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="self">Self</span> {
+        <span class="ident"><span class="self">Self</span>::default</span>()
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>with_settings(settings: Settings) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            _settings: settings,
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_settings</span>(<span class="ident">settings</span>: <span class="ident">Settings</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">_settings</span>: <span class="ident">settings</span>,
         }
     }
 
-    <span class="attribute">#[allow(clippy::unused_self)]
-    </span><span class="kw">pub fn </span>start_chart(<span class="kw-2">&amp;</span><span class="self">self</span>, _chart: <span class="kw-2">&amp;</span>RuntimeChart) {}
+    <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::unused_self</span>)]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_chart</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">_chart</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeChart</span>) {}
 }
 
-<span class="attribute">#[cfg(test)]
-</span><span class="kw">mod </span>tests {
-    <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::chart::BinChart;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::chart::BinChart</span>;
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>custom_settings() {
-        <span class="kw">let </span>settings = Settings::default();
-        <span class="kw">let </span>_rrr = RRR::with_settings(settings);
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">custom_settings</span>() {
+        <span class="kw">let</span> <span class="ident">settings</span> <span class="op">=</span> <span class="ident">Settings::default</span>();
+        <span class="kw">let</span> <span class="ident">_rrr</span> <span class="op">=</span> <span class="ident">RRR::with_settings</span>(<span class="ident">settings</span>);
     }
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>start_chart() {
-        <span class="kw">let </span>rrr = RRR::new();
-        <span class="kw">let </span>chart = BinChart::default();
-        <span class="kw">let </span>compiled_chart = chart.compile();
-        rrr.start_chart(<span class="kw-2">&amp;</span>compiled_chart);
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">start_chart</span>() {
+        <span class="kw">let</span> <span class="ident">rrr</span> <span class="op">=</span> <span class="ident">RRR::new</span>();
+        <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="ident">BinChart::default</span>();
+        <span class="kw">let</span> <span class="ident">compiled_chart</span> <span class="op">=</span> <span class="ident">chart</span>.<span class="ident">compile</span>();
+        <span class="ident">rrr</span>.<span class="ident">start_chart</span>(<span class="kw-2">&amp;</span><span class="ident">compiled_chart</span>);
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>

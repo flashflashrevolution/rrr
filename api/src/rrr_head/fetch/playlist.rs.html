@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/head/src/fetch/playlist.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>playlist.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_head/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_head/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_head/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/head/src/fetch/playlist.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>playlist.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_head/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_head/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_head/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -67,74 +73,75 @@
 <span id="67">67</span>
 <span id="68">68</span>
 <span id="69">69</span>
-</pre><pre class="rust"><code><span class="kw">use </span>serde::{Deserialize, Serialize};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">serde</span>::{<span class="ident">Deserialize</span>, <span class="ident">Serialize</span>};
 
-<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-</span><span class="kw">pub struct </span>Song {
-    <span class="kw">pub </span>genre: i64,
-    <span class="kw">pub </span>name: String,
-    <span class="kw">pub </span>difficulty: i64,
-    <span class="kw">pub </span>style: String,
-    <span class="kw">pub </span>time: String,
-    <span class="kw">pub </span>level: i64,
-    <span class="kw">pub </span>order: i64,
-    <span class="kw">pub </span>arrows: i64,
-    <span class="kw">pub </span>playhash: String,
-    <span class="kw">pub </span>previewhash: String,
-    <span class="kw">pub </span>prerelease: bool,
-    <span class="kw">pub </span>releasedate: i64,
-    <span class="kw">pub </span>author: String,
-    <span class="kw">pub </span>stepauthor: String,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Song</span> {
+    <span class="kw">pub</span> <span class="ident">genre</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">name</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">difficulty</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">style</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">time</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">level</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">order</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">arrows</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">playhash</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">previewhash</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">prerelease</span>: <span class="ident">bool</span>,
+    <span class="kw">pub</span> <span class="ident">releasedate</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">author</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">stepauthor</span>: <span class="ident">String</span>,
 
-    <span class="attribute">#[serde(rename = <span class="string">&quot;authorURL&quot;</span>)]
-    </span><span class="kw">pub </span>author_url: String,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;authorURL&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">author_url</span>: <span class="ident">String</span>,
 
-    <span class="attribute">#[serde(rename = <span class="string">&quot;stepauthorURL&quot;</span>)]
-    </span><span class="kw">pub </span>stepauthor_url: String,
-    <span class="kw">pub </span>min_nps: i64,
-    <span class="kw">pub </span>max_nps: i64,
-    <span class="kw">pub </span>nps_data: String,
-    <span class="kw">pub </span>song_rating: <span class="prelude-ty">Option</span>&lt;f64&gt;,
-    <span class="kw">pub </span>credits: <span class="prelude-ty">Option</span>&lt;i64&gt;,
-    <span class="kw">pub </span>price: <span class="prelude-ty">Option</span>&lt;i64&gt;,
+    <span class="attribute">#[<span class="ident">serde</span>(<span class="ident">rename</span> <span class="op">=</span> <span class="string">&quot;stepauthorURL&quot;</span>)]</span>
+    <span class="kw">pub</span> <span class="ident">stepauthor_url</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">min_nps</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">max_nps</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">nps_data</span>: <span class="ident">String</span>,
+    <span class="kw">pub</span> <span class="ident">song_rating</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">credits</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">price</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-</span><span class="kw">pub struct </span>Stat {
-    <span class="kw">pub </span>total_length: i64,
-    <span class="kw">pub </span>eff_length: i64,
-    <span class="kw">pub </span>chord_count: i64,
-    <span class="kw">pub </span>avg_nps: f64,
-    <span class="kw">pub </span>first_delay: i64,
-    <span class="kw">pub </span>last_delay: i64,
-    <span class="kw">pub </span>note_delays: Vec&lt;i64&gt;,
-    <span class="kw">pub </span>hand_bias: i64,
-    <span class="kw">pub </span>jumps: Vec&lt;i64&gt;,
-    <span class="kw">pub </span>color_jumps: Vec&lt;i64&gt;,
-    <span class="kw">pub </span>framers: Vec&lt;i64&gt;,
-    <span class="kw">pub </span>density: Vec&lt;Vec&lt;Density&gt;&gt;,
-    <span class="kw">pub </span>camel_jacks: i64,
-    <span class="kw">pub </span>color_total: ColorTotal,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Stat</span> {
+    <span class="kw">pub</span> <span class="ident">total_length</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">eff_length</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">chord_count</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">avg_nps</span>: <span class="ident">f64</span>,
+    <span class="kw">pub</span> <span class="ident">first_delay</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">last_delay</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">note_delays</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">hand_bias</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">jumps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">color_jumps</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">framers</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">i64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">density</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">Density</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">camel_jacks</span>: <span class="ident">i64</span>,
+    <span class="kw">pub</span> <span class="ident">color_total</span>: <span class="ident">ColorTotal</span>,
 }
 
-<span class="attribute">#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-</span><span class="kw">pub struct </span>ColorTotal {
-    <span class="kw">pub </span>red: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>blue: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>purple: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>yellow: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>pink: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>orange: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>cyan: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>green: Vec&lt;f64&gt;,
-    <span class="kw">pub </span>white: Vec&lt;f64&gt;,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">ColorTotal</span> {
+    <span class="kw">pub</span> <span class="ident">red</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">blue</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">purple</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">yellow</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">pink</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">orange</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">cyan</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">green</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span> <span class="ident">white</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">f64</span><span class="op">&gt;</span>,
 }
 
-<span class="attribute">#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(untagged)]
-</span><span class="kw">pub enum </span>Density {
-    Integer(i64),
-    String(String),
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Serialize</span>, <span class="ident">Deserialize</span>)]</span>
+<span class="attribute">#[<span class="ident">serde</span>(<span class="ident">untagged</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Density</span> {
+    <span class="ident">Integer</span>(<span class="ident">i64</span>),
+    <span class="ident">String</span>(<span class="ident">String</span>),
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_head" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>

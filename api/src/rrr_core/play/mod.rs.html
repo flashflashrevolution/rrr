@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -353,360 +359,361 @@
 <span id="353">353</span>
 <span id="354">354</span>
 <span id="355">355</span>
-</pre><pre class="rust"><code><span class="kw">pub mod </span>actions;
-<span class="kw">pub mod </span>field;
-<span class="kw">pub mod </span>judge;
-<span class="kw">pub mod </span>record;
-<span class="kw">pub mod </span>turntable;
+</pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">field</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">judge</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">record</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">turntable</span>;
 
-<span class="kw">use </span><span class="self">self</span>::{
-    actions::NoteAction,
-    field::Field,
-    judge::{Judge, JudgeWindow, Judgement},
-    turntable::Turntable,
+<span class="kw">use</span> <span class="self">self</span>::{
+    <span class="ident">actions::NoteAction</span>,
+    <span class="ident">field::Field</span>,
+    <span class="ident">judge</span>::{<span class="ident">Judge</span>, <span class="ident">JudgeWindow</span>, <span class="ident">Judgement</span>},
+    <span class="ident">turntable::Turntable</span>,
 };
-<span class="kw">use crate</span>::{
-    chart::{NoteDirection, RuntimeNote},
-    settings::Settings,
+<span class="kw">use</span> <span class="kw">crate</span>::{
+    <span class="ident">chart</span>::{<span class="ident">NoteDirection</span>, <span class="ident">RuntimeNote</span>},
+    <span class="ident">settings::Settings</span>,
 };
-<span class="kw">use </span>btreemultimap::{BTreeMultiMap, MultiRange};
-<span class="kw">use </span>std::collections::HashSet;
+<span class="kw">use</span> <span class="ident">btreemultimap</span>::{<span class="ident">BTreeMultiMap</span>, <span class="ident">MultiRange</span>};
+<span class="kw">use</span> <span class="ident">std::collections::HashSet</span>;
 
-<span class="attribute">#[derive(Debug, Default, Clone)]
-</span><span class="kw">pub struct </span>JudgementReport {
-    <span class="kw">pub </span>amazings: u32,
-    <span class="kw">pub </span>perfects: u32,
-    <span class="kw">pub </span>goods: u32,
-    <span class="kw">pub </span>averages: u32,
-    <span class="kw">pub </span>misses: u32,
-    <span class="kw">pub </span>boos: u32,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Default</span>, <span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">JudgementReport</span> {
+    <span class="kw">pub</span> <span class="ident">amazings</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">perfects</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">goods</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">averages</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">misses</span>: <span class="ident">u32</span>,
+    <span class="kw">pub</span> <span class="ident">boos</span>: <span class="ident">u32</span>,
 }
 
-<span class="kw">pub struct </span>Play&lt;S: PlayState&gt; {
-    field: Field,
-    state: S,
-    settings: Settings,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">PlayState</span><span class="op">&gt;</span> {
+    <span class="ident">field</span>: <span class="ident">Field</span>,
+    <span class="ident">state</span>: <span class="ident">S</span>,
+    <span class="ident">settings</span>: <span class="ident">Settings</span>,
 }
 
-<span class="kw">impl</span>&lt;S: PlayState&gt; Play&lt;S&gt; {
-    <span class="kw">pub fn </span>settings(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Settings {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.settings
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">PlayState</span><span class="op">&gt;</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">S</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">settings</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Settings</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">settings</span>
     }
 }
 
-<span class="kw">pub struct </span>Ready {
-    turntable: Turntable&lt;turntable::Loaded&gt;,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Ready</span> {
+    <span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Loaded</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">pub struct </span>Active {
-    turntable: Turntable&lt;turntable::Playing&gt;,
-    actions: BTreeMultiMap&lt;RuntimeNote, NoteAction&gt;,
-    judge: Judge,
-    judgement_report: JudgementReport,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Active</span> {
+    <span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Playing</span><span class="op">&gt;</span>,
+    <span class="ident">actions</span>: <span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span>, <span class="ident">NoteAction</span><span class="op">&gt;</span>,
+    <span class="ident">judge</span>: <span class="ident">Judge</span>,
+    <span class="ident">judgement_report</span>: <span class="ident">JudgementReport</span>,
 }
 
-<span class="kw">pub struct </span>Concluded {
-    turntable: Turntable&lt;turntable::Loaded&gt;,
-    actions: BTreeMultiMap&lt;RuntimeNote, NoteAction&gt;,
-    judgement_report: JudgementReport,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Concluded</span> {
+    <span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Loaded</span><span class="op">&gt;</span>,
+    <span class="ident">actions</span>: <span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span>, <span class="ident">NoteAction</span><span class="op">&gt;</span>,
+    <span class="ident">judgement_report</span>: <span class="ident">JudgementReport</span>,
 }
 
-<span class="kw">pub trait </span>PlayState {}
-<span class="kw">impl </span>PlayState <span class="kw">for </span>Ready {}
-<span class="kw">impl </span>PlayState <span class="kw">for </span>Active {}
-<span class="kw">impl </span>PlayState <span class="kw">for </span>Concluded {}
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">PlayState</span> {}
+<span class="kw">impl</span> <span class="ident">PlayState</span> <span class="kw">for</span> <span class="ident">Ready</span> {}
+<span class="kw">impl</span> <span class="ident">PlayState</span> <span class="kw">for</span> <span class="ident">Active</span> {}
+<span class="kw">impl</span> <span class="ident">PlayState</span> <span class="kw">for</span> <span class="ident">Concluded</span> {}
 
-<span class="kw">impl </span>Play&lt;Ready&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>new(turntable: Turntable&lt;turntable::Loaded&gt;, field: Field) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            state: Ready { turntable },
-            settings: Settings::default(),
-            field,
+<span class="kw">impl</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Ready</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Loaded</span><span class="op">&gt;</span>, <span class="ident">field</span>: <span class="ident">Field</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">state</span>: <span class="ident">Ready</span> { <span class="ident">turntable</span> },
+            <span class="ident">settings</span>: <span class="ident">Settings::default</span>(),
+            <span class="ident">field</span>,
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>with_settings(<span class="self">self</span>, settings: Settings) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            field: <span class="self">self</span>.field,
-            state: <span class="self">self</span>.state,
-            settings,
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_settings</span>(<span class="self">self</span>, <span class="ident">settings</span>: <span class="ident">Settings</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="self">self</span>.<span class="ident">state</span>,
+            <span class="ident">settings</span>,
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>with_field(<span class="self">self</span>, field: Field) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            field,
-            state: <span class="self">self</span>.state,
-            settings: <span class="self">self</span>.settings,
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_field</span>(<span class="self">self</span>, <span class="ident">field</span>: <span class="ident">Field</span>) -&gt; <span class="self">Self</span> {
+        <span class="self">Self</span> {
+            <span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="self">self</span>.<span class="ident">state</span>,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>start_with_audio(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
-        Play {
-            field: <span class="self">self</span>.field,
-            state: Active {
-                turntable: <span class="self">self</span>.state.turntable.play_with_audio(),
-                actions: BTreeMultiMap::default(),
-                judge: Judge::new(judge_zero_point.try_into().unwrap()),
-                judgement_report: JudgementReport::default(),
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_with_audio</span>(<span class="self">self</span>, <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
+        <span class="ident">Play</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="ident">Active</span> {
+                <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">play_with_audio</span>(),
+                <span class="ident">actions</span>: <span class="ident">BTreeMultiMap::default</span>(),
+                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(<span class="ident">judge_zero_point</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()),
+                <span class="ident">judgement_report</span>: <span class="ident">JudgementReport::default</span>(),
             },
-            settings: <span class="self">self</span>.settings,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>start(<span class="self">self</span>, judge_zero_point: i128) -&gt; Play&lt;Active&gt; {
-        Play {
-            field: <span class="self">self</span>.field,
-            state: Active {
-                turntable: <span class="self">self</span>.state.turntable.play(),
-                actions: BTreeMultiMap::default(),
-                judge: Judge::new(judge_zero_point.try_into().unwrap()),
-                judgement_report: JudgementReport::default(),
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="self">self</span>, <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
+        <span class="ident">Play</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="ident">Active</span> {
+                <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">play</span>(),
+                <span class="ident">actions</span>: <span class="ident">BTreeMultiMap::default</span>(),
+                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(<span class="ident">judge_zero_point</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()),
+                <span class="ident">judgement_report</span>: <span class="ident">JudgementReport::default</span>(),
             },
-            settings: <span class="self">self</span>.settings,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 }
 
-<span class="kw">impl </span>Play&lt;Active&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
-        Play {
-            field: <span class="self">self</span>.field,
-            state: Ready {
-                turntable: <span class="self">self</span>.state.turntable.stop(),
+<span class="kw">impl</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="self">self</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Ready</span><span class="op">&gt;</span> {
+        <span class="ident">Play</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="ident">Ready</span> {
+                <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">stop</span>(),
             },
-            settings: <span class="self">self</span>.settings,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>finish(<span class="self">self</span>) -&gt; Play&lt;Concluded&gt; {
-        Play {
-            field: <span class="self">self</span>.field,
-            state: Concluded {
-                turntable: <span class="self">self</span>.state.turntable.stop(),
-                actions: <span class="self">self</span>.state.actions,
-                judgement_report: <span class="self">self</span>.state.judgement_report,
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finish</span>(<span class="self">self</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Concluded</span><span class="op">&gt;</span> {
+        <span class="ident">Play</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="ident">Concluded</span> {
+                <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">stop</span>(),
+                <span class="ident">actions</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>,
+                <span class="ident">judgement_report</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>,
             },
-            settings: <span class="self">self</span>.settings,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 
-    <span class="doccomment">/// Temporary function giving a view directly into the playing turntable.
-    ///
-    /// Remove this after we create the `ChartDriver`.
-    /// # Errors
-    /// Turntable could slice into an invalid set of notes.
-    </span><span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: u64) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, RuntimeNote&gt; {
-        <span class="self">self</span>.state.turntable.view(range_in_milliseconds.into())
+    <span class="doccomment">/// Temporary function giving a view directly into the playing turntable.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// Remove this after we create the `ChartDriver`.</span>
+    <span class="doccomment">/// # Errors</span>
+    <span class="doccomment">/// Turntable could slice into an invalid set of notes.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>.<span class="ident">into</span>())
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>progress(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
-        <span class="self">self</span>.state.turntable.progress()
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">progress</span>()
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>missed_notes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>HashSet&lt;RuntimeNote&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.misses
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">missed_notes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;RuntimeNote, NoteAction&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">actions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span>, <span class="ident">NoteAction</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>
     }
 
-    <span class="kw">pub fn </span>tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, progress: u64) {
-        <span class="self">self</span>.state.turntable.tick(progress);
-        <span class="self">self</span>.check_miss();
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">progress</span>);
+        <span class="self">self</span>.<span class="ident">check_miss</span>();
 
-        <span class="comment">// TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.
-    </span>}
+        <span class="comment">// TODO: Calculate and store a judgement when the player activates a receptor, and a note is near it.</span>
+    }
 
-    <span class="kw">fn </span>check_miss(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span>song_progress = <span class="self">self</span>.progress() <span class="kw">as </span>i128;
+    <span class="kw">fn</span> <span class="ident">check_miss</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">let</span> <span class="ident">song_progress</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">progress</span>() <span class="kw">as</span> <span class="ident">i128</span>;
 
-        <span class="kw">let </span>mapped_notes = <span class="self">self
-            </span>.state
-            .turntable
-            .view(<span class="number">120</span>)
-            .filter(|(<span class="kw-2">&amp;</span>ts, note)| {
-                song_progress &gt;= ts + <span class="number">118 </span>&amp;&amp; !<span class="self">self</span>.state.judge.misses.contains(note)
+        <span class="kw">let</span> <span class="ident">mapped_notes</span> <span class="op">=</span> <span class="self">self</span>
+            .<span class="ident">state</span>
+            .<span class="ident">turntable</span>
+            .<span class="ident">view</span>(<span class="number">120</span>)
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>, <span class="ident">note</span>)<span class="op">|</span> {
+                <span class="ident">song_progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">ts</span> <span class="op">+</span> <span class="number">118</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>.<span class="ident">contains</span>(<span class="ident">note</span>)
             })
-            .map(|(<span class="kw">_</span>, note)| note.clone());
+            .<span class="ident">map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">note</span>.<span class="ident">clone</span>());
 
-        <span class="kw">let </span>misses = mapped_notes.collect::&lt;HashSet&lt;RuntimeNote&gt;&gt;();
-        <span class="self">self</span>.state.judgement_report.misses += misses.len() <span class="kw">as </span>u32;
+        <span class="kw">let</span> <span class="ident">misses</span> <span class="op">=</span> <span class="ident">mapped_notes</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="op">&gt;</span>();
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">misses</span> <span class="op">+</span><span class="op">=</span> <span class="ident">misses</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
 
-        <span class="self">self</span>.state.judge.misses.extend(misses);
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>.<span class="ident">extend</span>(<span class="ident">misses</span>);
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>field(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Field {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.field
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Field</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">field</span>
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>judge_zero_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.state.judge.judge_zero_point
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">judge_zero_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>judgement_results(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>JudgementReport {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.state.judgement_report
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">judgement_results</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">JudgementReport</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>judgements(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Judgement {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.state.judge.judgements
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">judgements</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Judgement</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judgements</span>
     }
 
-    <span class="kw">pub fn </span>do_action(<span class="kw-2">&amp;mut </span><span class="self">self</span>, direction: NoteDirection, ts: i128) {
-        <span class="kw">let </span>view_result = <span class="self">self</span>.state.turntable.view(<span class="number">500</span>);
-        <span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, closest_note)) = view_result
-            .filter(|(<span class="kw">_</span>, note)| <span class="self">self</span>.determine_judgable(note, <span class="kw-2">&amp;</span>direction, ts))
-            .next()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">NoteDirection</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) {
+        <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">500</span>);
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">determine_judgable</span>(<span class="ident">note</span>, <span class="kw-2">&amp;</span><span class="ident">direction</span>, <span class="ident">ts</span>))
+            .<span class="ident">next</span>()
         {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(judgement_result) = <span class="self">self</span>.state.judge.judge(ts, closest_note) {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(judgement) = judgement_result {
-                    <span class="macro">log::info!</span>(<span class="string">&quot;Judgement: {:?}&quot;</span>, judgement);
-                    <span class="self">self</span>.append_to_judgement_report(judgement);
-                } <span class="kw">else </span>{
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">judgement_result</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge</span>(<span class="ident">ts</span>, <span class="ident">closest_note</span>) {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">judgement</span>) <span class="op">=</span> <span class="ident">judgement_result</span> {
+                    <span class="macro">log::info!</span>(<span class="string">&quot;Judgement: {:?}&quot;</span>, <span class="ident">judgement</span>);
+                    <span class="self">self</span>.<span class="ident">append_to_judgement_report</span>(<span class="ident">judgement</span>);
+                } <span class="kw">else</span> {
                     <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
-                    <span class="self">self</span>.state.judgement_report.boos += <span class="number">1</span>;
+                    <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">boos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                 }
-            } <span class="kw">else </span>{
+            } <span class="kw">else</span> {
                 <span class="macro">log::error!</span>(<span class="string">&quot;Already judged, undefined behaviour.&quot;</span>);
             }
-        } <span class="kw">else </span>{
+        } <span class="kw">else</span> {
             <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
-            <span class="self">self</span>.state.judgement_report.boos += <span class="number">1</span>;
+            <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">boos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
     }
 
-    <span class="kw">fn </span>determine_judgable(<span class="kw-2">&amp;</span><span class="self">self</span>, note: <span class="kw-2">&amp;</span>RuntimeNote, direction: <span class="kw-2">&amp;</span>NoteDirection, ts: i128) -&gt; bool {
-        <span class="kw">let </span>is_judged = <span class="self">self</span>.state.actions.contains_key(note);
-        <span class="kw">let </span>is_same_direction = <span class="kw-2">*</span>direction == note.direction;
-        <span class="kw">let </span>is_within_judge_range = note
-            .timestamp
-            .abs_dif(<span class="kw-2">&amp;</span>(ts + i128::from(<span class="self">self</span>.state.judge.judge_zero_point)))
-            &lt;= <span class="number">118</span>;
+    <span class="kw">fn</span> <span class="ident">determine_judgable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">note</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeNote</span>, <span class="ident">direction</span>: <span class="kw-2">&amp;</span><span class="ident">NoteDirection</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) -&gt; <span class="ident">bool</span> {
+        <span class="kw">let</span> <span class="ident">is_judged</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>.<span class="ident">contains_key</span>(<span class="ident">note</span>);
+        <span class="kw">let</span> <span class="ident">is_same_direction</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>;
+        <span class="kw">let</span> <span class="ident">is_within_judge_range</span> <span class="op">=</span> <span class="ident">note</span>
+            .<span class="ident">timestamp</span>
+            .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span>(<span class="ident">ts</span> <span class="op">+</span> <span class="ident">i128::from</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>)))
+            <span class="op">&lt;</span><span class="op">=</span> <span class="number">118</span>;
         <span class="macro">log::debug!</span>(
             <span class="string">&quot;note: {:?} || judge: {:?}&quot;</span>,
-            note.timestamp
-                .abs_dif(<span class="kw-2">&amp;</span>(ts + i128::from(<span class="self">self</span>.state.judge.judge_zero_point))),
-            <span class="number">118
-        </span>);
-        !is_judged &amp;&amp; is_same_direction &amp;&amp; is_within_judge_range
+            <span class="ident">note</span>.<span class="ident">timestamp</span>
+                .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span>(<span class="ident">ts</span> <span class="op">+</span> <span class="ident">i128::from</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>))),
+            <span class="number">118</span>
+        );
+        <span class="op">!</span><span class="ident">is_judged</span> <span class="op">&amp;&amp;</span> <span class="ident">is_same_direction</span> <span class="op">&amp;&amp;</span> <span class="ident">is_within_judge_range</span>
     }
 
-    <span class="kw">fn </span>append_to_judgement_report(<span class="kw-2">&amp;mut </span><span class="self">self</span>, judgement: JudgeWindow) {
-        <span class="kw">match </span>judgement {
-            JudgeWindow(-<span class="number">118</span>) =&gt; <span class="self">self</span>.state.judgement_report.averages += <span class="number">1</span>,
-            JudgeWindow(-<span class="number">85</span>) =&gt; <span class="self">self</span>.state.judgement_report.goods += <span class="number">1</span>,
-            JudgeWindow(-<span class="number">51</span>) =&gt; <span class="self">self</span>.state.judgement_report.perfects += <span class="number">1</span>,
-            JudgeWindow(-<span class="number">18</span>) =&gt; <span class="self">self</span>.state.judgement_report.amazings += <span class="number">1</span>,
-            JudgeWindow(<span class="number">17</span>) =&gt; <span class="self">self</span>.state.judgement_report.perfects += <span class="number">1</span>,
-            JudgeWindow(<span class="number">50 </span>| <span class="number">84</span>) =&gt; <span class="self">self</span>.state.judgement_report.goods += <span class="number">1</span>,
-            JudgeWindow(<span class="number">117</span>) =&gt; <span class="self">self</span>.state.judgement_report.averages += <span class="number">1</span>,
-            <span class="kw">_ </span>=&gt; (),
+    <span class="kw">fn</span> <span class="ident">append_to_judgement_report</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">judgement</span>: <span class="ident">JudgeWindow</span>) {
+        <span class="kw">match</span> <span class="ident">judgement</span> {
+            <span class="ident">JudgeWindow</span>(<span class="op">-</span><span class="number">118</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">averages</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="op">-</span><span class="number">85</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">goods</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="op">-</span><span class="number">51</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">perfects</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="op">-</span><span class="number">18</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">amazings</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="number">17</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">perfects</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="number">50</span> <span class="op">|</span> <span class="number">84</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">goods</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="ident">JudgeWindow</span>(<span class="number">117</span>) =&gt; <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">averages</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>,
+            <span class="kw">_</span> =&gt; (),
         }
     }
 }
 
-<span class="kw">impl </span>Play&lt;Concluded&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>actions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BTreeMultiMap&lt;RuntimeNote, NoteAction&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.state.actions
+<span class="kw">impl</span> <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Concluded</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">actions</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span>, <span class="ident">NoteAction</span><span class="op">&gt;</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>finalize(<span class="self">self</span>) -&gt; Play&lt;Ready&gt; {
-        Play {
-            field: <span class="self">self</span>.field,
-            state: Ready {
-                turntable: <span class="self">self</span>.state.turntable,
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">finalize</span>(<span class="self">self</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Ready</span><span class="op">&gt;</span> {
+        <span class="ident">Play</span> {
+            <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
+            <span class="ident">state</span>: <span class="ident">Ready</span> {
+                <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>,
             },
-            settings: <span class="self">self</span>.settings,
+            <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
 }
 
-<span class="kw">pub trait </span>Difference {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">fn </span>abs_dif(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; <span class="self">Self</span>;
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Difference</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="self">Self</span>;
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">fn </span>diff(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; i128;
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span>;
 }
 
-<span class="kw">impl </span>Difference <span class="kw">for </span>i128 {
-    <span class="kw">fn </span>abs_dif(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; i128 {
-        <span class="kw">if </span><span class="self">self </span>&lt; <span class="kw-2">*</span>right {
-            <span class="kw-2">*</span>right - <span class="self">self
-        </span>} <span class="kw">else </span>{
-            <span class="self">self </span>- <span class="kw-2">*</span>right
+<span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">i128</span> {
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
+        <span class="kw">if</span> <span class="self">self</span> <span class="op">&lt;</span> <span class="kw-2">*</span><span class="ident">right</span> {
+            <span class="kw-2">*</span><span class="ident">right</span> <span class="op">-</span> <span class="self">self</span>
+        } <span class="kw">else</span> {
+            <span class="self">self</span> <span class="op">-</span> <span class="kw-2">*</span><span class="ident">right</span>
         }
     }
 
-    <span class="kw">fn </span>diff(<span class="self">self</span>, right: <span class="kw-2">&amp;</span>i128) -&gt; i128 {
-        <span class="self">self </span>- right
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
+        <span class="self">self</span> <span class="op">-</span> <span class="ident">right</span>
     }
 }
 
-<span class="comment">// tests
-</span><span class="attribute">#[cfg(test)]
-</span><span class="kw">mod </span>tests {
-    <span class="kw">use </span><span class="kw">crate</span>::math::lerp::Lerp;
+<span class="comment">// tests</span>
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
+<span class="kw">mod</span> <span class="ident">tests</span> {
+    <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::math::lerp::Lerp</span>;
 
-    <span class="kw">fn </span>screen_pos_to_lerp_time() -&gt; f64 {
-        (-<span class="number">64.</span>).inv_lerp(<span class="number">720.</span>, <span class="number">64.</span>)
+    <span class="kw">fn</span> <span class="ident">screen_pos_to_lerp_time</span>() -&gt; <span class="ident">f64</span> {
+        (<span class="op">-</span><span class="number">64.</span>).<span class="ident">inv_lerp</span>(<span class="number">720.</span>, <span class="number">64.</span>)
     }
 
-    <span class="kw">fn </span>lerp_time_to_screen_pos() -&gt; f64 {
-        (-<span class="number">64.</span>).lerp(<span class="number">720.</span>, screen_pos_to_lerp_time()).round()
+    <span class="kw">fn</span> <span class="ident">lerp_time_to_screen_pos</span>() -&gt; <span class="ident">f64</span> {
+        (<span class="op">-</span><span class="number">64.</span>).<span class="ident">lerp</span>(<span class="number">720.</span>, <span class="ident">screen_pos_to_lerp_time</span>()).<span class="ident">round</span>()
     }
 
-    <span class="kw">fn </span>ms_time_from_screen_height_time_on_screen_and_position() -&gt; f64 {
-        <span class="kw">let </span>start_position = <span class="number">720.</span>;
-        <span class="kw">let </span>end_position = -<span class="number">64.</span>;
-        <span class="kw">let </span>time_on_screen = <span class="number">3000.</span>;
-        <span class="kw">let </span>judge_position = <span class="number">64.</span>;
+    <span class="kw">fn</span> <span class="ident">ms_time_from_screen_height_time_on_screen_and_position</span>() -&gt; <span class="ident">f64</span> {
+        <span class="kw">let</span> <span class="ident">start_position</span> <span class="op">=</span> <span class="number">720.</span>;
+        <span class="kw">let</span> <span class="ident">end_position</span> <span class="op">=</span> <span class="op">-</span><span class="number">64.</span>;
+        <span class="kw">let</span> <span class="ident">time_on_screen</span> <span class="op">=</span> <span class="number">3000.</span>;
+        <span class="kw">let</span> <span class="ident">judge_position</span> <span class="op">=</span> <span class="number">64.</span>;
 
-        <span class="kw">let </span>normalized_note_progress = end_position.inv_lerp(start_position, judge_position);
-        <span class="kw">let </span>ms: f64 = normalized_note_progress * time_on_screen;
+        <span class="kw">let</span> <span class="ident">normalized_note_progress</span> <span class="op">=</span> <span class="ident">end_position</span>.<span class="ident">inv_lerp</span>(<span class="ident">start_position</span>, <span class="ident">judge_position</span>);
+        <span class="kw">let</span> <span class="ident">ms</span>: <span class="ident">f64</span> <span class="op">=</span> <span class="ident">normalized_note_progress</span> <span class="op">*</span> <span class="ident">time_on_screen</span>;
 
-        <span class="macro">log::info!</span>(<span class="string">&quot;normalized: {}&quot;</span>, ms);
-        ms.round()
+        <span class="macro">log::info!</span>(<span class="string">&quot;normalized: {}&quot;</span>, <span class="ident">ms</span>);
+        <span class="ident">ms</span>.<span class="ident">round</span>()
     }
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_screen_space_to_judgement_zero() {
-        <span class="macro">assert!</span>(screen_pos_to_lerp_time() - <span class="number">0.163_265_306_122_448_97 </span>&lt;= f64::EPSILON);
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_screen_space_to_judgement_zero</span>() {
+        <span class="macro">assert!</span>(<span class="ident">screen_pos_to_lerp_time</span>() <span class="op">-</span> <span class="number">0.163_265_306_122_448_97</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">f64::EPSILON</span>);
     }
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_screen_lerp_time_to_screen_space() {
-        <span class="macro">assert!</span>((lerp_time_to_screen_pos() - <span class="number">64.</span>).abs() &lt; f64::EPSILON);
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_screen_lerp_time_to_screen_space</span>() {
+        <span class="macro">assert!</span>((<span class="ident">lerp_time_to_screen_pos</span>() <span class="op">-</span> <span class="number">64.</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">f64::EPSILON</span>);
     }
 
-    <span class="attribute">#[test]
-    </span><span class="kw">fn </span>test_ms_time_from_screen_height_time_on_screen_and_position() {
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">test_ms_time_from_screen_height_time_on_screen_and_position</span>() {
         <span class="macro">assert!</span>(
-            (ms_time_from_screen_height_time_on_screen_and_position() - <span class="number">490.0</span>).abs() &lt; f64::EPSILON
+            (<span class="ident">ms_time_from_screen_height_time_on_screen_and_position</span>() <span class="op">-</span> <span class="number">490.0</span>).<span class="ident">abs</span>() <span class="op">&lt;</span> <span class="ident">f64::EPSILON</span>
         );
     }
 }
 
-<span class="comment">// What I should really be doing is determining exactly what ratio is between this zero point and the note.
-// So if a note has a ms timestamp of 2000, and the zero point is at 2000,
-// how many milliseconds is the is the receptor before that. Ex. (2000 - 120)
-</span></code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+<span class="comment">// What I should really be doing is determining exactly what ratio is between this zero point and the note.</span>
+<span class="comment">// So if a note has a ms timestamp of 2000, and the zero point is at 2000,</span>
+<span class="comment">// how many milliseconds is the is the receptor before that. Ex. (2000 - 120)</span>
+</code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>

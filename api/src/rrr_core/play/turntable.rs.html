@@ -1,4 +1,10 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/turntable.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>turntable.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a><h2 class="location"></h2></nav><nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div></a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><button type="button">?</button></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/core/src/play/turntable.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>turntable.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle">&#9776;</button><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a><h2 class="location"></h2>
+    </nav>
+    <nav class="sidebar"><a class="sidebar-logo" href="../../../rrr_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../rrr_core/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><nav class="sub"><form class="search-form"><div class="search-container"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><button type="button" id="help-button" title="help">?</button><div id="settings-menu" tabindex="-1">
+                                <a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div>
+                        </div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">1</span>
 <span id="2">2</span>
 <span id="3">3</span>
 <span id="4">4</span>
@@ -106,113 +112,114 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
-</pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::record::Record;
-<span class="kw">use crate</span>::{audio::AudioPlayer, chart::RuntimeNote};
-<span class="kw">use </span>btreemultimap::MultiRange;
-<span class="kw">use </span>std::{borrow::BorrowMut, ops::Bound::Included};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::record::Record</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">audio::AudioPlayer</span>, <span class="ident">chart::RuntimeNote</span>};
+<span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
+<span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">borrow::BorrowMut</span>, <span class="ident">ops::Bound::Included</span>};
 
-<span class="attribute">#[derive(Clone)]
-</span><span class="kw">pub struct </span>Turntable&lt;S: TurntableState&gt; {
-    record: Record,
-    state: S,
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">TurntableState</span><span class="op">&gt;</span> {
+    <span class="ident">record</span>: <span class="ident">Record</span>,
+    <span class="ident">state</span>: <span class="ident">S</span>,
 }
 
-<span class="kw">pub struct </span>Empty {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Empty</span> {}
 
-<span class="kw">pub struct </span>Loaded {}
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loaded</span> {}
 
-<span class="kw">pub struct </span>Playing {
-    <span class="kw">pub </span>progress: u64,
-    audio_player: <span class="prelude-ty">Option</span>&lt;AudioPlayer&gt;,
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Playing</span> {
+    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u64</span>,
+    <span class="ident">audio_player</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AudioPlayer</span><span class="op">&gt;</span>,
 }
 
-<span class="kw">pub trait </span>TurntableState {}
-<span class="kw">impl </span>TurntableState <span class="kw">for </span>Empty {}
-<span class="kw">impl </span>TurntableState <span class="kw">for </span>Loaded {}
-<span class="kw">impl </span>TurntableState <span class="kw">for </span>Playing {}
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">TurntableState</span> {}
+<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Empty</span> {}
+<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Loaded</span> {}
+<span class="kw">impl</span> <span class="ident">TurntableState</span> <span class="kw">for</span> <span class="ident">Playing</span> {}
 
-<span class="kw">impl </span>Turntable&lt;Empty&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>load(record: Record) -&gt; Turntable&lt;Loaded&gt; {
-        Turntable {
-            record,
-            state: Loaded {},
+<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Empty</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">load</span>(<span class="ident">record</span>: <span class="ident">Record</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+        <span class="ident">Turntable</span> {
+            <span class="ident">record</span>,
+            <span class="ident">state</span>: <span class="ident">Loaded</span> {},
         }
     }
 }
 
-<span class="kw">impl </span>Turntable&lt;Loaded&gt; {
-    <span class="doccomment">/// Start playing the record on the turntable.
-    </span><span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>play(<span class="self">self</span>) -&gt; Turntable&lt;Playing&gt; {
-        Turntable {
-            record: <span class="self">self</span>.record,
-            state: Playing {
-                progress: <span class="number">0</span>,
-                audio_player: <span class="prelude-val">None</span>,
+<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+    <span class="doccomment">/// Start playing the record on the turntable.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
+        <span class="ident">Turntable</span> {
+            <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
+            <span class="ident">state</span>: <span class="ident">Playing</span> {
+                <span class="ident">progress</span>: <span class="number">0</span>,
+                <span class="ident">audio_player</span>: <span class="prelude-val">None</span>,
             },
         }
     }
 
-    <span class="doccomment">/// Start playing the record on the turntable.
-    ///
-    /// # Panics
-    ///
-    /// If the mp3 data is malformed.
-    </span><span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>play_with_audio(<span class="self">self</span>) -&gt; Turntable&lt;Playing&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>turntable = Turntable {
-            record: <span class="self">self</span>.record,
-            state: Playing {
-                progress: <span class="number">0</span>,
-                audio_player: <span class="prelude-val">None</span>,
+    <span class="doccomment">/// Start playing the record on the turntable.</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// # Panics</span>
+    <span class="doccomment">///</span>
+    <span class="doccomment">/// If the mp3 data is malformed.</span>
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">play_with_audio</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">turntable</span> <span class="op">=</span> <span class="ident">Turntable</span> {
+            <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
+            <span class="ident">state</span>: <span class="ident">Playing</span> {
+                <span class="ident">progress</span>: <span class="number">0</span>,
+                <span class="ident">audio_player</span>: <span class="prelude-val">None</span>,
             },
         };
 
-        turntable.state.audio_player =
-            <span class="prelude-val">Some</span>(AudioPlayer::try_new(turntable.record.mp3.as_slice()).unwrap());
+        <span class="ident">turntable</span>.<span class="ident">state</span>.<span class="ident">audio_player</span> <span class="op">=</span>
+            <span class="prelude-val">Some</span>(<span class="ident">AudioPlayer::try_new</span>(<span class="ident">turntable</span>.<span class="ident">record</span>.<span class="ident">mp3</span>.<span class="ident">as_slice</span>()).<span class="ident">unwrap</span>());
 
-        turntable
+        <span class="ident">turntable</span>
     }
 }
 
-<span class="kw">impl </span>Turntable&lt;Playing&gt; {
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>stop(<span class="self">self</span>) -&gt; Turntable&lt;Loaded&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>player) = <span class="self">self</span>.state.audio_player {
-            player.stop();
+<span class="kw">impl</span> <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Playing</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stop</span>(<span class="self">self</span>) -&gt; <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">Loaded</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">mut</span> <span class="ident">player</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">audio_player</span> {
+            <span class="ident">player</span>.<span class="ident">stop</span>();
         }
 
-        Turntable {
-            record: <span class="self">self</span>.record,
-            state: Loaded {},
-        }
-    }
-
-    <span class="kw">pub fn </span>tick(<span class="kw-2">&amp;mut </span><span class="self">self</span>, progress: u64) {
-        <span class="self">self</span>.state.progress = progress;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(player) = <span class="self">self</span>.state.audio_player.borrow_mut() {
-            player.tick();
+        <span class="ident">Turntable</span> {
+            <span class="ident">record</span>: <span class="self">self</span>.<span class="ident">record</span>,
+            <span class="ident">state</span>: <span class="ident">Loaded</span> {},
         }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>is_finished(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.state.progress <span class="kw">as </span>i128 &gt;= <span class="self">self</span>.record.duration
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">=</span> <span class="ident">progress</span>;
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">player</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">audio_player</span>.<span class="ident">borrow_mut</span>() {
+            <span class="ident">player</span>.<span class="ident">tick</span>();
+        }
     }
 
-    <span class="attribute">#[must_use]
-    </span><span class="kw">pub fn </span>progress(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
-        <span class="self">self</span>.state.progress
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
     }
 
-    <span class="kw">pub fn </span>view(<span class="kw-2">&amp;</span><span class="self">self</span>, range_in_milliseconds: i128) -&gt; MultiRange&lt;<span class="lifetime">&#39;_</span>, i128, RuntimeNote&gt; {
-        <span class="kw">let </span>chart = <span class="kw-2">&amp;</span><span class="self">self</span>.record.optimized_chart;
-        chart.range((
-            Included(<span class="self">self</span>.state.progress <span class="kw">as </span>i128),
-            Included(<span class="self">self</span>.state.progress <span class="kw">as </span>i128 + range_in_milliseconds),
+    <span class="attribute">#[<span class="ident">must_use</span>]</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
+    }
+
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
+        <span class="ident">chart</span>.<span class="ident">range</span>((
+            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span>),
+            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">+</span> <span class="ident">range_in_milliseconds</span>),
         ))
     }
 }
 </code></pre></div>
-</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.65.0-nightly (750bd1a7f 2022-09-14)" ></div></body></html>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="rrr_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
+</body></html>
