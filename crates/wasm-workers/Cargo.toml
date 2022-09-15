@@ -18,7 +18,7 @@ name = "fetch"
 path = "src/fetch.rs"
 
 [features]
-release = ["rrr-head/release", "rrr-head/web"]
+default = ["rrr-head/release", "rrr-head/web"]
 
 [dependencies]
 console_error_panic_hook = "0.1.7"

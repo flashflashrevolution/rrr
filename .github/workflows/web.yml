@@ -51,21 +51,18 @@ jobs:
           args: --release --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/head-wasm/Cargo.toml
 
       - name: Generate the .wasm for web deploy.
-        working-directory: ${{ github.workspace }}/crates/head-wasm
-        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
+        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web ${{ github.workspace }}/crates/head-wasm/target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
 
       - name: Build Workers
         uses: actions-rs/cargo@v1.0.3
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
-          working-directory: ${{ github.workspace }}/crates/wasm0-workers
           command: build
           args: --release --bins --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/wasm-workers/Cargo.toml
 
       - name: Generate web workers
-        working-directory: ${{ github.workspace }}/crates/wasm-workers
-        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/fetch.wasm
+        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules ${{ github.workspace }}/crates/wasm-workers/target/wasm32-unknown-unknown/release/fetch.wasm
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0
