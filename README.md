@@ -3,7 +3,7 @@
 [![Build Status]][actions]
 [![Docs]][mdbook]
 [![Chat]][discord]
-[![rustc](https://img.shields.io/badge/rustc-1.65.0-lightgray.svg?style=round)](https://www.rust-lang.org/)
+[![rustc](https://img.shields.io/badge/rustc-1.63.0-lightgray.svg?style=round)](https://www.rust-lang.org/)
 [![codecov](https://codecov.io/gh/flashflashrevolution/rrr/branch/main/graph/badge.svg?token=2V0ZGQ04IK)](https://codecov.io/gh/flashflashrevolution/rrr)
 [![loc](https://tokei.rs/b1/github/flashflashrevolution/rrr)](https://github.com/flashflashrevolution/rrr/)
 
