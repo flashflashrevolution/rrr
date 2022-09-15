@@ -1,0 +1,13 @@
+{
+    "files.insertFinalNewline": true,
+    "files.eol": "\n",
+    "rust-analyzer.checkOnSave.enable": true,
+    "rust-analyzer.checkOnSave.command": "clippy",
+    "rust-analyzer.checkOnSave.extraArgs": [
+        "--no-deps"
+    ],
+    // Toggle this when you intend to work on WASM.
+    // Fair warning, rust-analyzer rebuilds from scratch every time when enabled.
+    "rust-analyzer.cargo.target": "wasm32-unknown-unknown",
+    "task.allowAutomaticTasks": "auto"
+}

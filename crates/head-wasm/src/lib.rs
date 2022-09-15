@@ -1,7 +1,29 @@
 use anyhow::Error;
 use rrr_head::{platform::platform::time::Time, query};
+use std::rc::Rc;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
+use web_sys::{Element, HtmlCanvasElement};
+use winit::platform::web::WindowBuilderExtWebSys;
+use winit::window::WindowBuilder;
 use winit::{dpi::LogicalSize, event_loop::EventLoop, window::Window};
+
+pub fn build_window(
+    event_loop: &EventLoop<()>,
+    canvas: Option<HtmlCanvasElement>,
+    screen_width: u32,
+    screen_height: u32,
+) -> Result<winit::window::Window, winit::error::OsError> {
+    {
+        let size = LogicalSize::new(screen_width, screen_height);
+        WindowBuilder::new()
+            .with_title("Rust Rust Revolution")
+            .with_canvas(canvas)
+            .with_inner_size(size)
+            .with_resizable(false)
+            .build(event_loop)
+    }
+}
 
 #[wasm_bindgen(start)]
 pub fn initialize() {
@@ -10,12 +32,12 @@ pub fn initialize() {
 }
 
 #[wasm_bindgen]
-pub fn play(width: u32, height: u32) {
+pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
     use wasm_bindgen::UnwrapThrowExt;
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_bindgen_futures::spawn_local(async move {
         let event_loop = EventLoop::new();
-        if let Ok(window) = initialize_window(width, height, &event_loop).await {
+        if let Ok(window) = initialize_window(canvas, width, height, &event_loop).await {
             let extracted_settings: Option<query::SettingsMerge> =
                 { Some(query::get_optional_settings()) };
 
@@ -28,16 +50,12 @@ pub fn play(width: u32, height: u32) {
 }
 
 async fn initialize_window(
+    canvas: Option<HtmlCanvasElement>,
     width: u32,
     height: u32,
     event_loop: &EventLoop<()>,
 ) -> Result<Window, Error> {
-    let window = rrr_head::build_window(&event_loop, width, height)?;
-
-    use std::rc::Rc;
-    use wasm_bindgen::JsCast;
-    use web_sys::{Element, HtmlCanvasElement};
-    use winit::platform::web::WindowExtWebSys;
+    let window = build_window(&event_loop, canvas.clone(), width, height)?;
 
     // Initialize winit window with current dimensions of browser client
     window.set_inner_size(LogicalSize::new(width, height));
@@ -74,24 +92,11 @@ async fn initialize_window(
             }
         }) as Box<dyn FnMut(web_sys::FocusEvent)>);
 
-        // Attach winit canvas to body element
-        web_sys::window()
-            .and_then(|win| win.document())
-            .and_then(|doc| doc.get_element_by_id("canvas"))
-            .and_then(|canvas_div: Element| {
-                let canvas: HtmlCanvasElement = window.canvas();
-                canvas.set_class_name("game");
-                canvas.set_id("rrr");
-                canvas.set_width(width);
-                canvas.set_height(height);
-                let res = canvas_div
-                    .append_child(&web_sys::Element::from(window.canvas()))
-                    .ok();
-                canvas.set_onblur(Some(onblur.as_ref().unchecked_ref()));
-                canvas.set_tab_index(1);
-                canvas.focus().ok();
-                res
-            });
+        if let Some(canvas) = canvas {
+            canvas.set_onblur(Some(onblur.as_ref().unchecked_ref()));
+            canvas.set_tab_index(1);
+            canvas.focus().ok();
+        }
 
         onblur.forget();
     }
