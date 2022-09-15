@@ -1,7 +1,7 @@
 use anyhow::Error;
 use rrr_head::prelude::winit::{
     self,
-    dpi::LogicalSize,
+    dpi::PhysicalSize,
     event_loop::EventLoop,
     platform::web::WindowBuilderExtWebSys,
     window::{Window, WindowBuilder},
@@ -14,16 +14,17 @@ use web_sys::HtmlCanvasElement;
 pub fn build_window(
     event_loop: &EventLoop<()>,
     canvas: Option<HtmlCanvasElement>,
-    screen_width: u32,
-    screen_height: u32,
+    size: PhysicalSize<u32>,
 ) -> Result<winit::window::Window, winit::error::OsError> {
     {
-        let size = LogicalSize::new(screen_width, screen_height);
+        log::debug!("Inner Size {:?}", size);
         WindowBuilder::new()
             .with_title("Rust Rust Revolution")
             .with_canvas(canvas)
             .with_inner_size(size)
             .with_resizable(false)
+            .with_max_inner_size(size)
+            .with_min_inner_size(size)
             .build(event_loop)
     }
 }
@@ -38,29 +39,26 @@ pub fn initialize() {
 pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_bindgen_futures::spawn_local(async move {
+        let size = PhysicalSize::new(width, height);
         let event_loop = EventLoop::new();
-        if let Ok(window) = initialize_window(canvas, width, height, &event_loop).await {
+        if let Ok(window) = initialize_window(canvas, size, &event_loop).await {
             let extracted_settings: Option<query::SettingsMerge> =
                 { Some(query::get_optional_settings()) };
 
             let mut game = rrr_head::Game::<Time>::new(None, width, height);
             game.with_settings(extracted_settings);
 
-            rrr_head::run_game_loop(window, event_loop, game).await;
+            rrr_head::run_game_loop(window, size, event_loop, game).await;
         }
     });
 }
 
 async fn initialize_window(
     canvas: Option<HtmlCanvasElement>,
-    width: u32,
-    height: u32,
+    size: PhysicalSize<u32>,
     event_loop: &EventLoop<()>,
 ) -> Result<Window, Error> {
-    let window = build_window(&event_loop, canvas.clone(), width, height)?;
-
-    // Initialize winit window with current dimensions of browser client
-    window.set_inner_size(LogicalSize::new(width, height));
+    let window = build_window(&event_loop, canvas.clone(), size)?;
 
     if let Some(client_window) = web_sys::window() {
         register_on_visibility_change_listener(&client_window);

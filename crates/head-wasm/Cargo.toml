@@ -17,7 +17,8 @@ rust-version = "1.63.0"
 crate-type = ["cdylib"]
 
 [features]
-default = ["rrr-head/release", "rrr-head/web"]
+default = ["rrr-head/develop", "rrr-head/web"]
+release = ["rrr-head/release", "rrr-head/web"]
 
 [dependencies]
 anyhow = "1.0.65"

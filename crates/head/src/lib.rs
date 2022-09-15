@@ -11,7 +11,7 @@ use rrr_core::{
     play::{self, field::Field, turntable::Turntable, Play},
 };
 use winit::{
-    dpi::LogicalSize,
+    dpi::PhysicalSize,
     event::{
         DeviceEvent, ElementState, Event, KeyboardInput, ModifiersState, TouchPhase, WindowEvent,
     },
@@ -41,7 +41,7 @@ pub fn build_window(
     screen_height: u32,
 ) -> Result<winit::window::Window, winit::error::OsError> {
     {
-        let size = LogicalSize::new(screen_width, screen_height);
+        let size = PhysicalSize::new(screen_width, screen_height);
         WindowBuilder::new()
             .with_title("Rust Rust Revolution")
             .with_inner_size(size)
@@ -52,11 +52,11 @@ pub fn build_window(
 
 pub async fn run_game_loop(
     window: winit::window::Window,
+    size: PhysicalSize<u32>,
     event_loop: EventLoop<()>,
     mut game: Game<Time>,
 ) -> Result<(), anyhow::Error> {
-    let window_size = window.inner_size();
-    let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+    let surface_texture = SurfaceTexture::new(size.width, size.height, &window);
 
     let pixels = if let Ok(pixels) =
         PixelsBuilder::new(game.screen_width, game.screen_height, surface_texture)
@@ -157,11 +157,6 @@ pub async fn run_game_loop(
         match in_event {
             Event::WindowEvent { event, .. } => match event {
                 WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
-                WindowEvent::Resized(size) => {
-                    if let Some(renderer) = &mut game.renderer {
-                        renderer.pixels.resize_surface(size.width, size.height);
-                    }
-                }
                 WindowEvent::Focused(focused) => {
                     log::info!("Window {:?} focused: {:?}", &window.id(), focused);
                 }
@@ -242,6 +237,7 @@ pub async fn run_game_loop(
                         );
                     }
 
+                    window.set_inner_size(size);
                     window.request_redraw();
                 }
             }

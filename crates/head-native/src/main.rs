@@ -44,7 +44,11 @@ use futures::executor;
 use log::error;
 use rrr_head::{
     platform::platform::time::Time,
-    prelude::{anyhow::Error, futures, log, winit::event_loop::EventLoop},
+    prelude::{
+        anyhow::Error,
+        futures, log,
+        winit::{dpi::PhysicalSize, event_loop::EventLoop},
+    },
     query::SettingsMerge,
 };
 use std::env;
@@ -78,5 +82,7 @@ async fn run() -> Result<(), Error> {
     let mut game = rrr_head::Game::<Time>::new(None, WIDTH, HEIGHT);
     game.with_settings(extracted_settings);
 
-    rrr_head::run_game_loop(window, event_loop, game).await
+    let size = PhysicalSize::new(WIDTH, HEIGHT);
+
+    rrr_head::run_game_loop(window, size, event_loop, game).await
 }
