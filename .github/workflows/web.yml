@@ -53,7 +53,7 @@ jobs:
 
       - name: Generate the .wasm for web deploy.
         working-directory: ${{ github.workspace }}/crates/head-wasm
-        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr-head.wasm
+        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
 
       - name: Build Workers
         uses: actions-rs/cargo@v1.0.3
@@ -66,7 +66,7 @@ jobs:
 
       - name: Generate web workers
         working-directory: ${{ github.workspace }}/crates/wasm-workers
-        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/worker.wasm
+        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/fetch.wasm
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0
