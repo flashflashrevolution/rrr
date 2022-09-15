@@ -41,11 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.0.2
 
-      - name: Install rust nightly
+      - name: Install Rust
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: rustfmt
 
       - name: Rustfmt
@@ -78,7 +78,7 @@ jobs:
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           target: wasm32-unknown-unknown
           components: llvm-tools-preview, clippy
 
@@ -119,11 +119,11 @@ jobs:
       - name: Install Dependencies
         run: sudo apt-get update && sudo apt-get install -y libegl1-mesa-dev xorg-dev libasound2-dev
         
-      - name: Install rust nightly
+      - name: Install Rust
         uses: actions-rs/toolchain@v1.0.7
         with:
           profile: minimal
-          toolchain: nightly
+          toolchain: stable
           components: llvm-tools-preview
 
       - name: ⚡ Cache

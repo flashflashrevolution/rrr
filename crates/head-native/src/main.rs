@@ -39,8 +39,6 @@
 )]
 #![allow(clippy::module_name_repetitions, clippy::multiple_crate_versions)]
 #![forbid(unsafe_code)]
-#![feature(array_chunks)]
-#![feature(poll_ready)]
 
 use futures::executor;
 use log::error;

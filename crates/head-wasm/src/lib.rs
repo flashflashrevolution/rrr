@@ -1,12 +1,15 @@
 use anyhow::Error;
+use rrr_head::prelude::winit::{
+    self,
+    dpi::LogicalSize,
+    event_loop::EventLoop,
+    platform::web::WindowBuilderExtWebSys,
+    window::{Window, WindowBuilder},
+};
 use rrr_head::{platform::platform::time::Time, query};
 use std::rc::Rc;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use web_sys::{Element, HtmlCanvasElement};
-use winit::platform::web::WindowBuilderExtWebSys;
-use winit::window::WindowBuilder;
-use winit::{dpi::LogicalSize, event_loop::EventLoop, window::Window};
+use wasm_bindgen::{closure::Closure, prelude::wasm_bindgen, JsCast};
+use web_sys::HtmlCanvasElement;
 
 pub fn build_window(
     event_loop: &EventLoop<()>,
@@ -33,7 +36,6 @@ pub fn initialize() {
 
 #[wasm_bindgen]
 pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
-    use wasm_bindgen::UnwrapThrowExt;
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_bindgen_futures::spawn_local(async move {
         let event_loop = EventLoop::new();

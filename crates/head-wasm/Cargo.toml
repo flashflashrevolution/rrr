@@ -11,7 +11,7 @@ categories = ["games"]
 license = "AGPL-3.0"
 edition = "2021"
 publish = false
-rust-version = "1.64.0"
+rust-version = "1.63.0"
 
 [lib]
 crate-type = ["cdylib"]
@@ -21,26 +21,12 @@ default = ["rrr-head/release", "rrr-head/web"]
 
 [dependencies]
 anyhow = "1.0.65"
-cfg-if = "1.0.0"
-image = { version = "0.24.3", default-features = false, features = ["png"] }
-inter-struct = "0.2.0"
-lerp = "0.4.0"
 log = { version = "0.4.17" }
-pixels = { git = "https://github.com/parasyte/pixels.git", branch = "main" }
-reqwest = { version = "0.11.11", features = ["json", "blocking"] }
 rrr-head = { path = "../head", default-features = false }
-serde = { version = "1.0.144", optional = true, features = ["derive"] }
-strum = { version = "0.24.1", features = ["derive"] }
-winit = { version = "0.27.3", default-features = false }
 console_error_panic_hook = "0.1.7"
 console_log = { version = "0.2.0", features = ["color"] }
-futures = { version = "0.3.24", features = ["thread-pool"] }
-gloo = "0.8.0"
-gloo-net = { git = "https://github.com/cdata/gloo.git" }
-gloo-worker = "0.2.1"
 wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.33"
-wgpu = "0.13.1"
 
 [dependencies.web-sys]
 version = "0.3.60"

@@ -11,7 +11,7 @@ categories = ["games"]
 license = "AGPL-3.0"
 edition = "2021"
 publish = false
-rust-version = "1.64.0"
+rust-version = "1.63.0"
 
 [features]
 default = ["develop", "web"]
