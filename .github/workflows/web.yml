@@ -43,26 +43,42 @@ jobs:
         run: 7z x -t7z ${{ github.workspace }}/assets/test-data.7z -o${{ github.workspace }}/ -p'${{ secrets.TEST_DATA_ARCHIVE_PASSWORD }}' -aoa
 
       - name: Build
-        uses: actions-rs/cargo@v1.0.3
+        working-directory: ${{ github.workspace }}/crates/head-wasm
+        run: |
+          cargo build --release --target wasm32-unknown-unknown --target-dir target
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
-        with:
-          command: build
-          args: --release --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/head-wasm/Cargo.toml
 
       - name: Generate the .wasm for web deploy.
-        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web ${{ github.workspace }}/crates/head-wasm/target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
+        working-directory: ${{ github.workspace }}/crates/head-wasm
+        run: wasm-bindgen --out-name rrr --out-dir ${{ github.workspace }}/web/bin --target web target/wasm32-unknown-unknown/release/rrr_head_wasm.wasm
 
       - name: Build Workers
-        uses: actions-rs/cargo@v1.0.3
+        working-directory: ${{ github.workspace }}/crates/head-wasm
+        run: |
+          cargo build --release --bins --target wasm32-unknown-unknown --target-dir target
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
-        with:
-          command: build
-          args: --release --bins --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/wasm-workers/Cargo.toml
 
       - name: Generate web workers
-        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules ${{ github.workspace }}/crates/wasm-workers/target/wasm32-unknown-unknown/release/fetch.wasm
+        working-directory: ${{ github.workspace }}/crates/head-wasm
+        run: wasm-bindgen --no-typescript --out-name fetch-worker --out-dir ${{ github.workspace }}/web/bin --target no-modules target/wasm32-unknown-unknown/release/fetch.wasm
+
+      - name: Upload Web Directory
+        uses: actions/upload-artifact@v3
+        with:
+          name: web-directory
+          path: ./web
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: web-directory
+          path: ./web
 
       - name: Deploy Pages
         uses: peaceiris/actions-gh-pages@v3.8.0
