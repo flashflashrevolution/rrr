@@ -14,7 +14,7 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -47,9 +47,8 @@ jobs:
         env:
           TEST_PREVIEW_HASH: ${{ secrets.TEST_PREVIEW_HASH }}
         with:
-          working-directory: ${{ github.workspace }}/crates/head-wasm
           command: build
-          args: --release --target wasm32-unknown-unknown --target-dir target
+          args: --release --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/head-wasm/cargo.toml
 
       - name: Generate the .wasm for web deploy.
         working-directory: ${{ github.workspace }}/crates/head-wasm
@@ -62,7 +61,7 @@ jobs:
         with:
           working-directory: ${{ github.workspace }}/crates/wasm0-workers
           command: build
-          args: --release --bins --target wasm32-unknown-unknown --target-dir target
+          args: --release --bins --target wasm32-unknown-unknown --target-dir target --manifest-path ${{ github.workspace }}/crates/wasm-workers/cargo.toml
 
       - name: Generate web workers
         working-directory: ${{ github.workspace }}/crates/wasm-workers
