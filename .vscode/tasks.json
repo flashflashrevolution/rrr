@@ -145,6 +145,8 @@
             },
             "args": [
                 "watch",
+                "--watch",
+                "${workspaceFolder}/",
                 "-i",
                 ".git*",
                 "-i",
@@ -190,6 +192,8 @@
             },
             "args": [
                 "watch",
+                "--watch",
+                "${workspaceFolder}/",
                 "-i",
                 ".git*",
                 "-i",
