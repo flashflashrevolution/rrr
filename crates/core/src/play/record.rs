@@ -3,10 +3,10 @@ use btreemultimap::BTreeMultiMap;
 
 #[derive(Debug, Clone)]
 pub struct Record {
-    pub optimized_chart: BTreeMultiMap<i128, RuntimeNote>,
+    pub optimized_chart: BTreeMultiMap<u32, RuntimeNote>,
     pub mp3: Vec<u8>,
     pub chart: RuntimeChart,
-    pub duration: i128,
+    pub duration: u32,
 }
 
 impl Record {
@@ -26,7 +26,7 @@ impl Record {
     }
 }
 
-fn create_optimized_chart(chart: &RuntimeChart) -> BTreeMultiMap<i128, RuntimeNote> {
+fn create_optimized_chart(chart: &RuntimeChart) -> BTreeMultiMap<u32, RuntimeNote> {
     let mut optimized_chart = BTreeMultiMap::new();
     for note in &chart.notes {
         optimized_chart.insert(note.timestamp, note.clone());

@@ -8,7 +8,12 @@ use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     chart::{NoteColor, NoteDirection, SwfParser},
     math::lerp::Lerp,
-    play::{self, field::Field, turntable::Turntable, Play},
+    play::{
+        self,
+        field::{self, Field},
+        turntable::Turntable,
+        Play,
+    },
 };
 use winit::{
     dpi::PhysicalSize,
@@ -308,7 +313,7 @@ where
         let delta = self.current_instant.sub(&self.previous_instant);
         self.benchmark_data.add_frame_time(delta);
 
-        let current_progress = (self.start_instant.ms_since() * 1000.) as u64;
+        let current_progress = (self.start_instant.ms_since() * 1000.) as u32;
 
         if let Some(stage) = &mut self.play_stage {
             stage.tick(current_progress);
@@ -336,8 +341,8 @@ where
                         let turntable = Turntable::load(record.unwrap());
 
                         // Calculate start and end points.
-                        let field_height = self.screen_height as f64;
-                        let note_height = self.note_height as f64;
+                        let field_height = self.screen_height as f32;
+                        let note_height = self.note_height as f32;
 
                         let start_position = match self.settings.scroll_direction {
                             settings::ScrollDirection::Down => -note_height,
@@ -349,30 +354,24 @@ where
                         };
                         let judge_position = match self.settings.scroll_direction {
                             settings::ScrollDirection::Down => {
-                                self.screen_height as f64
-                                    - self.settings.judge_position as f64
-                                    - note_height as f64
+                                self.screen_height as f32
+                                    - self.settings.judge_position as f32
+                                    - note_height as f32
                             }
-                            settings::ScrollDirection::Up => self.settings.judge_position as f64,
+                            settings::ScrollDirection::Up => self.settings.judge_position as f32,
                         };
                         let play = Play::new(
                             turntable,
                             Field {
                                 start_position,
                                 end_position,
+                                receptor_position: judge_position,
                             },
                         );
-
-                        // Calculate judge zero position.
-                        let normalized_note_progress =
-                            end_position.inv_lerp(start_position, judge_position as f64);
-                        let ms = (normalized_note_progress * f64::from(self.settings.scroll_speed))
-                            .round() as i128;
-
                         let play_started = if self.settings.muted {
-                            play.start(ms)
+                            play.start()
                         } else {
-                            play.start_with_audio(ms)
+                            play.start_with_audio()
                         };
                         self.play_stage = Some(play_started);
 
@@ -392,7 +391,7 @@ where
         if let Some(stage) = &mut self.play_stage {
             self.action_queue.push(Action {
                 direction,
-                ts: (self.start_instant.ms_since() * 1000.) as i128,
+                ts: (self.start_instant.ms_since() * 1000.) as u32,
             });
         }
     }
@@ -407,21 +406,18 @@ where
 
             if let Some(play) = &self.play_stage {
                 if let noteskin = &renderer.noteskin {
-                    let time_on_screen = u64::from(self.settings.scroll_speed);
-                    let offset = self.screen_width as f64 / 2.0 - noteskin.note_width as f64 * 0.5;
+                    let time_on_screen = u32::from(self.settings.scroll_speed);
+                    let offset = self.screen_width as f32 / 2.0 - noteskin.note_width as f32 * 0.5;
                     let chart_progress = play.progress();
 
-                    let field = &play.field();
-
-                    let position =
-                        get_pos_from_ms(play.judge_zero_point().into(), field, time_on_screen);
+                    let receptor_position = play.field().receptor_position;
 
                     draw_receptors(
                         play,
                         noteskin,
                         frame,
                         offset,
-                        position,
+                        receptor_position,
                         self.settings.lane_gap,
                         self.screen_width,
                         self.screen_height,
@@ -431,7 +427,7 @@ where
                         play,
                         time_on_screen,
                         chart_progress,
-                        field,
+                        play.field(),
                         offset,
                         frame,
                         noteskin,
@@ -515,7 +511,7 @@ fn clear(frame: &mut [u8]) {
 
 struct Action {
     direction: NoteDirection,
-    ts: i128,
+    ts: u32,
 }
 
 #[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
@@ -553,22 +549,24 @@ impl Engine {
 #[allow(clippy::too_many_arguments)]
 fn draw_notes(
     play: &Play<play::Active>,
-    time_on_screen: u64,
-    chart_progress: u64,
+    time_on_screen: u32,
+    chart_progress: u32,
     field: &Field,
-    offset: f64,
+    offset: f32,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
     lane_gap: u8,
     screen_width: u32,
     screen_height: u32,
 ) {
-    let view = play.view(time_on_screen);
+    let view = play.view(u32::from(time_on_screen / 10), time_on_screen);
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
-        let note_progress = duration - chart_progress as i128;
-        let normalized = note_progress as f64 / time_on_screen as f64;
-        let position = field.end_position.lerp(field.start_position, normalized);
-        let lane_offset = lane_gap as f64;
+        let note_progress = duration as f32 - chart_progress as f32;
+        let normalized = note_progress as f32 / time_on_screen as f32;
+        let position = field
+            .end_position
+            .lerp(field.start_position, normalized.into());
+        let lane_offset = lane_gap as f32;
 
         let lane_index = match note.direction {
             NoteDirection::Left => -1.5,
@@ -577,7 +575,7 @@ fn draw_notes(
             NoteDirection::Right => 1.5,
         };
         let x = offset + (lane_offset * lane_index);
-        let y = position;
+        let y = position as f32;
         sprites::blit(
             frame,
             screen_width,
@@ -590,26 +588,18 @@ fn draw_notes(
     }
 }
 
-fn get_pos_from_ms(ms: i128, field: &Field, time_on_screen: u64) -> f64 {
-    let normalized = ms as f64 / time_on_screen as f64;
-    let pos = field
-        .end_position
-        .lerp(field.start_position, normalized as f64);
-    pos
-}
-
 fn draw_receptors(
     play: &Play<play::Active>,
     noteskin: &noteskin::Definition,
     frame: &mut [u8],
-    offset: f64,
-    position: f64,
+    offset: f32,
+    position: f32,
     lane_gap: u8,
     screen_width: u32,
     screen_height: u32,
 ) {
     let receptor_skin = noteskin.get_note(NoteColor::Receptor);
-    let lane_offset = f64::from(lane_gap);
+    let lane_offset = f32::from(lane_gap);
     sprites::blit(
         frame,
         screen_width,

@@ -31,20 +31,30 @@ pub enum Color {
 }
 
 #[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug, Serialize, Deserialize)]
-#[repr(usize)]
+#[repr(u32)]
 pub enum Direction {
-    Left,
-    Down,
-    Up,
-    Right,
+    Left = 0,
+    Down = 1,
+    Up = 2,
+    Right = 3,
+}
+
+impl From<Direction> for u32 {
+    fn from(dir: Direction) -> Self {
+        if let Ok(res) = dir.try_into() {
+            res
+        } else {
+            u32::MAX
+        }
+    }
 }
 
 #[derive(Clone, Eq, PartialEq, Hash, Debug, Serialize, Deserialize)]
 pub struct RuntimeNote {
-    pub beat_position: i32,
+    pub beat_position: u32,
     pub color: Color,
     pub direction: Direction,
-    pub timestamp: i128,
+    pub timestamp: u32,
 }
 
 impl Display for RuntimeNote {
@@ -121,16 +131,16 @@ mod tests {
 
     #[test]
     fn test_lane_value() {
-        let lane_descriminant = Direction::Left as usize;
+        let lane_descriminant: u32 = u32::from(Direction::Left);
         assert_eq!(lane_descriminant, 0);
 
-        let lane_descriminant = Direction::Down as usize;
+        let lane_descriminant = u32::from(Direction::Down);
         assert_eq!(lane_descriminant, 1);
 
-        let lane_descriminant = Direction::Up as usize;
+        let lane_descriminant = u32::from(Direction::Up);
         assert_eq!(lane_descriminant, 2);
 
-        let lane_descriminant = Direction::Right as usize;
+        let lane_descriminant = u32::from(Direction::Right);
         assert_eq!(lane_descriminant, 3);
     }
 }

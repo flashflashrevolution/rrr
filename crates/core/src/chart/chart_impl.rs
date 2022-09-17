@@ -21,8 +21,10 @@ impl RuntimeChart {
         }
     }
 
-    #[must_use]
-    pub fn get_duration(&self) -> Result<i128, anyhow::Error> {
+    /// # Errors
+    ///
+    /// Will return `anyhow::Error` if there is not at least 1 note in the chart.
+    pub fn get_duration(&self) -> Result<u32, anyhow::Error> {
         if let Some(last_note) = self.notes.first() {
             Ok(last_note.timestamp)
         } else {
@@ -60,7 +62,7 @@ impl BinChart {
                     beat_position: 100,
                     color: Color::Red,
                     direction: Direction::Up,
-                    timestamp: 0i128
+                    timestamp: 0u32
                 };
                 100
             ],

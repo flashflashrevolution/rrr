@@ -13,21 +13,21 @@ pub(crate) fn blit<'a, S>(
     screen: &mut [u8],
     screen_width: u32,
     screen_height: u32,
-    dest_x: f64,
-    dest_y: f64,
+    dest_x: f32,
+    dest_y: f32,
     dir: &NoteDirection,
     drawable: &S,
 ) where
     S: Drawable<'a>,
 {
     let pixels = drawable.pixels();
-    let width: f64 = drawable.width() as f64;
-    let height: f64 = drawable.height() as f64;
+    let width: f32 = drawable.width() as f32;
+    let height: f32 = drawable.height() as f32;
 
-    let x_min: f64 = f64::max(0., dest_x);
-    let x_max: f64 = f64::min(screen_width as f64, dest_x + width);
-    let y_min: f64 = f64::max(0., dest_y);
-    let y_max: f64 = f64::min(screen_height as f64, dest_y + height);
+    let x_min = f32::max(0., dest_x);
+    let x_max = f32::min(screen_width as f32, dest_x + width);
+    let y_min = f32::max(0., dest_y);
+    let y_max = f32::min(screen_height as f32, dest_y + height);
 
     let x_min_u: usize = x_min.round() as usize;
     let x_max_u: usize = x_max.round() as usize;
@@ -43,20 +43,20 @@ pub(crate) fn blit<'a, S>(
             let mut source_y: u32;
             match *dir {
                 NoteDirection::Down => {
-                    source_x = ((screen_x as f64) - dest_x).round() as u32;
-                    source_y = ((screen_y as f64) - dest_y).round() as u32;
+                    source_x = ((screen_x as f32) - dest_x).round() as u32;
+                    source_y = ((screen_y as f32) - dest_y).round() as u32;
                 }
                 NoteDirection::Right => {
-                    source_x = (width - 1. - ((screen_y as f64) - dest_y)).round() as u32;
-                    source_y = ((screen_x as f64) - dest_x).round() as u32;
+                    source_x = (width - 1. - ((screen_y as f32) - dest_y)).round() as u32;
+                    source_y = ((screen_x as f32) - dest_x).round() as u32;
                 }
                 NoteDirection::Up => {
-                    source_x = (width - 1. - ((screen_x as f64) - dest_x)).round() as u32;
-                    source_y = (height - 1. - ((screen_y as f64) - dest_y)).round() as u32;
+                    source_x = (width - 1. - ((screen_x as f32) - dest_x)).round() as u32;
+                    source_y = (height - 1. - ((screen_y as f32) - dest_y)).round() as u32;
                 }
                 NoteDirection::Left => {
-                    source_x = ((screen_y as f64) - dest_y).round() as u32;
-                    source_y = (height - 1. - ((screen_x as f64) - dest_x)).round() as u32;
+                    source_x = ((screen_y as f32) - dest_y).round() as u32;
+                    source_y = (height - 1. - ((screen_x as f32) - dest_x)).round() as u32;
                 }
             }
 

@@ -221,9 +221,9 @@ impl SwfParser<Parsed> {
     }
 }
 
-fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i128> {
+fn parse_timestamp(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<u32> {
     if let Some(Value::Int(ms)) = value_stack.pop() {
-        Ok(ms.try_into().unwrap())
+        Ok(ms.unsigned_abs())
     } else {
         bail!(ChartParseError::Timestamp);
     }
@@ -275,9 +275,9 @@ fn parse_direction(
     }
 }
 
-fn parse_beat_position(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<i32> {
+fn parse_beat_position(value_stack: &mut Vec<Value<'_>>) -> anyhow::Result<u32> {
     if let Some(Value::Int(ms)) = value_stack.pop() {
-        Ok(ms)
+        Ok(ms.unsigned_abs())
     } else {
         log::error!("No beat position found");
         bail!(ChartParseError::BeatPosition);

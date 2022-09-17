@@ -47,6 +47,7 @@ pub struct Active {
     turntable: Turntable<turntable::Playing>,
     actions: BTreeMultiMap<RuntimeNote, NoteAction>,
     judge: Judge,
+    misses: HashSet<RuntimeNote>,
     judgement_report: JudgementReport,
 }
 
@@ -88,15 +89,14 @@ impl Play<Ready> {
             settings: self.settings,
         }
     }
-
-    #[must_use]
-    pub fn start_with_audio(self, judge_zero_point: i128) -> Play<Active> {
+    pub fn start_with_audio(self) -> Play<Active> {
         Play {
             field: self.field,
             state: Active {
                 turntable: self.state.turntable.play_with_audio(),
                 actions: BTreeMultiMap::default(),
-                judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judge: Judge::new(),
+                misses: HashSet::<RuntimeNote>::new(),
                 judgement_report: JudgementReport::default(),
             },
             settings: self.settings,
@@ -104,13 +104,14 @@ impl Play<Ready> {
     }
 
     #[must_use]
-    pub fn start(self, judge_zero_point: i128) -> Play<Active> {
+    pub fn start(self) -> Play<Active> {
         Play {
             field: self.field,
             state: Active {
                 turntable: self.state.turntable.play(),
                 actions: BTreeMultiMap::default(),
-                judge: Judge::new(judge_zero_point.try_into().unwrap()),
+                judge: Judge::new(),
+                misses: HashSet::<RuntimeNote>::new(),
                 judgement_report: JudgementReport::default(),
             },
             settings: self.settings,
@@ -149,18 +150,18 @@ impl Play<Active> {
     /// # Errors
     /// Turntable could slice into an invalid set of notes.
     #[must_use]
-    pub fn view(&self, range_in_milliseconds: u64) -> MultiRange<'_, i128, RuntimeNote> {
-        self.state.turntable.view(range_in_milliseconds.into())
+    pub fn view(&self, look_behind: u32, look_ahead: u32) -> MultiRange<'_, u32, RuntimeNote> {
+        self.state.turntable.view(look_behind, look_ahead)
     }
 
     #[must_use]
-    pub fn progress(&self) -> u64 {
+    pub fn progress(&self) -> u32 {
         self.state.turntable.progress()
     }
 
     #[must_use]
     pub fn missed_notes(&self) -> &HashSet<RuntimeNote> {
-        &self.state.judge.misses
+        &self.state.misses
     }
 
     #[must_use]
@@ -168,7 +169,7 @@ impl Play<Active> {
         &self.state.actions
     }
 
-    pub fn tick(&mut self, progress: u64) {
+    pub fn tick(&mut self, progress: u32) {
         self.state.turntable.tick(progress);
         self.check_miss();
 
@@ -176,31 +177,24 @@ impl Play<Active> {
     }
 
     fn check_miss(&mut self) {
-        let song_progress = self.progress() as i128;
+        let song_progress = self.progress();
 
         let mapped_notes = self
             .state
             .turntable
-            .view(120)
-            .filter(|(&ts, note)| {
-                song_progress >= ts + 118 && !self.state.judge.misses.contains(note)
-            })
+            .view(200, 120)
+            .filter(|(&ts, note)| song_progress >= ts + 118 && !self.state.misses.contains(note))
             .map(|(_, note)| note.clone());
 
         let misses = mapped_notes.collect::<HashSet<RuntimeNote>>();
         self.state.judgement_report.misses += misses.len() as u32;
 
-        self.state.judge.misses.extend(misses);
+        self.state.misses.extend(misses);
     }
 
     #[must_use]
     pub fn field(&self) -> &Field {
         &self.field
-    }
-
-    #[must_use]
-    pub fn judge_zero_point(&self) -> u32 {
-        self.state.judge.judge_zero_point
     }
 
     #[must_use]
@@ -213,10 +207,10 @@ impl Play<Active> {
         &self.state.judge.judgements
     }
 
-    pub fn do_action(&mut self, direction: NoteDirection, ts: i128) {
-        let view_result = self.state.turntable.view(500);
+    pub fn do_action(&mut self, direction: NoteDirection, ts: u32) {
+        let view_result = self.state.turntable.view(0, 120);
         if let Some((_, closest_note)) = view_result
-            .filter(|(_, note)| self.determine_judgable(note, &direction, ts))
+            .filter(|(_, note)| self.determine_judgable(note, &direction))
             .next()
         {
             if let Ok(judgement_result) = self.state.judge.judge(ts, closest_note) {
@@ -236,20 +230,10 @@ impl Play<Active> {
         }
     }
 
-    fn determine_judgable(&self, note: &RuntimeNote, direction: &NoteDirection, ts: i128) -> bool {
+    fn determine_judgable(&self, note: &RuntimeNote, direction: &NoteDirection) -> bool {
         let is_judged = self.state.actions.contains_key(note);
         let is_same_direction = *direction == note.direction;
-        let is_within_judge_range = note
-            .timestamp
-            .abs_dif(&(ts + i128::from(self.state.judge.judge_zero_point)))
-            <= 118;
-        log::debug!(
-            "note: {:?} || judge: {:?}",
-            note.timestamp
-                .abs_dif(&(ts + i128::from(self.state.judge.judge_zero_point))),
-            118
-        );
-        !is_judged && is_same_direction && is_within_judge_range
+        !is_judged && is_same_direction
     }
 
     fn append_to_judgement_report(&mut self, judgement: JudgeWindow) {
@@ -286,14 +270,14 @@ impl Play<Concluded> {
 
 pub trait Difference {
     #[must_use]
-    fn abs_dif(self, right: &i128) -> Self;
+    fn abs_dif(self, right: &u32) -> Self;
 
     #[must_use]
-    fn diff(self, right: &i128) -> i128;
+    fn diff(self, right: &u32) -> u32;
 }
 
-impl Difference for i128 {
-    fn abs_dif(self, right: &i128) -> i128 {
+impl Difference for u32 {
+    fn abs_dif(self, right: &u32) -> u32 {
         if self < *right {
             *right - self
         } else {
@@ -301,7 +285,7 @@ impl Difference for i128 {
         }
     }
 
-    fn diff(self, right: &i128) -> i128 {
+    fn diff(self, right: &u32) -> u32 {
         self - right
     }
 }

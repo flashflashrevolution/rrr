@@ -14,7 +14,7 @@ pub struct Empty {}
 pub struct Loaded {}
 
 pub struct Playing {
-    pub progress: u64,
+    pub progress: u32,
     audio_player: Option<AudioPlayer>,
 }
 
@@ -81,7 +81,7 @@ impl Turntable<Playing> {
         }
     }
 
-    pub fn tick(&mut self, progress: u64) {
+    pub fn tick(&mut self, progress: u32) {
         self.state.progress = progress;
         if let Some(player) = self.state.audio_player.borrow_mut() {
             player.tick();
@@ -90,19 +90,24 @@ impl Turntable<Playing> {
 
     #[must_use]
     pub fn is_finished(&self) -> bool {
-        self.state.progress as i128 >= self.record.duration
+        self.state.progress >= self.record.duration.into()
     }
 
     #[must_use]
-    pub fn progress(&self) -> u64 {
+    pub fn progress(&self) -> u32 {
         self.state.progress
     }
 
-    pub fn view(&self, range_in_milliseconds: i128) -> MultiRange<'_, i128, RuntimeNote> {
+    pub fn view(&self, look_behind: u32, look_ahead: u32) -> MultiRange<'_, u32, RuntimeNote> {
         let chart = &self.record.optimized_chart;
-        chart.range((
-            Included(self.state.progress as i128),
-            Included(self.state.progress as i128 + range_in_milliseconds),
-        ))
+
+        let first =
+            if let Some(first_value) = self.state.progress.checked_sub(u32::from(look_behind)) {
+                first_value
+            } else {
+                self.state.progress
+            };
+
+        chart.range((Included(first), Included(self.state.progress + look_ahead)))
     }
 }

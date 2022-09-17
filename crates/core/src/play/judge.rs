@@ -1,9 +1,13 @@
 use super::Difference;
 use crate::chart::RuntimeNote;
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    convert::TryInto,
+    thread::current,
+};
 
 #[derive(Clone, Copy, Debug, Hash, Eq, PartialEq)]
-pub struct JudgeWindow(pub i128);
+pub struct JudgeWindow(pub i32);
 pub static JUDGE: [JudgeWindow; 8] = [
     JudgeWindow(-118),
     JudgeWindow(-85),
@@ -16,50 +20,49 @@ pub static JUDGE: [JudgeWindow; 8] = [
 ];
 
 pub type Judgement = HashMap<RuntimeNote, JudgeWindow>;
-pub type Boo = HashSet<i128>;
+pub type Boo = HashSet<u32>;
 
 #[derive(Debug, Clone)]
 pub struct Judge {
     pub judgements: Judgement,
-    pub misses: HashSet<RuntimeNote>,
     pub boos: Boo,
-    pub judge_zero_point: u32,
 }
 
 impl Judge {
     /// Creates a new [`Judge`].
     #[must_use]
-    pub fn new(judgement_zero_point: u32) -> Self {
+    pub fn new() -> Self {
         Self {
             judgements: HashMap::default(),
-            misses: HashSet::default(),
             boos: HashSet::default(),
-            judge_zero_point: judgement_zero_point,
         }
     }
+
     /// Try to calculate a judge window for a note.
     ///
     /// # Errors
     /// Returns [`Err(None)`] if the note was already judged.
     pub fn judge(
         &mut self,
-        current_timestamp: i128,
+        current_timestamp: u32,
         closest_note: &RuntimeNote,
     ) -> anyhow::Result<Option<JudgeWindow>> {
-        if !self.misses.contains(closest_note) && !self.judgements.contains_key(closest_note) {
-            let diff = closest_note
-                .timestamp
-                .diff(&(current_timestamp + i128::from(self.judge_zero_point)));
+        if !self.judgements.contains_key(closest_note) {
+            let diff = closest_note.timestamp.diff(&(current_timestamp));
+            let signed_offset: i8 = if let Ok(small_offset) = diff.try_into() {
+                let negative = closest_note.timestamp < current_timestamp;
 
-            let judge = {
-                let mut last_judge = None;
-                for judge in JUDGE {
-                    if diff > judge.0 {
-                        last_judge.replace(judge);
-                    }
-                }
-                last_judge
+                let result = if negative {
+                    small_offset * -1
+                } else {
+                    small_offset
+                };
+                result
+            } else {
+                i8::MAX
             };
+
+            let judge = calculate_judge_window(signed_offset);
 
             if let Some(some_judge) = judge {
                 let local_note = closest_note.clone();
@@ -82,19 +85,47 @@ impl Judge {
     }
 }
 
-// Create a judge which lives for the curation of a play session.
+fn calculate_judge_window(hit_offset: i8) -> Option<JudgeWindow> {
+    let mut last_judge = None;
+    for judge in JUDGE {
+        if i32::from(hit_offset) > judge.0 {
+            last_judge.replace(judge);
+        }
+    }
+    last_judge
+}
 
-// Expectations:
-// Currently game receives a keyboard event and triggers a note action and generates a judgement.
-// The judge, could be a class which holds information regarding how judgements are to be calculated.
-// "Note Actions" are derived from finding the note, in the associated lane, nearest to the current receptor position.
-// Judgement is calculated based on the difference between the current receptor position and the note's timestamp.
-// The judgement is then stored in the judgement vector.
-// Each note can only be judged once.
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-// Alterantive:
-// Keyboard event is triggered by the player.
-// A timestamp is collected for the event.
-// Judgement is immediately calculated based on the current view.
-// Judgement can either be a HIT, with an associated note, or a boo, with no associated not.
-// Every judgement is stored in the judgement vector, any judgement with an associated note is also added to a hashset.
+    #[test]
+    fn judgement_to_window() {
+        let offset = -119i8;
+        assert_eq!(calculate_judge_window(offset), None);
+
+        let offset = -90i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[0]));
+
+        let offset = -70i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[1]));
+
+        let offset = -50i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[2]));
+
+        let offset = -14i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[3]));
+
+        let offset = 18i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[4]));
+
+        let offset = 51i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[5]));
+
+        let offset = 90i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[6]));
+
+        let offset = 118i8;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[7]));
+    }
+}

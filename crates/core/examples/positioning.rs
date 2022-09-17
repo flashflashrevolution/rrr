@@ -1,57 +1,79 @@
 // use rrr_core::{download_chart, SwfParser, Turntable};
 
-// fn main() {
-//     if let Some(raw_chart) = download_chart(3348) {
-//         let parser_compressed = SwfParser::new(*raw_chart);
-//         let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
-//             let parsing = ready_to_parse.parse();
-//             let parsed = parsing.tick();
-//             Some(parsed.produce_tape())
-//         } else {
-//             None
-//         };
+use std::thread::current;
 
-//         let mut playing_turntable = if let Some(record) = record {
-//             let loaded_turntable = Turntable::load(record);
-//             loaded_turntable.play()
-//         } else {
-//             panic!("Failed to create record.");
-//         };
+use rrr_core::{
+    chart::{NoteColor, NoteDirection, RuntimeChart, RuntimeNote},
+    math::lerp,
+    play::{self, record::Record, turntable::Turntable},
+};
 
-//         use lerp::Lerp;
+fn main() {
+    let notes = [
+        RuntimeNote {
+            beat_position: 0,
+            color: NoteColor::Yellow,
+            direction: NoteDirection::Right,
+            timestamp: 14000,
+        },
+        RuntimeNote {
+            beat_position: 0,
+            color: NoteColor::Red,
+            direction: NoteDirection::Down,
+            timestamp: 10000,
+        },
+        RuntimeNote {
+            beat_position: 0,
+            color: NoteColor::Red,
+            direction: NoteDirection::Left,
+            timestamp: 2000,
+        },
+        RuntimeNote {
+            beat_position: 0,
+            color: NoteColor::Red,
+            direction: NoteDirection::Up,
+            timestamp: 2000,
+        },
+    ];
 
-//         let field_height = 768.0;
-//         let note_height = 64.0;
-//         let notes_in_field = field_height / note_height;
-//         println!("field_height: {}", field_height);
-//         println!("note_height: {}", note_height);
-//         println!("notes_in_field: {}", notes_in_field);
+    let chart = RuntimeChart::new(&notes);
+    let mut playing_turntable = if let Ok(record) = Record::new(Vec::new(), chart) {
+        let loaded_turntable = Turntable::load(record);
+        loaded_turntable.play()
+    } else {
+        panic!("Failed to start playing turntable.")
+    };
 
-//         let lane_offset = 96.0;
-//         println!("lane_offset: {}", lane_offset);
+    let progress_start = 1.0;
+    let progress_end = -0.1;
 
-//         let start_position = field_height;
-//         let end_position = -note_height;
+    let look_ahead = 2000;
+    let look_behind = 200;
 
-//         let time_on_screen = 2000;
-//         let delta = 16;
+    let delta = 1000;
+    let mut delta_accumulator = 0;
+    while !playing_turntable.is_finished() {
+        playing_turntable.tick(delta_accumulator);
+        let current_progress = playing_turntable.progress();
+        let view = playing_turntable.view(look_behind, look_ahead);
+        println!("Progress: {:?} || View: {:?}", current_progress, view);
 
-//         while !playing_turntable.is_finished() {
-//             playing_turntable.tick(delta);
-//             let view = playing_turntable.view(time_on_screen);
-//             let chart_progress = playing_turntable.progress();
+        delta_accumulator += delta;
+    }
 
-//             for (duration, note) in view {
-//                 let note_progress = duration.as_millis() as u64 - chart_progress;
-//                 let normalized = note_progress as f64 / time_on_screen as f64;
-//                 let position = end_position.lerp(start_position, normalized);
+    //         while !playing_turntable.is_finished() {
+    //             playing_turntable.tick(delta);
+    //             let view = playing_turntable.view(time_on_screen);
+    //             let chart_progress = playing_turntable.progress();
 
-//                 if note.beat_position == 1183 {
-//                     println!("pos: {:?} {:.0}", note.beat_position, position);
-//                 }
-//             }
-//         }
-//     }
-// }
+    //             for (duration, note) in view {
+    //                 let note_progress = duration.as_millis() as u64 - chart_progress;
+    //                 let normalized = note_progress as f64 / time_on_screen as f64;
+    //                 let position = end_position.lerp(start_position, normalized);
 
-fn main() {}
+    //                 if note.beat_position == 1183 {
+    //                     println!("pos: {:?} {:.0}", note.beat_position, position);
+    //                 }
+    //             }
+    //         }
+}
