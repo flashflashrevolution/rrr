@@ -24,6 +24,7 @@ pub enum ScrollDirection {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Settings {
     pub scroll_speed: u16,
+    pub offset: u16,
     pub judge_position: i32,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
@@ -35,6 +36,7 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             scroll_speed: 3000,
+            offset: 0,
             judge_position: 92,
             scroll_direction: ScrollDirection::Up,
             lane_gap: 72,
@@ -47,6 +49,7 @@ impl Settings {
     #[must_use]
     pub fn new(
         scroll_speed: u16,
+        offset: u16,
         judge_zero_point: i32,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
@@ -54,6 +57,7 @@ impl Settings {
     ) -> Self {
         Self {
             scroll_speed,
+            offset,
             judge_position: judge_zero_point,
             scroll_direction,
             lane_gap,

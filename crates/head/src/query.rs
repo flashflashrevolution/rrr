@@ -8,6 +8,7 @@ use std::str::FromStr;
 #[struct_merge("crate::settings::Settings")]
 pub struct SettingsMerge {
     pub scroll_speed: Option<u16>,
+    pub offset: Option<u16>,
     pub judge_position: Option<i32>,
     pub scroll_direction: Option<ScrollDirection>,
     pub lane_gap: Option<u8>,
@@ -48,6 +49,10 @@ pub fn get_optional_settings() -> SettingsMerge {
                     "scroll_speed" => {
                         let speed = value.parse::<u16>().unwrap();
                         settings.scroll_speed.replace(speed);
+                    }
+                    "offset" => {
+                        let offset = value.parse::<u16>().unwrap();
+                        settings.offset.replace(offset);
                     }
                     "scroll_direction" => {
                         let scroll_direction = value.parse::<String>().unwrap();

@@ -77,7 +77,12 @@ fn main() {
 async fn run() -> Result<(), Error> {
     let event_loop = EventLoop::new();
     let window = rrr_head::build_window(&event_loop, WIDTH, HEIGHT)?;
-    let extracted_settings: Option<SettingsMerge> = { None };
+    let extracted_settings: Option<SettingsMerge> = Some(SettingsMerge {
+        scroll_speed: Some(2400),
+        offset: Some(55),
+        muted: Some(true),
+        ..Default::default()
+    });
 
     let mut game = rrr_head::Game::<Time>::new(None, WIDTH, HEIGHT);
     game.with_settings(extracted_settings);
