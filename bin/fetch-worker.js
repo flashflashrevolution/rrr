@@ -315,6 +315,7 @@ class Settings {
     toJSON() {
         return {
             scroll_speed: this.scroll_speed,
+            offset: this.offset,
             judge_position: this.judge_position,
             scroll_direction: this.scroll_direction,
             lane_gap: this.lane_gap,
@@ -349,6 +350,19 @@ class Settings {
     */
     set scroll_speed(arg0) {
         wasm.__wbg_set_settings_scroll_speed(this.ptr, arg0);
+    }
+    /**
+    * @returns {number}
+    */
+    get offset() {
+        const ret = wasm.__wbg_get_settings_offset(this.ptr);
+        return ret;
+    }
+    /**
+    * @param {number} arg0
+    */
+    set offset(arg0) {
+        wasm.__wbg_set_settings_offset(this.ptr, arg0);
     }
     /**
     * @returns {number}
@@ -438,6 +452,19 @@ class SettingsMerge {
     */
     set scroll_speed(arg0) {
         wasm.__wbg_set_settingsmerge_scroll_speed(this.ptr, isLikeNone(arg0) ? 0xFFFFFF : arg0);
+    }
+    /**
+    * @returns {number | undefined}
+    */
+    get offset() {
+        const ret = wasm.__wbg_get_settingsmerge_offset(this.ptr);
+        return ret === 0xFFFFFF ? undefined : ret;
+    }
+    /**
+    * @param {number | undefined} arg0
+    */
+    set offset(arg0) {
+        wasm.__wbg_set_settingsmerge_offset(this.ptr, isLikeNone(arg0) ? 0xFFFFFF : arg0);
     }
     /**
     * @returns {number | undefined}
@@ -761,7 +788,7 @@ function getImports() {
         const ret = makeClosure(arg0, arg1, 44, __wbg_adapter_20);
         return addHeapObject(ret);
     };
-    imports.wbg.__wbindgen_closure_wrapper258 = function(arg0, arg1, arg2) {
+    imports.wbg.__wbindgen_closure_wrapper262 = function(arg0, arg1, arg2) {
         const ret = makeMutClosure(arg0, arg1, 111, __wbg_adapter_23);
         return addHeapObject(ret);
     };

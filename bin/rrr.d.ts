@@ -56,6 +56,9 @@ export class Settings {
   muted: boolean;
 /**
 */
+  offset: number;
+/**
+*/
   scroll_direction: number;
 /**
 */
@@ -79,6 +82,9 @@ export class SettingsMerge {
   muted?: boolean;
 /**
 */
+  offset?: number;
+/**
+*/
   scroll_direction?: number;
 /**
 */
@@ -94,6 +100,8 @@ export interface InitOutput {
   readonly __wbg_settingsmerge_free: (a: number) => void;
   readonly __wbg_get_settingsmerge_scroll_speed: (a: number) => number;
   readonly __wbg_set_settingsmerge_scroll_speed: (a: number, b: number) => void;
+  readonly __wbg_get_settingsmerge_offset: (a: number) => number;
+  readonly __wbg_set_settingsmerge_offset: (a: number, b: number) => void;
   readonly __wbg_get_settingsmerge_judge_position: (a: number, b: number) => void;
   readonly __wbg_set_settingsmerge_judge_position: (a: number, b: number, c: number) => void;
   readonly __wbg_get_settingsmerge_scroll_direction: (a: number) => number;
@@ -110,6 +118,8 @@ export interface InitOutput {
   readonly __wbg_settings_free: (a: number) => void;
   readonly __wbg_get_settings_scroll_speed: (a: number) => number;
   readonly __wbg_set_settings_scroll_speed: (a: number, b: number) => void;
+  readonly __wbg_get_settings_offset: (a: number) => number;
+  readonly __wbg_set_settings_offset: (a: number, b: number) => void;
   readonly __wbg_get_settings_judge_position: (a: number) => number;
   readonly __wbg_set_settings_judge_position: (a: number, b: number) => void;
   readonly __wbg_get_settings_scroll_direction: (a: number) => number;
