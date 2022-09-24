@@ -80,7 +80,7 @@ pub async fn run_game_loop(
     };
 
     game.with_game_renderer(GameRenderer::new(pixels));
-    game.load(3348);
+    game.load(3378);
     window.focus_window();
 
     #[cfg(target_arch = "wasm32")]
@@ -477,7 +477,7 @@ impl GameRenderer {
 fn do_toggle_game_state_debug(game: &mut Game<Time>) {
     if game.play_stage.is_none() {
         if game.fetcher.is_none() {
-            game.fetcher.replace(fetch::download_chart(3348));
+            game.fetcher.replace(fetch::download_chart(3378));
         }
     } else {
         if let Some(play) = &game.play_stage {

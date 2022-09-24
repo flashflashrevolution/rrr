@@ -1,7 +1,7 @@
 use std::thread::sleep;
 
 fn main() {
-    if let Some(raw_chart) = download_chart(3348) {
+    if let Some(raw_chart) = download_chart(3378) {
         let parser_compressed = SwfParser::new(*raw_chart);
         let record = if let Ok(ready_to_parse) = parser_compressed.decompress() {
             let parsing = ready_to_parse.parse();
