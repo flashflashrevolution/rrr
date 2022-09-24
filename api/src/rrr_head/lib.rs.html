@@ -659,6 +659,8 @@
 <span id="659">659</span>
 <span id="660">660</span>
 <span id="661">661</span>
+<span id="662">662</span>
+<span id="663">663</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">platform</span>::{<span class="ident">platform::time::Time</span>, <span class="ident">platform::Fetcher</span>, <span class="ident">TimeTrait</span>},
     <span class="ident">query::SettingsMerge</span>,
@@ -1098,6 +1100,7 @@
                         <span class="ident">time_on_screen</span>,
                         <span class="ident">chart_progress</span>,
                         <span class="ident">play</span>.<span class="ident">field</span>(),
+                        <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">offset</span>,
                         <span class="ident">offset</span>,
                         <span class="ident">frame</span>,
                         <span class="ident">noteskin</span>,
@@ -1222,6 +1225,7 @@
     <span class="ident">time_on_screen</span>: <span class="ident">u32</span>,
     <span class="ident">chart_progress</span>: <span class="ident">u32</span>,
     <span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>,
+    <span class="ident">play_offset</span>: <span class="ident">u16</span>,
     <span class="ident">offset</span>: <span class="ident">f32</span>,
     <span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>],
     <span class="ident">noteskin</span>: <span class="kw-2">&amp;</span><span class="ident">noteskin::Definition</span>,
@@ -1235,7 +1239,7 @@
         <span class="comment">// Calculate &quot;time_on_screen&quot; as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)</span>
         <span class="comment">// Rendering should carry on past the zero point but it should arrive at 0 at the receptor point rather than the beginning of the screen.</span>
 
-        <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">f32</span>;
+        <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> (<span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">f32</span>) <span class="op">+</span> <span class="ident">f32::from</span>(<span class="ident">play_offset</span>);
         <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f32</span>;
         <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">field</span>.<span class="ident">start_position</span>, <span class="ident">normalized</span>.<span class="ident">into</span>());
         <span class="kw">let</span> <span class="ident">lane_offset</span> <span class="op">=</span> <span class="ident">lane_gap</span> <span class="kw">as</span> <span class="ident">f32</span>;
