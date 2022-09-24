@@ -32,16 +32,16 @@ inter-struct = "0.2.0"
 lerp = "0.4.0"
 log = { version = "0.4.17" }
 pixels = { git = "https://github.com/parasyte/pixels.git", branch = "main" }
-reqwest = { version = "0.11.11", features = ["json", "blocking"] }
+reqwest = { version = "0.11.12", features = ["json", "blocking"] }
 rrr-core = { path = "../core", default-features = false }
-serde = { version = "1.0.144", optional = true, features = ["derive"] }
+serde = { version = "1.0.145", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 
 [target.'cfg(unix)'.dependencies]
 winit = { version = "0.27.3", default-features = false, features = ['x11'] }
 
-[target.'cfg(not(unix))'.dependencies]
-winit = { version = "0.27.3", default-features = false }
+[target.'cfg(windows)'.dependencies]
+winit = { version = "0.26.1", default-features = false }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 futures = "0.3.24"
@@ -55,6 +55,7 @@ gloo-worker = "0.2.1"
 wasm-bindgen = "0.2.83"
 wasm-bindgen-futures = "0.4.33"
 wgpu = "0.13.1"
+winit = { version = "0.27.3", default-features = false }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies.web-sys]
 version = "0.3.60"
