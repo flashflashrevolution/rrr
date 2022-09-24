@@ -410,7 +410,15 @@ where
                     let offset = self.screen_width as f32 / 2.0 - noteskin.note_width as f32 * 0.5;
                     let chart_progress = play.progress();
 
-                    let receptor_position = play.field().receptor_position;
+                    let receptor_position = play.field().receptor_position + 32.;
+
+                    // Draw the zero point of the notes.
+                    draw_line(
+                        frame,
+                        receptor_position + 32.,
+                        self.screen_height,
+                        self.screen_width,
+                    );
 
                     draw_receptors(
                         play,
@@ -559,7 +567,7 @@ fn draw_notes(
     screen_width: u32,
     screen_height: u32,
 ) {
-    let end_position = field.receptor_position - 32.;
+    let end_position = field.receptor_position - 16.;
     let view = play.view(u32::from(time_on_screen / 2), time_on_screen);
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
         // Calculate "time_on_screen" as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)
@@ -587,6 +595,17 @@ fn draw_notes(
             &note.direction,
             &noteskin.get_note(note.color),
         );
+    }
+}
+
+fn draw_line(frame: &mut [u8], position: f32, screen_height: u32, screen_width: u32) {
+    let color = [0x5e, 0x48, 0xe8, 0xff];
+    let rounded: i16 = position.round() as i16;
+    for (i, pixel) in frame.chunks_exact_mut(4).enumerate() {
+        let y = (i / screen_width as usize) as i16;
+        if rounded == y {
+            pixel.copy_from_slice(&color);
+        }
     }
 }
 
