@@ -559,13 +559,15 @@ fn draw_notes(
     screen_width: u32,
     screen_height: u32,
 ) {
-    let view = play.view(u32::from(time_on_screen / 10), time_on_screen);
+    let end_position = field.receptor_position - 32.;
+    let view = play.view(u32::from(time_on_screen / 2), time_on_screen);
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
+        // Calculate "time_on_screen" as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)
+        // Rendering should carry on past the zero point but it should arrive at 0 at the receptor point rather than the beginning of the screen.
+
         let note_progress = duration as f32 - chart_progress as f32;
         let normalized = note_progress as f32 / time_on_screen as f32;
-        let position = field
-            .end_position
-            .lerp(field.start_position, normalized.into());
+        let position = end_position.lerp(field.start_position, normalized.into());
         let lane_offset = lane_gap as f32;
 
         let lane_index = match note.direction {
