@@ -437,6 +437,7 @@ where
                         time_on_screen,
                         chart_progress,
                         play.field(),
+                        self.settings.offset,
                         offset,
                         frame,
                         noteskin,
@@ -561,6 +562,7 @@ fn draw_notes(
     time_on_screen: u32,
     chart_progress: u32,
     field: &Field,
+    play_offset: u16,
     offset: f32,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
@@ -574,7 +576,7 @@ fn draw_notes(
         // Calculate "time_on_screen" as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)
         // Rendering should carry on past the zero point but it should arrive at 0 at the receptor point rather than the beginning of the screen.
 
-        let note_progress = duration as f32 - chart_progress as f32;
+        let note_progress = (duration as f32 - chart_progress as f32) + f32::from(play_offset);
         let normalized = note_progress as f32 / time_on_screen as f32;
         let position = end_position.lerp(field.start_position, normalized.into());
         let lane_offset = lane_gap as f32;
