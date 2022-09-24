@@ -332,11 +332,6 @@
 <span id="332">332</span>
 <span id="333">333</span>
 <span id="334">334</span>
-<span id="335">335</span>
-<span id="336">336</span>
-<span id="337">337</span>
-<span id="338">338</span>
-<span id="339">339</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">field</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">judge</span>;
@@ -554,17 +549,12 @@
         {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">judgement_result</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge</span>(<span class="ident">ts</span>, <span class="ident">closest_note</span>) {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">judgement</span>) <span class="op">=</span> <span class="ident">judgement_result</span> {
-                    <span class="macro">log::info!</span>(<span class="string">&quot;Judgement: {:?}&quot;</span>, <span class="ident">judgement</span>);
                     <span class="self">self</span>.<span class="ident">append_to_judgement_report</span>(<span class="ident">judgement</span>);
                 } <span class="kw">else</span> {
-                    <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
                     <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">boos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
                 }
-            } <span class="kw">else</span> {
-                <span class="macro">log::error!</span>(<span class="string">&quot;Already judged, undefined behaviour.&quot;</span>);
             }
         } <span class="kw">else</span> {
-            <span class="macro">log::info!</span>(<span class="string">&quot;No judgement, boo.&quot;</span>);
             <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">boos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         }
     }

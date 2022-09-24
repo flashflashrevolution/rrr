@@ -122,13 +122,6 @@
 <span id="122">122</span>
 <span id="123">123</span>
 <span id="124">124</span>
-<span id="125">125</span>
-<span id="126">126</span>
-<span id="127">127</span>
-<span id="128">128</span>
-<span id="129">129</span>
-<span id="130">130</span>
-<span id="131">131</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Difference</span>;
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::chart::RuntimeNote</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{
@@ -197,20 +190,13 @@
 
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">some_judge</span>) <span class="op">=</span> <span class="ident">judge</span> {
                 <span class="kw">let</span> <span class="ident">local_note</span> <span class="op">=</span> <span class="ident">closest_note</span>.<span class="ident">clone</span>();
-                <span class="macro">log::debug!</span>(
-                    <span class="string">&quot;Judgement: {:?} on note: {:?} at &quot;</span>,
-                    <span class="ident">some_judge</span>,
-                    <span class="ident">local_note</span>.<span class="ident">timestamp</span>,
-                );
                 <span class="self">self</span>.<span class="ident">judgements</span>.<span class="ident">insert</span>(<span class="ident">local_note</span>, <span class="ident">some_judge</span>);
             } <span class="kw">else</span> {
                 <span class="self">self</span>.<span class="ident">boos</span>.<span class="ident">insert</span>(<span class="ident">current_timestamp</span>);
-                <span class="macro">log::debug!</span>(<span class="string">&quot;Boo at: {:?}&quot;</span>, <span class="ident">current_timestamp</span>);
             }
 
             <span class="prelude-val">Ok</span>(<span class="ident">judge</span>)
         } <span class="kw">else</span> {
-            <span class="macro">log::error!</span>(<span class="string">&quot;Already judged: {:?}&quot;</span>, <span class="ident">closest_note</span>);
             <span class="prelude-val">Err</span>(<span class="macro">anyhow::anyhow!</span>(<span class="string">&quot;Already judged&quot;</span>))
         }
     }
