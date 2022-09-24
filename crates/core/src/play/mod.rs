@@ -215,17 +215,12 @@ impl Play<Active> {
         {
             if let Ok(judgement_result) = self.state.judge.judge(ts, closest_note) {
                 if let Some(judgement) = judgement_result {
-                    log::info!("Judgement: {:?}", judgement);
                     self.append_to_judgement_report(judgement);
                 } else {
-                    log::info!("No judgement, boo.");
                     self.state.judgement_report.boos += 1;
                 }
-            } else {
-                log::error!("Already judged, undefined behaviour.");
             }
         } else {
-            log::info!("No judgement, boo.");
             self.state.judgement_report.boos += 1;
         }
     }

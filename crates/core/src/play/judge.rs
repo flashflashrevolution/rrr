@@ -66,20 +66,13 @@ impl Judge {
 
             if let Some(some_judge) = judge {
                 let local_note = closest_note.clone();
-                log::debug!(
-                    "Judgement: {:?} on note: {:?} at ",
-                    some_judge,
-                    local_note.timestamp,
-                );
                 self.judgements.insert(local_note, some_judge);
             } else {
                 self.boos.insert(current_timestamp);
-                log::debug!("Boo at: {:?}", current_timestamp);
             }
 
             Ok(judge)
         } else {
-            log::error!("Already judged: {:?}", closest_note);
             Err(anyhow::anyhow!("Already judged"))
         }
     }
