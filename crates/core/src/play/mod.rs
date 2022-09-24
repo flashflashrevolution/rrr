@@ -89,6 +89,8 @@ impl Play<Ready> {
             settings: self.settings,
         }
     }
+
+    #[must_use]
     pub fn start_with_audio(self) -> Play<Active> {
         Play {
             field: self.field,
@@ -182,8 +184,12 @@ impl Play<Active> {
         let mapped_notes = self
             .state
             .turntable
-            .view(200, 120)
-            .filter(|(&ts, note)| song_progress >= ts + 118 && !self.state.misses.contains(note))
+            .view(500, 0)
+            .filter(|(&ts, note)| {
+                song_progress >= ts + 118
+                    && !self.state.misses.contains(note)
+                    && !self.state.judge.judgements.contains_key(note)
+            })
             .map(|(_, note)| note.clone());
 
         let misses = mapped_notes.collect::<HashSet<RuntimeNote>>();
@@ -208,7 +214,7 @@ impl Play<Active> {
     }
 
     pub fn do_action(&mut self, direction: NoteDirection, ts: u32) {
-        let view_result = self.state.turntable.view(0, 120);
+        let view_result = self.state.turntable.view(120, 120);
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction))
             .next()
