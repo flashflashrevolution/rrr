@@ -337,22 +337,6 @@
 <span id="337">337</span>
 <span id="338">338</span>
 <span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
-<span id="355">355</span>
 </pre><pre class="rust"><code><span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">actions</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">field</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">judge</span>;
@@ -402,6 +386,7 @@
     <span class="ident">turntable</span>: <span class="ident">Turntable</span><span class="op">&lt;</span><span class="ident">turntable::Playing</span><span class="op">&gt;</span>,
     <span class="ident">actions</span>: <span class="ident">BTreeMultiMap</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span>, <span class="ident">NoteAction</span><span class="op">&gt;</span>,
     <span class="ident">judge</span>: <span class="ident">Judge</span>,
+    <span class="ident">misses</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span>,
     <span class="ident">judgement_report</span>: <span class="ident">JudgementReport</span>,
 }
 
@@ -443,15 +428,14 @@
             <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
         }
     }
-
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_with_audio</span>(<span class="self">self</span>, <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start_with_audio</span>(<span class="self">self</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
         <span class="ident">Play</span> {
             <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
             <span class="ident">state</span>: <span class="ident">Active</span> {
                 <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">play_with_audio</span>(),
                 <span class="ident">actions</span>: <span class="ident">BTreeMultiMap::default</span>(),
-                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(<span class="ident">judge_zero_point</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()),
+                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(),
+                <span class="ident">misses</span>: <span class="ident">HashSet</span>::<span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="ident">::new</span>(),
                 <span class="ident">judgement_report</span>: <span class="ident">JudgementReport::default</span>(),
             },
             <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
@@ -459,13 +443,14 @@
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="self">self</span>, <span class="ident">judge_zero_point</span>: <span class="ident">i128</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">start</span>(<span class="self">self</span>) -&gt; <span class="ident">Play</span><span class="op">&lt;</span><span class="ident">Active</span><span class="op">&gt;</span> {
         <span class="ident">Play</span> {
             <span class="ident">field</span>: <span class="self">self</span>.<span class="ident">field</span>,
             <span class="ident">state</span>: <span class="ident">Active</span> {
                 <span class="ident">turntable</span>: <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">play</span>(),
                 <span class="ident">actions</span>: <span class="ident">BTreeMultiMap::default</span>(),
-                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(<span class="ident">judge_zero_point</span>.<span class="ident">try_into</span>().<span class="ident">unwrap</span>()),
+                <span class="ident">judge</span>: <span class="ident">Judge::new</span>(),
+                <span class="ident">misses</span>: <span class="ident">HashSet</span>::<span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="ident">::new</span>(),
                 <span class="ident">judgement_report</span>: <span class="ident">JudgementReport::default</span>(),
             },
             <span class="ident">settings</span>: <span class="self">self</span>.<span class="ident">settings</span>,
@@ -504,18 +489,18 @@
     <span class="doccomment">/// # Errors</span>
     <span class="doccomment">/// Turntable could slice into an invalid set of notes.</span>
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">u64</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">range_in_milliseconds</span>.<span class="ident">into</span>())
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">look_behind</span>: <span class="ident">u32</span>, <span class="ident">look_ahead</span>: <span class="ident">u32</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">u32</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="ident">look_behind</span>, <span class="ident">look_ahead</span>)
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">progress</span>()
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">missed_notes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">misses</span>
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -523,7 +508,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u32</span>) {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">tick</span>(<span class="ident">progress</span>);
         <span class="self">self</span>.<span class="ident">check_miss</span>();
 
@@ -531,31 +516,24 @@
     }
 
     <span class="kw">fn</span> <span class="ident">check_miss</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
-        <span class="kw">let</span> <span class="ident">song_progress</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">progress</span>() <span class="kw">as</span> <span class="ident">i128</span>;
+        <span class="kw">let</span> <span class="ident">song_progress</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">progress</span>();
 
         <span class="kw">let</span> <span class="ident">mapped_notes</span> <span class="op">=</span> <span class="self">self</span>
             .<span class="ident">state</span>
             .<span class="ident">turntable</span>
-            .<span class="ident">view</span>(<span class="number">120</span>)
-            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>, <span class="ident">note</span>)<span class="op">|</span> {
-                <span class="ident">song_progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">ts</span> <span class="op">+</span> <span class="number">118</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>.<span class="ident">contains</span>(<span class="ident">note</span>)
-            })
+            .<span class="ident">view</span>(<span class="number">200</span>, <span class="number">120</span>)
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw-2">&amp;</span><span class="ident">ts</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">song_progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">ts</span> <span class="op">+</span> <span class="number">118</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">misses</span>.<span class="ident">contains</span>(<span class="ident">note</span>))
             .<span class="ident">map</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="ident">note</span>.<span class="ident">clone</span>());
 
         <span class="kw">let</span> <span class="ident">misses</span> <span class="op">=</span> <span class="ident">mapped_notes</span>.<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">RuntimeNote</span><span class="op">&gt;</span><span class="op">&gt;</span>();
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judgement_report</span>.<span class="ident">misses</span> <span class="op">+</span><span class="op">=</span> <span class="ident">misses</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span>;
 
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">misses</span>.<span class="ident">extend</span>(<span class="ident">misses</span>);
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">misses</span>.<span class="ident">extend</span>(<span class="ident">misses</span>);
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">field</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">Field</span> {
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">field</span>
-    }
-
-    <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">judge_zero_point</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
@@ -568,10 +546,10 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judgements</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">NoteDirection</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) {
-        <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">500</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">do_action</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">direction</span>: <span class="ident">NoteDirection</span>, <span class="ident">ts</span>: <span class="ident">u32</span>) {
+        <span class="kw">let</span> <span class="ident">view_result</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">turntable</span>.<span class="ident">view</span>(<span class="number">0</span>, <span class="number">120</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>((<span class="kw">_</span>, <span class="ident">closest_note</span>)) <span class="op">=</span> <span class="ident">view_result</span>
-            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">determine_judgable</span>(<span class="ident">note</span>, <span class="kw-2">&amp;</span><span class="ident">direction</span>, <span class="ident">ts</span>))
+            .<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="self">self</span>.<span class="ident">determine_judgable</span>(<span class="ident">note</span>, <span class="kw-2">&amp;</span><span class="ident">direction</span>))
             .<span class="ident">next</span>()
         {
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">judgement_result</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge</span>(<span class="ident">ts</span>, <span class="ident">closest_note</span>) {
@@ -591,20 +569,10 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">determine_judgable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">note</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeNote</span>, <span class="ident">direction</span>: <span class="kw-2">&amp;</span><span class="ident">NoteDirection</span>, <span class="ident">ts</span>: <span class="ident">i128</span>) -&gt; <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">determine_judgable</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">note</span>: <span class="kw-2">&amp;</span><span class="ident">RuntimeNote</span>, <span class="ident">direction</span>: <span class="kw-2">&amp;</span><span class="ident">NoteDirection</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">is_judged</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">actions</span>.<span class="ident">contains_key</span>(<span class="ident">note</span>);
         <span class="kw">let</span> <span class="ident">is_same_direction</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">direction</span> <span class="op">==</span> <span class="ident">note</span>.<span class="ident">direction</span>;
-        <span class="kw">let</span> <span class="ident">is_within_judge_range</span> <span class="op">=</span> <span class="ident">note</span>
-            .<span class="ident">timestamp</span>
-            .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span>(<span class="ident">ts</span> <span class="op">+</span> <span class="ident">i128::from</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>)))
-            <span class="op">&lt;</span><span class="op">=</span> <span class="number">118</span>;
-        <span class="macro">log::debug!</span>(
-            <span class="string">&quot;note: {:?} || judge: {:?}&quot;</span>,
-            <span class="ident">note</span>.<span class="ident">timestamp</span>
-                .<span class="ident">abs_dif</span>(<span class="kw-2">&amp;</span>(<span class="ident">ts</span> <span class="op">+</span> <span class="ident">i128::from</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">judge</span>.<span class="ident">judge_zero_point</span>))),
-            <span class="number">118</span>
-        );
-        <span class="op">!</span><span class="ident">is_judged</span> <span class="op">&amp;&amp;</span> <span class="ident">is_same_direction</span> <span class="op">&amp;&amp;</span> <span class="ident">is_within_judge_range</span>
+        <span class="op">!</span><span class="ident">is_judged</span> <span class="op">&amp;&amp;</span> <span class="ident">is_same_direction</span>
     }
 
     <span class="kw">fn</span> <span class="ident">append_to_judgement_report</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">judgement</span>: <span class="ident">JudgeWindow</span>) {
@@ -641,14 +609,14 @@
 
 <span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Difference</span> {
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="self">Self</span>;
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="self">Self</span>;
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span>;
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">u32</span>;
 }
 
-<span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">i128</span> {
-    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
+<span class="kw">impl</span> <span class="ident">Difference</span> <span class="kw">for</span> <span class="ident">u32</span> {
+    <span class="kw">fn</span> <span class="ident">abs_dif</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
         <span class="kw">if</span> <span class="self">self</span> <span class="op">&lt;</span> <span class="kw-2">*</span><span class="ident">right</span> {
             <span class="kw-2">*</span><span class="ident">right</span> <span class="op">-</span> <span class="self">self</span>
         } <span class="kw">else</span> {
@@ -656,7 +624,7 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">i128</span>) -&gt; <span class="ident">i128</span> {
+    <span class="kw">fn</span> <span class="ident">diff</span>(<span class="self">self</span>, <span class="ident">right</span>: <span class="kw-2">&amp;</span><span class="ident">u32</span>) -&gt; <span class="ident">u32</span> {
         <span class="self">self</span> <span class="op">-</span> <span class="ident">right</span>
     }
 }

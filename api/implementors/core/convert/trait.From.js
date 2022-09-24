@@ -1,0 +1,3 @@
+(function() {var implementors = {};
+implementors["rrr_core"] = [{"text":"impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.64.0/core/convert/trait.From.html\" title=\"trait core::convert::From\">From</a>&lt;<a class=\"enum\" href=\"rrr_core/chart/enum.NoteDirection.html\" title=\"enum rrr_core::chart::NoteDirection\">Direction</a>&gt; for <a class=\"primitive\" href=\"https://doc.rust-lang.org/1.64.0/std/primitive.u32.html\">u32</a>","synthetic":false,"types":[]}];
+if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

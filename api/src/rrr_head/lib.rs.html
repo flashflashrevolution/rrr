@@ -637,16 +637,6 @@
 <span id="637">637</span>
 <span id="638">638</span>
 <span id="639">639</span>
-<span id="640">640</span>
-<span id="641">641</span>
-<span id="642">642</span>
-<span id="643">643</span>
-<span id="644">644</span>
-<span id="645">645</span>
-<span id="646">646</span>
-<span id="647">647</span>
-<span id="648">648</span>
-<span id="649">649</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">platform</span>::{<span class="ident">platform::time::Time</span>, <span class="ident">platform::Fetcher</span>, <span class="ident">TimeTrait</span>},
     <span class="ident">query::SettingsMerge</span>,
@@ -657,7 +647,12 @@
 <span class="kw">use</span> <span class="ident">rrr_core</span>::{
     <span class="ident">chart</span>::{<span class="ident">NoteColor</span>, <span class="ident">NoteDirection</span>, <span class="ident">SwfParser</span>},
     <span class="ident">math::lerp::Lerp</span>,
-    <span class="ident">play</span>::{<span class="self">self</span>, <span class="ident">field::Field</span>, <span class="ident">turntable::Turntable</span>, <span class="ident">Play</span>},
+    <span class="ident">play</span>::{
+        <span class="self">self</span>,
+        <span class="ident">field</span>::{<span class="self">self</span>, <span class="ident">Field</span>},
+        <span class="ident">turntable::Turntable</span>,
+        <span class="ident">Play</span>,
+    },
 };
 <span class="kw">use</span> <span class="ident">winit</span>::{
     <span class="ident">dpi::PhysicalSize</span>,
@@ -957,7 +952,7 @@
         <span class="kw">let</span> <span class="ident">delta</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">current_instant</span>.<span class="ident">sub</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">previous_instant</span>);
         <span class="self">self</span>.<span class="ident">benchmark_data</span>.<span class="ident">add_frame_time</span>(<span class="ident">delta</span>);
 
-        <span class="kw">let</span> <span class="ident">current_progress</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">u64</span>;
+        <span class="kw">let</span> <span class="ident">current_progress</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">u32</span>;
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
             <span class="ident">stage</span>.<span class="ident">tick</span>(<span class="ident">current_progress</span>);
@@ -985,8 +980,8 @@
                         <span class="kw">let</span> <span class="ident">turntable</span> <span class="op">=</span> <span class="ident">Turntable::load</span>(<span class="ident">record</span>.<span class="ident">unwrap</span>());
 
                         <span class="comment">// Calculate start and end points.</span>
-                        <span class="kw">let</span> <span class="ident">field_height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">screen_height</span> <span class="kw">as</span> <span class="ident">f64</span>;
-                        <span class="kw">let</span> <span class="ident">note_height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">note_height</span> <span class="kw">as</span> <span class="ident">f64</span>;
+                        <span class="kw">let</span> <span class="ident">field_height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">screen_height</span> <span class="kw">as</span> <span class="ident">f32</span>;
+                        <span class="kw">let</span> <span class="ident">note_height</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">note_height</span> <span class="kw">as</span> <span class="ident">f32</span>;
 
                         <span class="kw">let</span> <span class="ident">start_position</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">scroll_direction</span> {
                             <span class="ident">settings::ScrollDirection::Down</span> =&gt; <span class="op">-</span><span class="ident">note_height</span>,
@@ -998,30 +993,24 @@
                         };
                         <span class="kw">let</span> <span class="ident">judge_position</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">scroll_direction</span> {
                             <span class="ident">settings::ScrollDirection::Down</span> =&gt; {
-                                <span class="self">self</span>.<span class="ident">screen_height</span> <span class="kw">as</span> <span class="ident">f64</span>
-                                    <span class="op">-</span> <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">judge_position</span> <span class="kw">as</span> <span class="ident">f64</span>
-                                    <span class="op">-</span> <span class="ident">note_height</span> <span class="kw">as</span> <span class="ident">f64</span>
+                                <span class="self">self</span>.<span class="ident">screen_height</span> <span class="kw">as</span> <span class="ident">f32</span>
+                                    <span class="op">-</span> <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">judge_position</span> <span class="kw">as</span> <span class="ident">f32</span>
+                                    <span class="op">-</span> <span class="ident">note_height</span> <span class="kw">as</span> <span class="ident">f32</span>
                             }
-                            <span class="ident">settings::ScrollDirection::Up</span> =&gt; <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">judge_position</span> <span class="kw">as</span> <span class="ident">f64</span>,
+                            <span class="ident">settings::ScrollDirection::Up</span> =&gt; <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">judge_position</span> <span class="kw">as</span> <span class="ident">f32</span>,
                         };
                         <span class="kw">let</span> <span class="ident">play</span> <span class="op">=</span> <span class="ident">Play::new</span>(
                             <span class="ident">turntable</span>,
                             <span class="ident">Field</span> {
                                 <span class="ident">start_position</span>,
                                 <span class="ident">end_position</span>,
+                                <span class="ident">receptor_position</span>: <span class="ident">judge_position</span>,
                             },
                         );
-
-                        <span class="comment">// Calculate judge zero position.</span>
-                        <span class="kw">let</span> <span class="ident">normalized_note_progress</span> <span class="op">=</span>
-                            <span class="ident">end_position</span>.<span class="ident">inv_lerp</span>(<span class="ident">start_position</span>, <span class="ident">judge_position</span> <span class="kw">as</span> <span class="ident">f64</span>);
-                        <span class="kw">let</span> <span class="ident">ms</span> <span class="op">=</span> (<span class="ident">normalized_note_progress</span> <span class="op">*</span> <span class="ident">f64::from</span>(<span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">scroll_speed</span>))
-                            .<span class="ident">round</span>() <span class="kw">as</span> <span class="ident">i128</span>;
-
                         <span class="kw">let</span> <span class="ident">play_started</span> <span class="op">=</span> <span class="kw">if</span> <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">muted</span> {
-                            <span class="ident">play</span>.<span class="ident">start</span>(<span class="ident">ms</span>)
+                            <span class="ident">play</span>.<span class="ident">start</span>()
                         } <span class="kw">else</span> {
-                            <span class="ident">play</span>.<span class="ident">start_with_audio</span>(<span class="ident">ms</span>)
+                            <span class="ident">play</span>.<span class="ident">start_with_audio</span>()
                         };
                         <span class="self">self</span>.<span class="ident">play_stage</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">play_started</span>);
 
@@ -1041,7 +1030,7 @@
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">stage</span>) <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">play_stage</span> {
             <span class="self">self</span>.<span class="ident">action_queue</span>.<span class="ident">push</span>(<span class="ident">Action</span> {
                 <span class="ident">direction</span>,
-                <span class="ident">ts</span>: (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">i128</span>,
+                <span class="ident">ts</span>: (<span class="self">self</span>.<span class="ident">start_instant</span>.<span class="ident">ms_since</span>() <span class="op">*</span> <span class="number">1000.</span>) <span class="kw">as</span> <span class="ident">u32</span>,
             });
         }
     }
@@ -1056,21 +1045,18 @@
 
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">play</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">play_stage</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="ident">noteskin</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">renderer</span>.<span class="ident">noteskin</span> {
-                    <span class="kw">let</span> <span class="ident">time_on_screen</span> <span class="op">=</span> <span class="ident">u64::from</span>(<span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">scroll_speed</span>);
-                    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">screen_width</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="number">2.0</span> <span class="op">-</span> <span class="ident">noteskin</span>.<span class="ident">note_width</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">*</span> <span class="number">0.5</span>;
+                    <span class="kw">let</span> <span class="ident">time_on_screen</span> <span class="op">=</span> <span class="ident">u32::from</span>(<span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">scroll_speed</span>);
+                    <span class="kw">let</span> <span class="ident">offset</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">screen_width</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">/</span> <span class="number">2.0</span> <span class="op">-</span> <span class="ident">noteskin</span>.<span class="ident">note_width</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">*</span> <span class="number">0.5</span>;
                     <span class="kw">let</span> <span class="ident">chart_progress</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">progress</span>();
 
-                    <span class="kw">let</span> <span class="ident">field</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">play</span>.<span class="ident">field</span>();
-
-                    <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span>
-                        <span class="ident">get_pos_from_ms</span>(<span class="ident">play</span>.<span class="ident">judge_zero_point</span>().<span class="ident">into</span>(), <span class="ident">field</span>, <span class="ident">time_on_screen</span>);
+                    <span class="kw">let</span> <span class="ident">receptor_position</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">field</span>().<span class="ident">receptor_position</span>;
 
                     <span class="ident">draw_receptors</span>(
                         <span class="ident">play</span>,
                         <span class="ident">noteskin</span>,
                         <span class="ident">frame</span>,
                         <span class="ident">offset</span>,
-                        <span class="ident">position</span>,
+                        <span class="ident">receptor_position</span>,
                         <span class="self">self</span>.<span class="ident">settings</span>.<span class="ident">lane_gap</span>,
                         <span class="self">self</span>.<span class="ident">screen_width</span>,
                         <span class="self">self</span>.<span class="ident">screen_height</span>,
@@ -1080,7 +1066,7 @@
                         <span class="ident">play</span>,
                         <span class="ident">time_on_screen</span>,
                         <span class="ident">chart_progress</span>,
-                        <span class="ident">field</span>,
+                        <span class="ident">play</span>.<span class="ident">field</span>(),
                         <span class="ident">offset</span>,
                         <span class="ident">frame</span>,
                         <span class="ident">noteskin</span>,
@@ -1164,7 +1150,7 @@
 
 <span class="kw">struct</span> <span class="ident">Action</span> {
     <span class="ident">direction</span>: <span class="ident">NoteDirection</span>,
-    <span class="ident">ts</span>: <span class="ident">i128</span>,
+    <span class="ident">ts</span>: <span class="ident">u32</span>,
 }
 
 <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">target_arch</span> <span class="op">=</span> <span class="string">&quot;wasm32&quot;</span>, <span class="ident">wasm_bindgen::prelude::wasm_bindgen</span>)]</span>
@@ -1202,22 +1188,24 @@
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">clippy::too_many_arguments</span>)]</span>
 <span class="kw">fn</span> <span class="ident">draw_notes</span>(
     <span class="ident">play</span>: <span class="kw-2">&amp;</span><span class="ident">Play</span><span class="op">&lt;</span><span class="ident">play::Active</span><span class="op">&gt;</span>,
-    <span class="ident">time_on_screen</span>: <span class="ident">u64</span>,
-    <span class="ident">chart_progress</span>: <span class="ident">u64</span>,
+    <span class="ident">time_on_screen</span>: <span class="ident">u32</span>,
+    <span class="ident">chart_progress</span>: <span class="ident">u32</span>,
     <span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>,
-    <span class="ident">offset</span>: <span class="ident">f64</span>,
+    <span class="ident">offset</span>: <span class="ident">f32</span>,
     <span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>],
     <span class="ident">noteskin</span>: <span class="kw-2">&amp;</span><span class="ident">noteskin::Definition</span>,
     <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
     <span class="ident">screen_width</span>: <span class="ident">u32</span>,
     <span class="ident">screen_height</span>: <span class="ident">u32</span>,
 ) {
-    <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">time_on_screen</span>);
+    <span class="kw">let</span> <span class="ident">view</span> <span class="op">=</span> <span class="ident">play</span>.<span class="ident">view</span>(<span class="ident">u32::from</span>(<span class="ident">time_on_screen</span> <span class="op">/</span> <span class="number">10</span>), <span class="ident">time_on_screen</span>);
     <span class="kw">for</span> (<span class="kw-2">&amp;</span><span class="ident">duration</span>, <span class="ident">note</span>) <span class="kw">in</span> <span class="ident">view</span>.<span class="ident">filter</span>(<span class="op">|</span>(<span class="kw">_</span>, <span class="ident">note</span>)<span class="op">|</span> <span class="op">!</span><span class="ident">play</span>.<span class="ident">judgements</span>().<span class="ident">contains_key</span>(<span class="ident">note</span>)) {
-        <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="ident">duration</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">i128</span>;
-        <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
-        <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">field</span>.<span class="ident">end_position</span>.<span class="ident">lerp</span>(<span class="ident">field</span>.<span class="ident">start_position</span>, <span class="ident">normalized</span>);
-        <span class="kw">let</span> <span class="ident">lane_offset</span> <span class="op">=</span> <span class="ident">lane_gap</span> <span class="kw">as</span> <span class="ident">f64</span>;
+        <span class="kw">let</span> <span class="ident">note_progress</span> <span class="op">=</span> <span class="ident">duration</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">-</span> <span class="ident">chart_progress</span> <span class="kw">as</span> <span class="ident">f32</span>;
+        <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">note_progress</span> <span class="kw">as</span> <span class="ident">f32</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f32</span>;
+        <span class="kw">let</span> <span class="ident">position</span> <span class="op">=</span> <span class="ident">field</span>
+            .<span class="ident">end_position</span>
+            .<span class="ident">lerp</span>(<span class="ident">field</span>.<span class="ident">start_position</span>, <span class="ident">normalized</span>.<span class="ident">into</span>());
+        <span class="kw">let</span> <span class="ident">lane_offset</span> <span class="op">=</span> <span class="ident">lane_gap</span> <span class="kw">as</span> <span class="ident">f32</span>;
 
         <span class="kw">let</span> <span class="ident">lane_index</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">note</span>.<span class="ident">direction</span> {
             <span class="ident">NoteDirection::Left</span> =&gt; <span class="op">-</span><span class="number">1.5</span>,
@@ -1226,7 +1214,7 @@
             <span class="ident">NoteDirection::Right</span> =&gt; <span class="number">1.5</span>,
         };
         <span class="kw">let</span> <span class="ident">x</span> <span class="op">=</span> <span class="ident">offset</span> <span class="op">+</span> (<span class="ident">lane_offset</span> <span class="op">*</span> <span class="ident">lane_index</span>);
-        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">position</span>;
+        <span class="kw">let</span> <span class="ident">y</span> <span class="op">=</span> <span class="ident">position</span> <span class="kw">as</span> <span class="ident">f32</span>;
         <span class="ident">sprites::blit</span>(
             <span class="ident">frame</span>,
             <span class="ident">screen_width</span>,
@@ -1239,26 +1227,18 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">get_pos_from_ms</span>(<span class="ident">ms</span>: <span class="ident">i128</span>, <span class="ident">field</span>: <span class="kw-2">&amp;</span><span class="ident">Field</span>, <span class="ident">time_on_screen</span>: <span class="ident">u64</span>) -&gt; <span class="ident">f64</span> {
-    <span class="kw">let</span> <span class="ident">normalized</span> <span class="op">=</span> <span class="ident">ms</span> <span class="kw">as</span> <span class="ident">f64</span> <span class="op">/</span> <span class="ident">time_on_screen</span> <span class="kw">as</span> <span class="ident">f64</span>;
-    <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="ident">field</span>
-        .<span class="ident">end_position</span>
-        .<span class="ident">lerp</span>(<span class="ident">field</span>.<span class="ident">start_position</span>, <span class="ident">normalized</span> <span class="kw">as</span> <span class="ident">f64</span>);
-    <span class="ident">pos</span>
-}
-
 <span class="kw">fn</span> <span class="ident">draw_receptors</span>(
     <span class="ident">play</span>: <span class="kw-2">&amp;</span><span class="ident">Play</span><span class="op">&lt;</span><span class="ident">play::Active</span><span class="op">&gt;</span>,
     <span class="ident">noteskin</span>: <span class="kw-2">&amp;</span><span class="ident">noteskin::Definition</span>,
     <span class="ident">frame</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>],
-    <span class="ident">offset</span>: <span class="ident">f64</span>,
-    <span class="ident">position</span>: <span class="ident">f64</span>,
+    <span class="ident">offset</span>: <span class="ident">f32</span>,
+    <span class="ident">position</span>: <span class="ident">f32</span>,
     <span class="ident">lane_gap</span>: <span class="ident">u8</span>,
     <span class="ident">screen_width</span>: <span class="ident">u32</span>,
     <span class="ident">screen_height</span>: <span class="ident">u32</span>,
 ) {
     <span class="kw">let</span> <span class="ident">receptor_skin</span> <span class="op">=</span> <span class="ident">noteskin</span>.<span class="ident">get_note</span>(<span class="ident">NoteColor::Receptor</span>);
-    <span class="kw">let</span> <span class="ident">lane_offset</span> <span class="op">=</span> <span class="ident">f64::from</span>(<span class="ident">lane_gap</span>);
+    <span class="kw">let</span> <span class="ident">lane_offset</span> <span class="op">=</span> <span class="ident">f32::from</span>(<span class="ident">lane_gap</span>);
     <span class="ident">sprites::blit</span>(
         <span class="ident">frame</span>,
         <span class="ident">screen_width</span>,

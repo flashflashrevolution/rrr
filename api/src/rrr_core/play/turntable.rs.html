@@ -106,6 +106,11 @@
 <span id="106">106</span>
 <span id="107">107</span>
 <span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident"><span class="kw">super</span>::record::Record</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">audio::AudioPlayer</span>, <span class="ident">chart::RuntimeNote</span>};
 <span class="kw">use</span> <span class="ident">btreemultimap::MultiRange</span>;
@@ -122,7 +127,7 @@
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Loaded</span> {}
 
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Playing</span> {
-    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u64</span>,
+    <span class="kw">pub</span> <span class="ident">progress</span>: <span class="ident">u32</span>,
     <span class="ident">audio_player</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AudioPlayer</span><span class="op">&gt;</span>,
 }
 
@@ -189,7 +194,7 @@
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u64</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">tick</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">progress</span>: <span class="ident">u32</span>) {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">=</span> <span class="ident">progress</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">player</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">audio_player</span>.<span class="ident">borrow_mut</span>() {
             <span class="ident">player</span>.<span class="ident">tick</span>();
@@ -198,20 +203,25 @@
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_finished</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>
+        <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">record</span>.<span class="ident">duration</span>.<span class="ident">into</span>()
     }
 
     <span class="attribute">#[<span class="ident">must_use</span>]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">progress</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">u32</span> {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">range_in_milliseconds</span>: <span class="ident">i128</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">i128</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">view</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">look_behind</span>: <span class="ident">u32</span>, <span class="ident">look_ahead</span>: <span class="ident">u32</span>) -&gt; <span class="ident">MultiRange</span><span class="op">&lt;</span><span class="lifetime">&#39;_</span>, <span class="ident">u32</span>, <span class="ident">RuntimeNote</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">chart</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">record</span>.<span class="ident">optimized_chart</span>;
-        <span class="ident">chart</span>.<span class="ident">range</span>((
-            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span>),
-            <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="kw">as</span> <span class="ident">i128</span> <span class="op">+</span> <span class="ident">range_in_milliseconds</span>),
-        ))
+
+        <span class="kw">let</span> <span class="ident">first</span> <span class="op">=</span>
+            <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">first_value</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>.<span class="ident">checked_sub</span>(<span class="ident">u32::from</span>(<span class="ident">look_behind</span>)) {
+                <span class="ident">first_value</span>
+            } <span class="kw">else</span> {
+                <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span>
+            };
+
+        <span class="ident">chart</span>.<span class="ident">range</span>((<span class="ident">Included</span>(<span class="ident">first</span>), <span class="ident">Included</span>(<span class="self">self</span>.<span class="ident">state</span>.<span class="ident">progress</span> <span class="op">+</span> <span class="ident">look_ahead</span>)))
     }
 }
 </code></pre></div>
