@@ -70,7 +70,7 @@ impl Fetcher {
                     let _ = tx.send(bytes);
                 }
             })
-            .spawn("bin/worker.js");
+            .spawn("bin/fetch-worker.js");
 
         let temp_hash = if let Some(hash) = option_env!("TEST_PREVIEW_HASH") {
             hash.to_string()
