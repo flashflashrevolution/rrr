@@ -91,10 +91,6 @@ export interface InitOutput {
   readonly memory: WebAssembly.Memory;
   readonly initialize: () => void;
   readonly play: (a: number, b: number, c: number) => void;
-  readonly __wbg_engine_free: (a: number) => void;
-  readonly engine_new: () => number;
-  readonly engine_modify_settings: (a: number, b: number) => number;
-  readonly engine_toJSON: (a: number) => number;
   readonly __wbg_settingsmerge_free: (a: number) => void;
   readonly __wbg_get_settingsmerge_scroll_speed: (a: number) => number;
   readonly __wbg_set_settingsmerge_scroll_speed: (a: number, b: number) => void;
@@ -107,6 +103,10 @@ export interface InitOutput {
   readonly __wbg_get_settingsmerge_muted: (a: number) => number;
   readonly __wbg_set_settingsmerge_muted: (a: number, b: number) => void;
   readonly settingsmerge_new: () => number;
+  readonly __wbg_engine_free: (a: number) => void;
+  readonly engine_new: () => number;
+  readonly engine_modify_settings: (a: number, b: number) => number;
+  readonly engine_toJSON: (a: number) => number;
   readonly __wbg_settings_free: (a: number) => void;
   readonly __wbg_get_settings_scroll_speed: (a: number) => number;
   readonly __wbg_set_settings_scroll_speed: (a: number, b: number) => void;
