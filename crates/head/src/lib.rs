@@ -365,7 +365,7 @@ where
                             Field {
                                 start_position,
                                 end_position,
-                                receptor_position: judge_position,
+                                judge_position,
                             },
                         );
                         let play_started = if self.settings.muted {
@@ -410,12 +410,13 @@ where
                     let offset = self.screen_width as f32 / 2.0 - noteskin.note_width as f32 * 0.5;
                     let chart_progress = play.progress();
 
-                    let receptor_position = play.field().receptor_position + 32.;
+                    let receptor_position = play.field().judge_position;
 
                     // Draw the zero point of the notes.
+                    // These offsets don't make much sense.
                     draw_line(
                         frame,
-                        receptor_position + 32.,
+                        receptor_position + 48.,
                         self.screen_height,
                         self.screen_width,
                     );
@@ -425,7 +426,7 @@ where
                         noteskin,
                         frame,
                         offset,
-                        receptor_position,
+                        receptor_position + 16.,
                         self.settings.lane_gap,
                         self.screen_width,
                         self.screen_height,
@@ -567,7 +568,7 @@ fn draw_notes(
     screen_width: u32,
     screen_height: u32,
 ) {
-    let end_position = field.receptor_position - 16.;
+    let end_position = field.judge_position;
     let view = play.view(u32::from(time_on_screen / 2), time_on_screen);
     for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
         // Calculate "time_on_screen" as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)
