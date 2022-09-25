@@ -3,6 +3,7 @@ use crate::chart::RuntimeNote;
 use std::{
     collections::{HashMap, HashSet},
     convert::TryInto,
+    ops::Neg,
     thread::current,
 };
 
@@ -47,41 +48,50 @@ impl Judge {
         current_timestamp: u32,
         closest_note: &RuntimeNote,
     ) -> anyhow::Result<Option<JudgeWindow>> {
-        if !self.judgements.contains_key(closest_note) {
-            let diff = closest_note.timestamp.diff(&(current_timestamp));
-            let signed_offset: i8 = if let Ok(small_offset) = diff.try_into() {
-                let negative = closest_note.timestamp < current_timestamp;
-
-                let result = if negative {
-                    small_offset * -1
-                } else {
-                    small_offset
-                };
-                result
-            } else {
-                i8::MAX
-            };
-
-            let judge = calculate_judge_window(signed_offset);
-
-            if let Some(some_judge) = judge {
-                let local_note = closest_note.clone();
-                self.judgements.insert(local_note, some_judge);
-            } else {
-                self.boos.insert(current_timestamp);
-            }
-
-            Ok(judge)
-        } else {
-            Err(anyhow::anyhow!("Already judged"))
+        if self.judgements.contains_key(closest_note) {
+            return Err(anyhow::anyhow!("Already judged"));
         }
+
+        log::info!(
+            "Timestamp of Strike: {:?} || Timestamp of Note: {:?}",
+            current_timestamp,
+            closest_note.timestamp
+        );
+
+        let diff: u32 = closest_note.timestamp.abs_diff(current_timestamp);
+
+        let signed_offset = if let Ok(small_offset) = i32::try_from(diff) {
+            let negative = closest_note.timestamp < current_timestamp;
+
+            if negative {
+                small_offset.neg()
+            } else {
+                small_offset
+            }
+        } else {
+            i32::MAX
+        };
+
+        log::info!("Difference: {:?}", signed_offset);
+
+        let judge = calculate_judge_window(signed_offset);
+        log::info!("Judgement: {:?}", judge);
+
+        if let Some(some_judge) = judge {
+            let local_note = closest_note.clone();
+            self.judgements.insert(local_note, some_judge);
+        } else {
+            self.boos.insert(current_timestamp);
+        }
+
+        Ok(judge)
     }
 }
 
-fn calculate_judge_window(hit_offset: i8) -> Option<JudgeWindow> {
+fn calculate_judge_window(hit_offset: i32) -> Option<JudgeWindow> {
     let mut last_judge = None;
     for judge in JUDGE {
-        if i32::from(hit_offset) > judge.0 {
+        if hit_offset > judge.0 {
             last_judge.replace(judge);
         }
     }
@@ -94,31 +104,34 @@ mod tests {
 
     #[test]
     fn judgement_to_window() {
-        let offset = -119i8;
-        assert_eq!(calculate_judge_window(offset), None);
-
-        let offset = -90i8;
-        assert_eq!(calculate_judge_window(offset), Some(JUDGE[0]));
-
-        let offset = -70i8;
-        assert_eq!(calculate_judge_window(offset), Some(JUDGE[1]));
-
-        let offset = -50i8;
-        assert_eq!(calculate_judge_window(offset), Some(JUDGE[2]));
-
-        let offset = -14i8;
+        let offset = 4;
         assert_eq!(calculate_judge_window(offset), Some(JUDGE[3]));
 
-        let offset = 18i8;
+        let offset = -119;
+        assert_eq!(calculate_judge_window(offset), None);
+
+        let offset = -90;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[0]));
+
+        let offset = -70;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[1]));
+
+        let offset = -50;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[2]));
+
+        let offset = -14;
+        assert_eq!(calculate_judge_window(offset), Some(JUDGE[3]));
+
+        let offset = 18;
         assert_eq!(calculate_judge_window(offset), Some(JUDGE[4]));
 
-        let offset = 51i8;
+        let offset = 51;
         assert_eq!(calculate_judge_window(offset), Some(JUDGE[5]));
 
-        let offset = 90i8;
+        let offset = 90;
         assert_eq!(calculate_judge_window(offset), Some(JUDGE[6]));
 
-        let offset = 118i8;
+        let offset = 118;
         assert_eq!(calculate_judge_window(offset), Some(JUDGE[7]));
     }
 }

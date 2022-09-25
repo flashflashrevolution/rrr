@@ -271,14 +271,14 @@ impl Play<Concluded> {
 
 pub trait Difference {
     #[must_use]
-    fn abs_dif(self, right: &u32) -> Self;
+    fn abs_diff(self, right: &u32) -> Self;
 
     #[must_use]
     fn diff(self, right: &u32) -> u32;
 }
 
 impl Difference for u32 {
-    fn abs_dif(self, right: &u32) -> u32 {
+    fn abs_diff(self, right: &u32) -> u32 {
         if self < *right {
             *right - self
         } else {
