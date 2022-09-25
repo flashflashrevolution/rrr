@@ -317,7 +317,7 @@ where
 
         if let Some(stage) = &mut self.play_stage {
             for actions in self.action_queue.drain(..) {
-                stage.do_action(actions.direction, actions.ts);
+                stage.do_action(&actions.direction, actions.ts, self.settings.offset);
             }
 
             stage.tick(current_progress);
