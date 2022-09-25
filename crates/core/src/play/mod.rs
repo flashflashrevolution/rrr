@@ -179,14 +179,16 @@ impl Play<Active> {
     }
 
     fn check_miss(&mut self) {
+        const MISS_OFFSET: u32 = 118 + (i8::MAX) as u32;
+
         let song_progress = self.progress();
 
         let mapped_notes = self
             .state
             .turntable
-            .view(500, 0)
+            .view(MISS_OFFSET * 2, 0)
             .filter(|(&ts, note)| {
-                song_progress >= ts + 118
+                song_progress >= ts + MISS_OFFSET
                     && !self.state.misses.contains(note)
                     && !self.state.judge.judgements.contains_key(note)
             })
@@ -213,8 +215,11 @@ impl Play<Active> {
         &self.state.judge.judgements
     }
 
-    pub fn do_action(&mut self, direction: NoteDirection, ts: u32) {
-        let view_result = self.state.turntable.view(120, 120);
+    pub fn do_action(&mut self, direction: &NoteDirection, ts: u32, offset: i8) {
+        let view_result = self.state.turntable.view(
+            120 + u32::from(offset.unsigned_abs()),
+            120 + u32::from(offset.unsigned_abs()),
+        );
         if let Some((_, closest_note)) = view_result
             .filter(|(_, note)| self.determine_judgable(note, &direction))
             .next()
