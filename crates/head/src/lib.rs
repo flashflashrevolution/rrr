@@ -316,11 +316,11 @@ where
         let current_progress = (self.start_instant.ms_since() * 1000.) as u32;
 
         if let Some(stage) = &mut self.play_stage {
-            stage.tick(current_progress);
-
             for actions in self.action_queue.drain(..) {
                 stage.do_action(actions.direction, actions.ts);
             }
+
+            stage.tick(current_progress);
         }
 
         if let Some(mut fetcher) = self.fetcher.take() {
@@ -348,10 +348,6 @@ where
                             settings::ScrollDirection::Down => -note_height,
                             settings::ScrollDirection::Up => field_height,
                         };
-                        let end_position = match self.settings.scroll_direction {
-                            settings::ScrollDirection::Down => field_height,
-                            settings::ScrollDirection::Up => -note_height,
-                        };
                         let judge_position = match self.settings.scroll_direction {
                             settings::ScrollDirection::Down => {
                                 self.screen_height as f32
@@ -364,7 +360,6 @@ where
                             turntable,
                             Field {
                                 start_position,
-                                end_position,
                                 judge_position,
                             },
                         );
@@ -391,7 +386,7 @@ where
         if let Some(stage) = &mut self.play_stage {
             self.action_queue.push(Action {
                 direction,
-                ts: (self.start_instant.ms_since() * 1000.) as u32,
+                ts: ((self.start_instant.ms_since() * 1000.) - self.settings.offset as f64) as u32,
             });
         }
     }
@@ -410,13 +405,18 @@ where
                     let offset = self.screen_width as f32 / 2.0 - noteskin.note_width as f32 * 0.5;
                     let chart_progress = play.progress();
 
-                    let receptor_position = play.field().judge_position;
+                    let receptor_position = play.field().judge_position + 32.;
 
                     // Draw the zero point of the notes.
                     // These offsets don't make much sense.
                     draw_line(
                         frame,
-                        receptor_position + 48.,
+                        get_pos_from_ms(
+                            self.settings.offset.into(),
+                            receptor_position,
+                            play.field().start_position,
+                            time_on_screen,
+                        ),
                         self.screen_height,
                         self.screen_width,
                     );
@@ -426,7 +426,7 @@ where
                         noteskin,
                         frame,
                         offset,
-                        receptor_position + 16.,
+                        receptor_position - noteskin.note_height as f32 * 0.5,
                         self.settings.lane_gap,
                         self.screen_width,
                         self.screen_height,
@@ -556,13 +556,17 @@ impl Engine {
     }
 }
 
+fn get_pos_from_ms(ms: i64, end_position: f32, start_position: f32, time_on_screen: u32) -> f32 {
+    end_position.lerp(start_position, ms as f32 / time_on_screen as f32)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn draw_notes(
     play: &Play<play::Active>,
     time_on_screen: u32,
-    chart_progress: u32,
+    ms_chart_progress: u32,
     field: &Field,
-    play_offset: u16,
+    ms_note_render_offset: i8,
     offset: f32,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
@@ -571,14 +575,21 @@ fn draw_notes(
     screen_height: u32,
 ) {
     let end_position = field.judge_position;
-    let view = play.view(u32::from(time_on_screen / 2), time_on_screen);
-    for (&duration, note) in view.filter(|(_, note)| !play.judgements().contains_key(note)) {
+    let view = play.view(
+        u32::from(time_on_screen / 2),
+        time_on_screen + u32::from(i8::unsigned_abs(ms_note_render_offset)),
+    );
+    for (&ms_when_note_at_receptor, note) in
+        view.filter(|(_, note)| !play.judgements().contains_key(note))
+    {
         // Calculate "time_on_screen" as from off-screen to receptor, and then continue on with the lerp. (lerp can fall off)
         // Rendering should carry on past the zero point but it should arrive at 0 at the receptor point rather than the beginning of the screen.
 
-        let note_progress = (duration as f32 - chart_progress as f32) + f32::from(play_offset);
+        let note_progress = (ms_when_note_at_receptor as f32 + f32::from(ms_note_render_offset))
+            - ms_chart_progress as f32;
         let normalized = note_progress as f32 / time_on_screen as f32;
         let position = end_position.lerp(field.start_position, normalized.into());
+
         let lane_offset = lane_gap as f32;
 
         let lane_index = match note.direction {
@@ -617,7 +628,7 @@ fn draw_receptors(
     noteskin: &noteskin::Definition,
     frame: &mut [u8],
     offset: f32,
-    position: f32,
+    receptor_y: f32,
     lane_gap: u8,
     screen_width: u32,
     screen_height: u32,
@@ -629,7 +640,7 @@ fn draw_receptors(
         screen_width,
         screen_height,
         offset + (lane_offset * -1.5),
-        position,
+        receptor_y,
         &NoteDirection::Left,
         &receptor_skin,
     );
@@ -638,7 +649,7 @@ fn draw_receptors(
         screen_width,
         screen_height,
         offset + (lane_offset * -0.5),
-        position,
+        receptor_y,
         &NoteDirection::Down,
         &receptor_skin,
     );
@@ -647,7 +658,7 @@ fn draw_receptors(
         screen_width,
         screen_height,
         offset + (lane_offset * 0.5),
-        position,
+        receptor_y,
         &NoteDirection::Up,
         &receptor_skin,
     );
@@ -656,7 +667,7 @@ fn draw_receptors(
         screen_width,
         screen_height,
         offset + (lane_offset * 1.5),
-        position,
+        receptor_y,
         &NoteDirection::Right,
         &receptor_skin,
     );
