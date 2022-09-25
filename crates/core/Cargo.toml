@@ -41,7 +41,7 @@ serde = { version = "1.0.145", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 swf = "0.2.0"
 symphonia = { version = "0.5.1", default-features = false, features = ["mp3"] }
-thiserror = "1.0.35"
+thiserror = "1.0.36"
 
 [target.'cfg(not(all(target_arch = "wasm32", target_os = "unknown")))'.dependencies]
 cpal = { git = "https://github.com/RustAudio/cpal.git" }

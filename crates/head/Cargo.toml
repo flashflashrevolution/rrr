@@ -27,7 +27,7 @@ release = ["log/release_max_level_off", "rrr-core/release", "serde"]
 [dependencies]
 anyhow = "1.0.65"
 cfg-if = "1.0.0"
-image = { version = "0.24.3", default-features = false, features = ["png"] }
+image = { version = "0.24.4", default-features = false, features = ["png"] }
 inter-struct = "0.2.0"
 lerp = "0.4.0"
 log = { version = "0.4.17" }
@@ -63,4 +63,5 @@ features = ["Window", "Document", "EventListener"]
 
 [dev-dependencies]
 bytes = { version = "1.2.1", features = ["serde"] }
-tokio = { version = "1.21.1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.21.1", features = ["macros", "rt"] }
+wasm-bindgen-test = "0.3.33"
