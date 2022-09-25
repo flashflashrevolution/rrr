@@ -562,7 +562,7 @@ fn draw_notes(
     time_on_screen: u32,
     chart_progress: u32,
     field: &Field,
-    play_offset: u16,
+    play_offset: i8,
     offset: f32,
     frame: &mut [u8],
     noteskin: &noteskin::Definition,
