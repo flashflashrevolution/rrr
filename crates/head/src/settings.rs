@@ -24,7 +24,7 @@ pub enum ScrollDirection {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Settings {
     pub scroll_speed: u16,
-    pub offset: u16,
+    pub offset: i8,
     pub judge_position: i32,
     pub scroll_direction: ScrollDirection,
     pub lane_gap: u8,
@@ -49,7 +49,7 @@ impl Settings {
     #[must_use]
     pub fn new(
         scroll_speed: u16,
-        offset: u16,
+        offset: i8,
         judge_zero_point: i32,
         scroll_direction: ScrollDirection,
         lane_gap: u8,
