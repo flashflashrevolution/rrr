@@ -22,6 +22,7 @@ release = ["rrr-head/release", "rrr-head/web"]
 
 [dependencies]
 anyhow = "1.0.65"
+js-sys = "0.3.60"
 log = { version = "0.4.17" }
 rrr-head = { path = "../head", default-features = false }
 console_error_panic_hook = "0.1.7"

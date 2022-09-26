@@ -11,6 +11,7 @@ use std::rc::Rc;
 use wasm_bindgen::{closure::Closure, prelude::wasm_bindgen, JsCast};
 use web_sys::HtmlCanvasElement;
 
+
 pub fn build_window(
     event_loop: &EventLoop<()>,
     canvas: Option<HtmlCanvasElement>,
@@ -29,13 +30,13 @@ pub fn build_window(
     }
 }
 
-#[wasm_bindgen(start)]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen(start))]
 pub fn initialize() {
     console_log::init().unwrap();
     log::info!("RRR loaded.");
 }
 
-#[wasm_bindgen]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
 pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_bindgen_futures::spawn_local(async move {
@@ -104,8 +105,6 @@ async fn initialize_window(
 }
 
 pub fn register_on_visibility_change_listener(window: &web_sys::Window) {
-    use wasm_bindgen::JsCast;
-
     let closure = Closure::wrap(Box::new(move || {
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
