@@ -11,7 +11,6 @@ use std::rc::Rc;
 use wasm_bindgen::{closure::Closure, prelude::wasm_bindgen, JsCast};
 use web_sys::HtmlCanvasElement;
 
-
 pub fn build_window(
     event_loop: &EventLoop<()>,
     canvas: Option<HtmlCanvasElement>,
@@ -105,6 +104,8 @@ async fn initialize_window(
 }
 
 pub fn register_on_visibility_change_listener(window: &web_sys::Window) {
+    use wasm_bindgen::JsCast;
+
     let closure = Closure::wrap(Box::new(move || {
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
