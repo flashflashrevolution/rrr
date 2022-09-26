@@ -36,6 +36,7 @@ pub mod prelude {
     pub use anyhow;
     pub use futures;
     pub use log;
+    pub use rrr_core::play;
     pub use winit;
 }
 

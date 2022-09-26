@@ -1,41 +1,138 @@
-use anyhow::Error;
-use rrr_head::prelude::winit::{
+#![feature(cfg_eval)]
+#![feature(type_alias_impl_trait)]
+
+use anyhow::{Error, Result};
+use js_sys::Function;
+use rrr_head::prelude::play;
+use rrr_head::{platform::platform::time::Time, query};
+use std::rc::Rc;
+use wasm_bindgen::{prelude::*, JsCast};
+use winit::error::OsError;
+
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
+use winit::{
     self,
     dpi::PhysicalSize,
     event_loop::EventLoop,
     platform::web::WindowBuilderExtWebSys,
     window::{Window, WindowBuilder},
 };
-use rrr_head::{platform::platform::time::Time, query};
-use std::rc::Rc;
-use wasm_bindgen::{closure::Closure, prelude::wasm_bindgen, JsCast};
+
 use web_sys::HtmlCanvasElement;
+
+#[cfg_eval]
+#[cfg_attr(feature = "wasm-bindgen", wasm_bindgen)]
+pub struct Engine {
+    #[cfg_attr(feature = "wasm-bindgen", wasm_bindgen(skip))]
+    event_loop: EventLoop<()>,
+    window: Window,
+}
+
+#[wasm_bindgen]
+impl Engine {
+    #[inline]
+    pub(crate) fn new(engine: EngineComponents) -> Result<Engine> {
+        Self::init(engine)
+    }
+
+    fn init(engine: EngineComponents) -> Result<Self> {
+        let event_loop = EventLoop::new();
+
+        let size = PhysicalSize {
+            width: engine.width,
+            height: engine.height,
+        };
+        let window = WindowBuilder::new()
+            .with_title("Rust Rust Revolution")
+            .with_canvas(engine.canvas)
+            .with_inner_size(size)
+            .with_resizable(false)
+            .with_max_inner_size(size)
+            .with_min_inner_size(size)
+            .build(&event_loop)?;
+
+        Ok(Engine { event_loop, window })
+    }
+}
+
+#[derive(Debug, Default, Clone)]
+#[wasm_bindgen]
+pub struct EngineBuilder {
+    pub(crate) engine: EngineComponents,
+}
+
+/// Components to use when building an Engine instance.
+#[derive(Debug, Clone)]
+pub(crate) struct EngineComponents {
+    pub canvas: Option<HtmlCanvasElement>,
+    pub width: u32,
+    pub height: u32,
+    pub ui_callback: Option<Function>,
+}
+
+impl Default for EngineComponents {
+    #[inline]
+    fn default() -> EngineComponents {
+        EngineComponents {
+            canvas: None,
+            width: 512,
+            height: 768,
+            ui_callback: None,
+        }
+    }
+}
+
+impl EngineBuilder {
+    /// Initializes builder with default values.
+    #[inline]
+    pub fn new() -> Self {
+        Default::default()
+    }
+
+    #[inline]
+    pub fn with_canvas(mut self, canvas: HtmlCanvasElement) -> Self {
+        self.engine.canvas.replace(canvas);
+        self
+    }
+
+    #[inline]
+    pub fn with_judgement_callback(mut self, callback: Function) -> Self {
+        self.engine.ui_callback.replace(callback);
+        self
+    }
+
+    #[inline]
+    pub fn build(self) -> Engine {
+        if let Ok(engine) = Engine::new(self.engine) {
+            engine
+        } else {
+            panic!("no good")
+        }
+    }
+}
 
 pub fn build_window(
     event_loop: &EventLoop<()>,
     canvas: Option<HtmlCanvasElement>,
     size: PhysicalSize<u32>,
-) -> Result<winit::window::Window, winit::error::OsError> {
-    {
-        log::debug!("Inner Size {:?}", size);
-        WindowBuilder::new()
-            .with_title("Rust Rust Revolution")
-            .with_canvas(canvas)
-            .with_inner_size(size)
-            .with_resizable(false)
-            .with_max_inner_size(size)
-            .with_min_inner_size(size)
-            .build(event_loop)
-    }
+) -> Result<Window, OsError> {
+    WindowBuilder::new()
+        .with_title("Rust Rust Revolution")
+        .with_canvas(canvas)
+        .with_inner_size(size)
+        .with_resizable(false)
+        .with_max_inner_size(size)
+        .with_min_inner_size(size)
+        .build(event_loop)
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen(start))]
+#[wasm_bindgen(start)]
 pub fn initialize() {
     console_log::init().unwrap();
     log::info!("RRR loaded.");
 }
 
-#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
+#[wasm_bindgen]
 pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     wasm_bindgen_futures::spawn_local(async move {
@@ -48,7 +145,7 @@ pub fn play(canvas: Option<HtmlCanvasElement>, width: u32, height: u32) {
             let mut game = rrr_head::Game::<Time>::new(None, width, height);
             game.with_settings(extracted_settings);
 
-            rrr_head::run_game_loop(window, size, event_loop, game).await;
+            let _ = rrr_head::run_game_loop(window, size, event_loop, game).await;
         }
     });
 }
@@ -104,8 +201,6 @@ async fn initialize_window(
 }
 
 pub fn register_on_visibility_change_listener(window: &web_sys::Window) {
-    use wasm_bindgen::JsCast;
-
     let closure = Closure::wrap(Box::new(move || {
         let window = web_sys::window().unwrap();
         let document = window.document().unwrap();
