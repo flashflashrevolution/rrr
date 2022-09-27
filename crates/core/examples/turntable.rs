@@ -1,3 +1,4 @@
+use rrr_core::play::turntable::Turntable;
 use std::thread::sleep;
 
 fn main() {
