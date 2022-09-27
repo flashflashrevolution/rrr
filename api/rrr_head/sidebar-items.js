@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["build_window",""],["run_game_loop",""]],"mod":[["benchmark",""],["fetch",""],["geo","Simple geometry primitives."],["noteskin",""],["platform",""],["prelude",""],["query",""],["settings",""],["sprites",""]],"struct":[["Engine",""],["Game",""],["GameRenderer",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["build_window",""],["run_game_loop",""]],"mod":[["benchmark",""],["fetch",""],["noteskin",""],["platform",""],["prelude",""],["query",""],["settings",""]],"struct":[["Engine",""],["Game",""],["GameRenderer",""]]};

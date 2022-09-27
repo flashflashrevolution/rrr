@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Direction",""]],"fn":[["blit",""]],"trait":[["DirectionValue",""],["Drawable","Drawables can be blitted to the pixel buffer and animated."]]};
