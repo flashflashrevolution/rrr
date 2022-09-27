@@ -1,21 +1,41 @@
 use image::{DynamicImage, GenericImageView, SubImage};
-use rrr_core::chart::NoteDirection;
-use std::f64;
+
+pub enum Direction {
+    Left,
+    Down,
+    Up,
+    Right,
+}
+
+pub trait DirectionValue {
+    fn value(&self) -> Direction;
+}
+
+impl DirectionValue for Direction {
+    fn value(&self) -> Direction {
+        match self {
+            Direction::Left => Direction::Left,
+            Direction::Down => Direction::Down,
+            Direction::Up => Direction::Up,
+            Direction::Right => Direction::Right,
+        }
+    }
+}
 
 /// Drawables can be blitted to the pixel buffer and animated.
-pub(crate) trait Drawable<'a> {
+pub trait Drawable<'a> {
     fn width(&self) -> usize;
     fn height(&self) -> usize;
     fn pixels(&self) -> SubImage<&'a DynamicImage>;
 }
 
-pub(crate) fn blit<'a, S>(
+pub fn blit<'a, S, NoteDir: DirectionValue>(
     screen: &mut [u8],
     screen_width: u32,
     screen_height: u32,
     dest_x: f32,
     dest_y: f32,
-    dir: &NoteDirection,
+    dir: &NoteDir,
     drawable: &S,
 ) where
     S: Drawable<'a>,
@@ -41,20 +61,20 @@ pub(crate) fn blit<'a, S>(
             // I make no guarantees that this will work with a non-square drawable
             let mut source_x: u32;
             let mut source_y: u32;
-            match *dir {
-                NoteDirection::Down => {
+            match dir.value() {
+                Direction::Down => {
                     source_x = ((screen_x as f32) - dest_x).round() as u32;
                     source_y = ((screen_y as f32) - dest_y).round() as u32;
                 }
-                NoteDirection::Right => {
+                Direction::Right => {
                     source_x = (width - 1. - ((screen_y as f32) - dest_y)).round() as u32;
                     source_y = ((screen_x as f32) - dest_x).round() as u32;
                 }
-                NoteDirection::Up => {
+                Direction::Up => {
                     source_x = (width - 1. - ((screen_x as f32) - dest_x)).round() as u32;
                     source_y = (height - 1. - ((screen_y as f32) - dest_y)).round() as u32;
                 }
-                NoteDirection::Left => {
+                Direction::Left => {
                     source_x = ((screen_y as f32) - dest_y).round() as u32;
                     source_y = (height - 1. - ((screen_x as f32) - dest_x)).round() as u32;
                 }

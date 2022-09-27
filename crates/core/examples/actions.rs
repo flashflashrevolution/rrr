@@ -74,7 +74,7 @@ fn main() {
         },
     ];
 
-    let current_receptor_ms_position = 160u64;
+    let current_receptor_ms_position = 160u32;
 
     let key_actions = [
         (NoteDirection::Up, current_receptor_ms_position),
@@ -86,8 +86,8 @@ fn main() {
     let missed_notes: HashSet<&RuntimeNote> = missed_view
         .iter()
         .filter(|&note| {
-            current_receptor_ms_position as i128 + i128::abs(judge::JUDGE[0].0 as i128)
-                > note.timestamp
+            current_receptor_ms_position as i32 + i32::abs(judge::JUDGE[0].0)
+                > note.timestamp.try_into().unwrap()
         })
         .collect();
 
@@ -95,12 +95,12 @@ fn main() {
 
     for note in view {
         if !missed_notes.contains(&note) {
-            let diff = current_receptor_ms_position as i128 - note.timestamp;
+            let diff = current_receptor_ms_position - note.timestamp;
 
             let judge = {
                 let mut last_judge = None;
                 for judge in judge::JUDGE {
-                    if diff > judge.0.into() {
+                    if diff > judge.0 as u32 {
                         last_judge.replace(judge);
                     }
                 }

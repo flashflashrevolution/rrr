@@ -4,7 +4,6 @@ use crate::{
     settings::Settings,
 };
 use inter_struct::prelude::StructMerge;
-use pixels::{Pixels, PixelsBuilder, SurfaceTexture};
 use rrr_core::{
     chart::{NoteColor, NoteDirection, SwfParser},
     math::lerp::Lerp,
@@ -14,6 +13,10 @@ use rrr_core::{
         turntable::Turntable,
         Play,
     },
+};
+use rrr_render::{
+    sprites::{self, DirectionValue},
+    Renderer, RendererBuilder,
 };
 use winit::{
     dpi::PhysicalSize,
@@ -33,12 +36,22 @@ pub mod prelude {
 
 pub mod benchmark;
 pub mod fetch;
-pub mod geo;
 pub mod noteskin;
 pub mod platform;
 pub mod query;
 pub mod settings;
-pub mod sprites;
+
+struct Direction<'a>(&'a NoteDirection);
+impl DirectionValue for Direction<'_> {
+    fn value(&self) -> sprites::Direction {
+        match self.0 {
+            NoteDirection::Left => sprites::Direction::Left,
+            NoteDirection::Down => sprites::Direction::Down,
+            NoteDirection::Up => sprites::Direction::Up,
+            NoteDirection::Right => sprites::Direction::Right,
+        }
+    }
+}
 
 pub fn build_window(
     event_loop: &EventLoop<()>,
@@ -61,25 +74,10 @@ pub async fn run_game_loop(
     event_loop: EventLoop<()>,
     mut game: Game<Time>,
 ) -> Result<(), anyhow::Error> {
-    let surface_texture = SurfaceTexture::new(size.width, size.height, &window);
-
-    let pixels = if let Ok(pixels) =
-        PixelsBuilder::new(game.screen_width, game.screen_height, surface_texture)
-            .clear_color(pixels::wgpu::Color {
-                r: 0.,
-                g: 0.,
-                b: 0.,
-                a: 1.0,
-            })
-            .build_async()
-            .await
-    {
-        pixels
-    } else {
-        Err(anyhow::anyhow!("Could not initialize Pixels renderer."))?
-    };
-
-    game.with_game_renderer(GameRenderer::new(pixels));
+    let renderer = RendererBuilder::new(size.width, size.height, &window)
+        .build()
+        .await?;
+    game.with_renderer(renderer);
     game.load(3378);
     window.focus_window();
 
@@ -194,7 +192,7 @@ pub async fn run_game_loop(
             },
             Event::MainEventsCleared => {
                 if let Some(renderer) = &game.renderer {
-                    if let Err(e) = renderer.pixels.render() {
+                    if let Err(e) = renderer.renderer.pixels.render() {
                         log::error!("pixels.render() failed: {}", e);
                         *control_flow = ControlFlow::Exit;
                     }
@@ -296,10 +294,16 @@ where
         }
     }
 
-    pub(crate) fn with_game_renderer(&mut self, renderer: GameRenderer) {
-        self.note_height = renderer.noteskin.note_height;
-        self.note_width = renderer.noteskin.note_width;
-        self.renderer = Some(renderer);
+    pub(crate) fn with_renderer(&mut self, renderer: Renderer) {
+        self.renderer = Some(GameRenderer {
+            noteskin: noteskin::Definition::default(),
+            renderer,
+        });
+
+        if let Some(renderer) = &self.renderer {
+            self.note_height = renderer.noteskin.note_height;
+            self.note_width = renderer.noteskin.note_width;
+        }
     }
 
     pub(crate) fn start(&mut self) {
@@ -396,7 +400,7 @@ where
     /// Assumes the default texture format: `wgpu::TextureFormat::Rgba8UnormSrgb`
     fn draw(&mut self) {
         if let Some(renderer) = &mut self.renderer {
-            let frame = renderer.pixels.get_frame_mut();
+            let frame = renderer.renderer.pixels.get_frame_mut();
             clear(frame);
 
             if let Some(play) = &self.play_stage {
@@ -463,14 +467,14 @@ where
 
 pub struct GameRenderer {
     noteskin: noteskin::Definition,
-    pixels: Pixels,
+    renderer: Renderer,
 }
 
 impl GameRenderer {
-    fn new(pixels: Pixels) -> Self {
+    fn new(renderer: Renderer) -> Self {
         Self {
             noteskin: noteskin::Definition::default(),
-            pixels,
+            renderer,
         }
     }
 }
@@ -606,7 +610,7 @@ fn draw_notes(
             screen_height,
             x,
             y,
-            &note.direction,
+            &Direction(&note.direction),
             &noteskin.get_note(note.color),
         );
     }
@@ -641,7 +645,7 @@ fn draw_receptors(
         screen_height,
         offset + (lane_offset * -1.5),
         receptor_y,
-        &NoteDirection::Left,
+        &Direction(&NoteDirection::Left),
         &receptor_skin,
     );
     sprites::blit(
@@ -650,7 +654,7 @@ fn draw_receptors(
         screen_height,
         offset + (lane_offset * -0.5),
         receptor_y,
-        &NoteDirection::Down,
+        &Direction(&NoteDirection::Down),
         &receptor_skin,
     );
     sprites::blit(
@@ -659,7 +663,7 @@ fn draw_receptors(
         screen_height,
         offset + (lane_offset * 0.5),
         receptor_y,
-        &NoteDirection::Up,
+        &Direction(&NoteDirection::Up),
         &receptor_skin,
     );
     sprites::blit(
@@ -668,7 +672,7 @@ fn draw_receptors(
         screen_height,
         offset + (lane_offset * 1.5),
         receptor_y,
-        &NoteDirection::Right,
+        &Direction(&NoteDirection::Right),
         &receptor_skin,
     );
 }

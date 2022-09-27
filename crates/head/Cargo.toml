@@ -31,9 +31,9 @@ image = { version = "0.24.4", default-features = false, features = ["png"] }
 inter-struct = "0.2.0"
 lerp = "0.4.0"
 log = { version = "0.4.17" }
-pixels = { git = "https://github.com/parasyte/pixels.git", branch = "main" }
 reqwest = { version = "0.11.12", features = ["json", "blocking"] }
 rrr-core = { path = "../core", default-features = false }
+rrr-render = { path = "../render" }
 serde = { version = "1.0.145", optional = true, features = ["derive"] }
 strum = { version = "0.24.1", features = ["derive"] }
 
