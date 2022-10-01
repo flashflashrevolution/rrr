@@ -17,7 +17,9 @@ use crate::{
 use btreemultimap::{BTreeMultiMap, MultiRange};
 use std::collections::HashSet;
 
-#[derive(Debug, Default, Clone)]
+#[cfg_attr(target_arch = "wasm32", wasm_bindgen::prelude::wasm_bindgen)]
+#[derive(Debug, Default, Clone, Copy)]
+#[repr(C)]
 pub struct JudgementReport {
     pub amazings: u32,
     pub perfects: u32,
@@ -28,9 +30,9 @@ pub struct JudgementReport {
 }
 
 pub struct Play<S: PlayState> {
-    field: Field,
-    state: S,
-    settings: Settings,
+    pub field: Field,
+    pub state: S,
+    pub settings: Settings,
 }
 
 impl<S: PlayState> Play<S> {
@@ -49,6 +51,13 @@ pub struct Active {
     judge: Judge,
     misses: HashSet<RuntimeNote>,
     judgement_report: JudgementReport,
+}
+
+impl Active {
+    #[must_use]
+    pub fn judgement_report(&self) -> &JudgementReport {
+        &self.judgement_report
+    }
 }
 
 pub struct Concluded {

@@ -27,10 +27,19 @@ use winit::{
     window::WindowBuilder,
 };
 
+#[cfg_attr(
+    target_arch = "wasm32",
+    wasm_bindgen::prelude::wasm_bindgen(module = "\\/src\\/judgement.js")
+)]
+extern "C" {
+    fn update_judgement(judgement_report: play::JudgementReport);
+}
+
 pub mod prelude {
     pub use anyhow;
     pub use futures;
     pub use log;
+    pub use rrr_core::play;
     pub use winit;
 }
 
@@ -449,6 +458,10 @@ where
                         self.screen_width,
                         self.screen_height,
                     );
+                }
+
+                unsafe {
+                    update_judgement(*play.state.judgement_report());
                 }
             }
         }
