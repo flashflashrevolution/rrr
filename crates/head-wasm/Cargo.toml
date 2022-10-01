@@ -1,6 +1,6 @@
 [package]
 name = "rrr-head-wasm"
-version = "0.1.0"
+version = "0.1.2"
 authors = ["Zageron <hello@adambryant.ca>"]
 description = "WASM head for the RRR game."
 homepage = "https://github.com/flashflashrevolution/rrr"
