@@ -1,0 +1,23 @@
+[env]
+CARGO_MAKE_CRATE_WORKSPACE_MEMBERS = [
+    "crates/core",
+    "crates/head",
+    "crates/render",
+    "crates/head-native",
+    "crates/head-wasm",
+    "crates/wasm-workers",
+]
+CARGO_MAKE_WORKSPACE_EMULATION = true
+
+[tasks.build]
+clear = true
+workspace = false
+env = { CARGO_MAKE_WORKSPACE_SKIP_MEMBERS = [
+    "crates/core",
+    "crates/head",
+    "crates/render",
+] }
+run_task = { name = "build-inner", fork = true }
+
+[tasks.test]
+run_task = { name = "test" }

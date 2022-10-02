@@ -1,0 +1,28 @@
+[tasks.build_crate]
+command = "cargo"
+args = [
+    "build",
+    "--release",
+    "--target",
+    "wasm32-unknown-unknown",
+    "--features",
+    "release",
+]
+
+[tasks.build-inner]
+command = "wasm-bindgen"
+args = [
+    "--out-dir",
+    "web/bin",
+    "--target",
+    "web",
+    "target/wasm32-unknown-unknown/release/${CARGO_MAKE_CRATE_FS_NAME}.wasm",
+]
+dependencies = ["build_crate"]
+
+[tasks.build]
+dependencies = ["build-inner"]
+
+[tasks.test]
+command = "wasm-pack"
+args = ["test", "--firefox"]

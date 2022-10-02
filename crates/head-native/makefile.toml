@@ -1,0 +1,7 @@
+[tasks.build-inner]
+command = "cargo"
+args = ["build"]
+
+
+[tasks.build]
+dependencies = ["build-inner"]

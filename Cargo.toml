@@ -1,9 +1,0 @@
-[workspace]
-resolver = "2"
-#members = ["crates/*"] # Uncomment for WASM specific development.
-members = ["crates/head", "crates/head", "crates/head-native", "crates/render"]
-exclude = ["crates/wasm-workers", "crates/head-wasm"]
-
-[profile.release]
-lto = "thin"
-opt-level = 3

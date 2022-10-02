@@ -1,0 +1,10 @@
+[tasks.test_native]
+command = "cargo"
+args = ["test"]
+
+[tasks.test_wasm]
+command = "wasm-pack"
+args = ["test", "--firefox"]
+
+[tasks.test]
+dependencies = ["test_native", "test_wasm"]
