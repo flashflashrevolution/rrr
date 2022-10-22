@@ -63,5 +63,5 @@ features = ["Window", "Document", "EventListener"]
 
 [dev-dependencies]
 bytes = { version = "1.2.1", features = ["serde"] }
-tokio = { version = "1.21.1", features = ["macros", "rt"] }
+tokio = { version = "1.21.2", features = ["macros", "rt"] }
 wasm-bindgen-test = "0.3.33"
