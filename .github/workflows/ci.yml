@@ -83,7 +83,7 @@ jobs:
           components: llvm-tools-preview, clippy
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v2.0.0
+        uses: Swatinem/rust-cache@v2.0.2
         if: ${{ !env.ACT }}
 
       - name: Extract Test Data
@@ -127,7 +127,7 @@ jobs:
           components: llvm-tools-preview
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v2.0.0
+        uses: Swatinem/rust-cache@v2.0.2
         if: ${{ !env.ACT }}
         
       - name: Extract Test Data

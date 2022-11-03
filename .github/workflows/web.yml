@@ -36,7 +36,7 @@ jobs:
           version: "latest"
 
       - name: ⚡ Cache
-        uses: Swatinem/rust-cache@v2.0.0
+        uses: Swatinem/rust-cache@v2.0.2
         if: ${{ !env.ACT }}
 
       - name: Extract Test Data
