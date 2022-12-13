@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.2.0
 
       - name: Download actionlint
         id: get_actionlint
@@ -39,7 +39,7 @@ jobs:
     needs: [actionlint]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.2.0
 
       - name: Install Rust
         uses: actions-rs/toolchain@v1.0.7
@@ -65,7 +65,7 @@ jobs:
     needs: [rustfmt]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.2.0
         with:
           fetch-depth: 1
           lfs: true
@@ -111,7 +111,7 @@ jobs:
     needs: [test]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.0.2
+        uses: actions/checkout@v3.2.0
         with:
           fetch-depth: 1
           lfs: true
